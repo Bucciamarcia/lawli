@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "134366442829",
+    "project_id": "lawli-bab83",
+    "storage_bucket": "lawli-bab83.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134366442829:android:f2094421aa4a11a3e93304",
+        "android_client_info": {
+          "package_name": "com.stefanominiconsulting.lawli"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA53sxP_lcnUOKRkbT3abkgAI3fPCPwII"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
