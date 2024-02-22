@@ -12,7 +12,7 @@ class DesktopVersion extends StatelessWidget {
         appBar: appBar,
         body: Row(
           children: [
-            Container(
+            const SizedBox(
               width: 300,
               child: ResponsiveDrawer(),
             ),

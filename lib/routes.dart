@@ -10,13 +10,13 @@ import "home/recent/recent.dart";
 import "cases/cases.dart";
 
 final Map<String, WidgetBuilder> routes = {
-  '/': (BuildContext context) => HomeScreen(),
-  '/dashboard': (BuildContext context) => DashboardScreen(),
-  'dashboard/uploadfile': (BuildContext context) => UploadFileScreen(),
-  'dashboard/document': (BuildContext context) => DocumentScreen(),
-  '/clients': (BuildContext context) => ClientsScreen(),
-  'clients/client': (BuildContext context) => ClientScreen(),
-  '/login': (BuildContext context) => LoginScreen(),
-  '/recent': (BuildContext context) => RecentScreen(),
-  '/cases': (BuildContext context) => CasesScreen(),
+  '/': (BuildContext context) => const HomeScreen(),
+  '/dashboard': (BuildContext context) => const DashboardScreen(),
+  'dashboard/uploadfile': (BuildContext context) => const UploadFileScreen(),
+  'dashboard/document': (BuildContext context) => const DocumentScreen(),
+  '/clients': (BuildContext context) => const ClientsScreen(),
+  'clients/client': (BuildContext context) => const ClientScreen(),
+  '/login': (BuildContext context) => const LoginScreen(),
+  '/recent': (BuildContext context) => const RecentScreen(),
+  '/cases': (BuildContext context) => const CasesScreen(),
 };
