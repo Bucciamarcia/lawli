@@ -26,6 +26,7 @@ class LoginScreen extends StatelessWidget {
 
   AppBar appBar(BuildContext context) {
     return AppBar(
+      centerTitle: true,
         title: const Text("Benvenuto in Lawli!"),
       );
   }
