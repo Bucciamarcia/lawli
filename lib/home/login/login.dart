@@ -8,21 +8,58 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Variables
-    const padding = Padding(padding: EdgeInsets.all(20));
-    final logoImage = Image.asset(
-      logoPath,
-      width: MediaQuery.of(context).size.width * 0.3,
-    );
+    const String headerText = "Benvenuto in Lawli!";
+    const String appbarText = "Login";
     // End variables
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login"),
+        title: const Text(appbarText),
       ),
-      body: Center(
+      body: const Center(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[logoImage, padding, const LoginBlock()])),
+              children: <Widget>[
+            LogoImage(),
+            SizedBox(height: 20),
+            TextHeader(headerText: headerText),
+            SizedBox(height: 20),
+            LoginBlock(),
+            FooterWidget(),
+          ]),),
+    );
+  }
+}
+
+class LogoImage extends StatelessWidget {
+  final double width;
+
+  const LogoImage({super.key, this.width = 250});
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      logoPath,
+      width: MediaQuery.of(context).size.width >= 600
+          ? width
+          : MediaQuery.of(context).size.width * 0.6,
+    );
+  }
+}
+
+class TextHeader extends StatelessWidget {
+  final String headerText;
+
+  const TextHeader({super.key, required this.headerText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      headerText,
+      style: const TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 }
