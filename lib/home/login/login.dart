@@ -5,80 +5,10 @@ import 'loginblock.dart';
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth > 600) {
-          return LoginDesktop();
-        } else {
-          return LoginMobile();
-        }
-      },
-    );
-  }
-}
-
-class LoginDesktop extends StatelessWidget {
-  const LoginDesktop({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // Variables
-    const String headerText = "Benvenuto in Lawli desktop!";
-    const String appbarText = "Login";
-    // End variables
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(appbarText),
-      ),
-      body: Row(
-        children: [
-          Container(
-            width: 300,
-            child: ResponsiveDrawer(),
-          ),
-          Expanded(
-            child: Center(
-              child: BodyElement(),
-            ),
-          ),
-        ],
-      )
-    );
-  }
-}
-
-class LoginMobile extends StatelessWidget {
-  const LoginMobile({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // Variables
-    const String appbarText = "Login";
-    // End variables
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(appbarText),
-      ),
-      drawer: const ResponsiveDrawer(),
-      body: BodyElement()
-    );
-  }
-}
-
-
-
-
-
-class BodyElement extends StatelessWidget {
-  static const String headerText = "Benvenuto in Lawli!";
-
-  const BodyElement({super.key, headerText});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
+  Scaffold body(BuildContext context) {
+    const String headerText = "Benvenuto in Lawli!";
+    return const Scaffold(
+      body: Center(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -88,7 +18,70 @@ class BodyElement extends StatelessWidget {
             SizedBox(height: 20),
             LoginBlock(),
             FooterWidget(),
-          ]),);
+              ]),
+            ),
+          );
+
+  }
+
+  AppBar appBar(BuildContext context) {
+    return AppBar(
+        title: const Text("Benvenuto in Lawli!"),
+      );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          return DesktopVersion(body: body(context), appBar: appBar(context));
+        } else {
+          return MobileVersion(body: body(context), appBar: appBar(context));
+        }
+      },
+    );
+  }
+}
+
+class DesktopVersion extends StatelessWidget {
+  final Scaffold body;
+  final AppBar appBar;
+  const DesktopVersion({super.key, required this.body, required this.appBar});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: appBar,
+      body: Row(
+        children: [
+          Container(
+            width: 300,
+            child: ResponsiveDrawer(),
+          ),
+          Expanded(
+            child: Center(
+              child: body,
+            ),
+          ),
+        ],
+      )
+    );
+  }
+}
+
+class MobileVersion extends StatelessWidget {
+  final Scaffold body;
+  final AppBar appBar;
+  const MobileVersion({super.key, required this.body, required this.appBar});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: appBar,
+      drawer: const ResponsiveDrawer(),
+      body: body
+    );
   }
 }
 
