@@ -44,7 +44,12 @@ class _LoginBlockState extends State<LoginBlock> {
       style: ElevatedButton.styleFrom(
         backgroundColor: bgColor,
         foregroundColor: fgColor,
-        minimumSize: Size(MediaQuery.of(context).size.width * 0.9, 50),
+        minimumSize: Size(
+          MediaQuery.of(context).size.width >= 600
+              ? 400
+              : MediaQuery.of(context).size.width * 0.9,
+          50,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
       onPressed: () async {
