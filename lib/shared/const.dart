@@ -1,0 +1,1 @@
+const String logoPath = "assets/images/lawli_logo.png";
