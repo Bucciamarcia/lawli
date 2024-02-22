@@ -7,16 +7,78 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          return LoginDesktop();
+        } else {
+          return LoginMobile();
+        }
+      },
+    );
+  }
+}
+
+class LoginDesktop extends StatelessWidget {
+  const LoginDesktop({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     // Variables
-    const String headerText = "Benvenuto in Lawli!";
+    const String headerText = "Benvenuto in Lawli desktop!";
     const String appbarText = "Login";
     // End variables
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(appbarText),
       ),
-      body: const Center(
+      body: Row(
+        children: [
+          Container(
+            width: 300,
+            child: ResponsiveDrawer(),
+          ),
+          Expanded(
+            child: Center(
+              child: BodyElement(),
+            ),
+          ),
+        ],
+      )
+    );
+  }
+}
+
+class LoginMobile extends StatelessWidget {
+  const LoginMobile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Variables
+    const String appbarText = "Login";
+    // End variables
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(appbarText),
+      ),
+      drawer: const ResponsiveDrawer(),
+      body: BodyElement()
+    );
+  }
+}
+
+
+
+
+
+class BodyElement extends StatelessWidget {
+  static const String headerText = "Benvenuto in Lawli!";
+
+  const BodyElement({super.key, headerText});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -26,10 +88,28 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 20),
             LoginBlock(),
             FooterWidget(),
-          ]),),
-    );
+          ]),);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class LogoImage extends StatelessWidget {
   final double width;
