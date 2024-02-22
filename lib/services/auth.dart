@@ -48,4 +48,8 @@ class AuthService {
   String userId() {
     return FirebaseAuth.instance.currentUser!.uid;
   }
+
+  bool isSignedIn() {
+    return FirebaseAuth.instance.currentUser != null;
+  }
 }

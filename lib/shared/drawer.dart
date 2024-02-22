@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
+import "../services/auth.dart";
 
 class ResponsiveDrawer extends StatelessWidget {
-  const ResponsiveDrawer({Key? key}) : super(key: key);
+  const ResponsiveDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    if (AuthService().isSignedIn()) {
     return Drawer(
       child: ListView(
-        children: [
+        children: const [
           // Always show the header
-          const DrawerHeader(child: Text('Drawer Header')),
-          // Show list items based on screen size
-            const ListTile(title: Text('Item 1')),
-            const ListTile(title: Text('Item 2')),
+          DrawerHeader(child: Text('Drawer Header')),
+          ListTile(title: Text('Item 1')),
+          ListTile(title: Text('Item 2')),
         ],
       ),
     );
+    } else {
+      return Drawer(
+        child: ListView(
+          children: const [
+
+            ListTile(title: Text('Log in')),
+          ],
+        ),
+        );
+    }
   }
 }
