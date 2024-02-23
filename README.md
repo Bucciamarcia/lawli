@@ -26,23 +26,11 @@ import "../../shared/shared.dart";
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  static const Widget appBarText = Text("Benvenuto in Lawli!");
-
   Scaffold body(BuildContext context) {
-    const String headerText = "Benvenuto in Lawli!";
     return const Scaffold(
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              LogoImage(),
-              SizedBox(height: 20),
-              TextHeader(headerText: headerText),
-              SizedBox(height: 20),
-              LoginBlock(),
-              FooterWidget(),
-            ]),
-      ),
+      
+      // PAGE BODY HERE
+
     );
   }
 
@@ -50,8 +38,10 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AppBar appBar(BuildContext context) {
       return AppBar(
+        
         centerTitle: true,
-        title: appBarText,
+        // APPBAR HERE
+
       );
     }
 
