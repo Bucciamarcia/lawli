@@ -14,3 +14,48 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+# Layout builder
+
+Code for each new page:
+
+```dart
+import 'package:flutter/material.dart';
+import "../../shared/shared.dart";
+
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
+  Scaffold body(BuildContext context) {
+    return const Scaffold(
+      
+      // PAGE BODY HERE
+
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    AppBar appBar(BuildContext context) {
+      return AppBar(
+        
+        centerTitle: true,
+        // APPBAR HERE
+
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          return DesktopVersion(body: body(context), appBar: appBar(context));
+        } else {
+          return MobileVersion(body: body(context), appBar: appBar(context));
+        }
+      },
+    );
+  }
+}
+```
+
+The reason for this code is that there is a different menu on desktop.
