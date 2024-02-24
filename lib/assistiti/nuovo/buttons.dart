@@ -44,7 +44,7 @@ class AddAssistitoToFirebase {
 
   const AddAssistitoToFirebase({required this.formData});
 
-  Future<double> getAssistitoId(account) async {
+  Future<double> _getAssistitoId(account) async {
     final stats = account.collection("stats");
     final docRef = stats.doc("assistiti counter");
     final docSnapshot = await docRef.get(); // Get the document snapshot
@@ -71,8 +71,16 @@ class AddAssistitoToFirebase {
   Future<void> addAssistito() async {
     final account = await FirestoreService().retrieveAccountObject();
     final assistiti = account.collection("assistiti");
-    final double assistitoId = await getAssistitoId(account);
-    final assistito = {
+    final double assistitoId = await _getAssistitoId(account);
+    final assistito = _buildAssistitoMap(assistitoId, formData);
+    final documentName = assistitoId.toString();
+    
+    await assistiti.doc(documentName).set(assistito);
+  }
+
+  Map<String, dynamic> _buildAssistitoMap(double assistitoId, NuovoAssistitoFormState formData) {
+    // Builds and returns the assistito map from formData
+    return {
       "id": assistitoId,
       "nome": formData.firstNameController.text,
       "cognome": formData.lastNameController.text,
@@ -85,7 +93,5 @@ class AddAssistitoToFirebase {
       "citta": formData.cityController.text,
       "cap": formData.capController.text,
     };
-    final documentName = assistitoId.toString();
-    assistiti.doc(documentName).set(assistito);
   }
 }
