@@ -37,6 +37,24 @@ class FirestoreService {
   }
 }
 
+class AccountDb {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final String userId = AuthService().userId();
+
+  Future<String> getAccountName() async {
+    try {
+      final DocumentSnapshot userDoc = await _db.collection('users').doc(userId).get();
+      return userDoc.get('account');
+    } catch (e) {
+      log('Error getting account name: $e');
+      return "Error";
+    }
+  
+  }
+
+  
+}
+
 class CreateUserData {
   Future<void> addToDb(final String id, final bool anon) async {
     try {
