@@ -75,7 +75,7 @@ class _NuovoAssistitoScreenState extends State<NuovoAssistitoScreen> {
         labelText: "Nazione",
       ),
       const SizedBox(height: 20),
-      NuovoAssistitoFormButtons(formData: formState),
+      NuovoAssistitoFormButtons(formData: formState, pageContext: context),
 
 
     ];

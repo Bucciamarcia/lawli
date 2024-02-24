@@ -4,8 +4,10 @@ import "nuovo.dart";
 
 class NuovoAssistitoFormButtons extends StatefulWidget {
   final NuovoAssistitoFormState formData;
+  final BuildContext pageContext;
 
-  const NuovoAssistitoFormButtons({super.key, required this.formData});
+  const NuovoAssistitoFormButtons(
+      {super.key, required this.formData, required this.pageContext});
 
   @override
   State<NuovoAssistitoFormButtons> createState() =>
@@ -30,11 +32,33 @@ class _NuovoAssistitoFormButtonsState extends State<NuovoAssistitoFormButtons> {
           child: ElevatedButton(
             onPressed: () {
               AddAssistitoToFirebase(formData: widget.formData).addAssistito();
+              postAdditionPushAndRemove();
             },
             child: const Text("Salva"),
           ),
         ),
       ],
+    );
+  }
+
+  Future<dynamic> postAdditionPushAndRemove() {
+    return showDialog(
+      context: widget.pageContext,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Assistito aggiunto"),
+          content: const Text("L'assistito è stato aggiunto correttamente"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, "/assistiti", (route) => false);
+              },
+              child: const Text("Chiudi"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -74,11 +98,12 @@ class AddAssistitoToFirebase {
     final double assistitoId = await _getAssistitoId(account);
     final assistito = _buildAssistitoMap(assistitoId, formData);
     final documentName = assistitoId.toString();
-    
+
     await assistiti.doc(documentName).set(assistito);
   }
 
-  Map<String, dynamic> _buildAssistitoMap(double assistitoId, NuovoAssistitoFormState formData) {
+  Map<String, dynamic> _buildAssistitoMap(
+      double assistitoId, NuovoAssistitoFormState formData) {
     // Builds and returns the assistito map from formData
     return {
       "id": assistitoId,
