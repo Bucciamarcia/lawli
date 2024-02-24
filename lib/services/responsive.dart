@@ -11,4 +11,9 @@ class ResponsiveLayout {
     double width = screenWidth(context);
     return width > desktopBreakpoint;
   }
+
+  static EdgeInsets padding(BuildContext context) {
+    bool desktop = isDesktop(context);
+    return EdgeInsets.all(desktop ? 30 : 10);
+  }
 }

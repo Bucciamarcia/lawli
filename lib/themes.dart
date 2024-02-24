@@ -11,7 +11,12 @@ class LightTheme {
           fontSize: 20,
         ),
       ),
-
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          color: Colors.black,
+          fontSize: 40,
+        ),
+      )
     );
   } 
 }

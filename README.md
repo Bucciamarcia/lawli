@@ -22,15 +22,20 @@ Code for each new page:
 ```dart
 import 'package:flutter/material.dart';
 import "../../shared/shared.dart";
+import "../../services/services.dart";
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class AssistitiScreen extends StatelessWidget {
+  const AssistitiScreen({super.key});
 
   Scaffold body(BuildContext context) {
-    return const Scaffold(
-      
-      // PAGE BODY HERE
-
+    return Scaffold(
+      body: Container(
+        padding: ResponsiveLayout.padding(context),
+        child: Text(
+          "Assistiti",
+          style: Theme.of(context).textTheme.displayLarge,
+        ),
+      ),
     );
   }
 
@@ -38,10 +43,8 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AppBar appBar(BuildContext context) {
       return AppBar(
-        
         centerTitle: true,
-        // APPBAR HERE
-
+        title: const Text("Assistiti"),
       );
     }
 
