@@ -14,7 +14,7 @@ class AuthService {
 
       final anonUser = FirebaseAuth.instance.currentUser;
       debugPrint("Signed in anonymously. UserID: ${anonUser!.uid}");
-      await CreateUserData().addToDb(anonUser.uid, true);
+      await FirestoreService().addUserToDb(anonUser.uid, true);
     } on FirebaseAuthException catch (e) {
       debugPrint("Error signing in anonymously: $e");
     }
@@ -37,7 +37,7 @@ class AuthService {
       debugPrint("Logged in with Google. UserID: ${loggedUser!.uid}");
       final userData = await FirestoreService().getUserData(loggedUser.uid);
       if (userData == null) {
-        await CreateUserData().addToDb(loggedUser.uid, false);
+        await FirestoreService().addUserToDb(loggedUser.uid, false);
       }
     } on FirebaseAuthException catch (e) {
       log(e as String);

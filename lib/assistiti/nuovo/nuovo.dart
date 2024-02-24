@@ -21,8 +21,6 @@ class _NuovoAssistitoScreenState extends State<NuovoAssistitoScreen> {
         style: Theme.of(context).textTheme.displayLarge,
       ),
       const SizedBox(height: 20),
-      const Text("Nome e cognome sono obbligatori."),
-      const SizedBox(height: 20),
       Row(
         children: [
           Expanded(

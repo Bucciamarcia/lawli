@@ -7,6 +7,7 @@ part of 'models.dart';
 // **************************************************************************
 
 Assistito _$AssistitoFromJson(Map<String, dynamic> json) => Assistito(
+      id: (json['id'] as num?)?.toDouble() ?? 0,
       firstName: json['firstName'] as String? ?? '',
       lastName: json['lastName'] as String? ?? '',
       businessName: json['businessName'] as String? ?? '',
@@ -21,6 +22,7 @@ Assistito _$AssistitoFromJson(Map<String, dynamic> json) => Assistito(
     );
 
 Map<String, dynamic> _$AssistitoToJson(Assistito instance) => <String, dynamic>{
+      'id': instance.id,
       'firstName': instance.firstName,
       'lastName': instance.lastName,
       'businessName': instance.businessName,

@@ -8,19 +8,6 @@ class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String userId = AuthService().userId();
 
-  Future<void> addUser() async {
-    try {
-      await _db.collection('users').doc(userId).set({
-        'full_name': 'Full Name',
-        'company': 'Company Name',
-        'age': 42,
-        'email': ''
-      });
-    } catch (e) {
-      log('Error writing document: $e');
-    }
-  }
-
   Future<Object?> getUserData(String user) async {
     try {
       final DocumentSnapshot userDoc = await _db.collection('users').doc(user).get();
@@ -33,6 +20,33 @@ class FirestoreService {
     } catch (e) {
       log('Error getting user data: $e');
       return null;
+    }
+  }
+
+  Future<void> addUserToDb(final String id, final bool anon) async {
+    try {
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(id)
+          .set(
+        {
+          "account": false,
+        },
+      );
+      debugPrint("Added anon $id user to db");
+    } catch (e) {
+      debugPrint("Error adding anon user to db: $e");
+    }
+  }
+
+  Future<DocumentReference<Map<String, dynamic>>> retrieveAccountObject() async {
+    try {
+      final userDocument = await _db.collection("users").doc(userId).get();
+      final accountName = userDocument.get('account');
+      return _db.collection("accounts").doc(accountName);
+    } catch (e) {
+      log("Error retrieving account name");
+      rethrow;
     }
   }
 }
@@ -53,22 +67,4 @@ class AccountDb {
   }
 
   
-}
-
-class CreateUserData {
-  Future<void> addToDb(final String id, final bool anon) async {
-    try {
-      FirebaseFirestore.instance
-          .collection("users")
-          .doc(id)
-          .set(
-        {
-          "account": false,
-        },
-      );
-      debugPrint("Added anon $id user to db");
-    } catch (e) {
-      debugPrint("Error adding anon user to db: $e");
-    }
-  }
 }

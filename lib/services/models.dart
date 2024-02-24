@@ -3,6 +3,7 @@ part "models.g.dart";
 
 @JsonSerializable()
 class Assistito {
+  final double id;
   final String firstName;
   final String lastName;
   final String businessName;
@@ -17,6 +18,7 @@ class Assistito {
 
   // Assign empty string to all the fields
   Assistito({
+    this.id = 0,
     this.firstName = '',
     this.lastName = '',
     this.businessName = '',
