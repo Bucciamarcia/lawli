@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
 import "dart:async";
 import "../services/auth.dart";
+import "../services/models.dart";
 import "dart:developer";
 
 class FirestoreService {
@@ -49,11 +50,11 @@ class FirestoreService {
       rethrow;
     }
   }
+
+  
 }
 
-class AccountDb {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final String userId = AuthService().userId();
+class AccountDb extends FirestoreService {
 
   Future<String> getAccountName() async {
     try {
@@ -66,5 +67,19 @@ class AccountDb {
   
   }
 
+  
+}
+
+class RetrieveObjectFromDb extends FirestoreService {
+
+  Future<List<Assistito>> getAssistiti() async {
+    String accountName = await AccountDb().getAccountName();
+    var ref = _db.collection("accounts").doc(accountName).collection(accountName);
+    var snapshot = await ref.get();
+    var data = snapshot.docs.map((s) => s.data());
+    var topics = data.map((d) => Assistito.fromJson(d));
+    return topics.toList();
+
+  }
   
 }
