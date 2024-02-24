@@ -35,7 +35,10 @@ class AuthService {
       await FirebaseAuth.instance.signInWithCredential(authCredential);
       final loggedUser = FirebaseAuth.instance.currentUser;
       debugPrint("Logged in with Google. UserID: ${loggedUser!.uid}");
-      await CreateUserData().addToDb(loggedUser.uid, false);
+      final userData = await FirestoreService().getUserData(loggedUser.uid);
+      if (userData == null) {
+        await CreateUserData().addToDb(loggedUser.uid, false);
+      }
     } on FirebaseAuthException catch (e) {
       log(e as String);
     }

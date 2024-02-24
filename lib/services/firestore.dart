@@ -20,44 +20,19 @@ class FirestoreService {
       log('Error writing document: $e');
     }
   }
-}
 
-class CreateMemory {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final String userId = AuthService().userId();
-  final List<double> embeddings;
-  final String memoryText;
-
-  CreateMemory({required this.embeddings, required this.memoryText});
-
-  Future<double> addPermanent() async {
+  Future<Object?> getUserData(String user) async {
     try {
-      _db.collection("users").doc(userId).collection("memories").add({
-        "embeddings": embeddings,
-        "memoryText": memoryText,
-        "timestamp": DateTime.now(),
-        "isTemporary": false,
-      });
-      return 200;
+      final DocumentSnapshot userDoc = await _db.collection('users').doc(user).get();
+      if (userDoc.data() == null) {
+        log("User data null");
+      } else {
+        log("User data existing");
+      }
+      return userDoc.data();
     } catch (e) {
-      debugPrint("Error adding memory: $e");
-      return 500;
-    }
-  }
-
-  Future<double> addTemporary(DateTime expirationDate) async {
-    try {
-      _db.collection("users").doc(userId).collection("memories").add({
-        "embeddings": embeddings,
-        "memoryText": memoryText,
-        "timestamp": DateTime.now(),
-        "isTemporary": true,
-        "expirationDate": expirationDate,
-      });
-      return 200;
-    } catch (e) {
-      debugPrint("Error adding memory: $e");
-      return 500;
+      log('Error getting user data: $e');
+      return null;
     }
   }
 }
@@ -70,7 +45,7 @@ class CreateUserData {
           .doc(id)
           .set(
         {
-          "isAnonymous": anon,
+          "account": false,
         },
       );
       debugPrint("Added anon $id user to db");

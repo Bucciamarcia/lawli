@@ -30,7 +30,7 @@ class MenuElements {
     listElements = [
       SizedBox(
           height: ResponsiveLayout.isDesktop(context) ? 100 : null,
-          child: const DrawerHeader(child: Text('Drawer Header'))),
+          child: const DrawerHeader(child: Text('Menù principale'))),
       const ListTile(title: Text('Item 1')),
       const ListTile(title: Text('Item 2')),
     ];
@@ -41,5 +41,6 @@ class MenuElements {
     listElements = [
       const ListTile(title: Text('Log in')),
     ];
+    return listElements;
   }
 }
