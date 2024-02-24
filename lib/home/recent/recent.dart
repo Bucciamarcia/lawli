@@ -9,7 +9,10 @@ class RecentScreen extends StatelessWidget {
       
       body: Center(
         child: Text(
-          "In questa schermata verranno presentate le pratiche recenti dell'utente.",
+          '''
+          In questa schermata verranno presentate le pratiche recenti dell'utente.
+          Naviga le tue pratiche con il menù a sinistra.
+          ''',
           style: TextStyle(fontSize: 20),
         )
       )
