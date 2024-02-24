@@ -7,12 +7,23 @@ class AssistitiScreen extends StatelessWidget {
 
   Scaffold body(BuildContext context) {
     return Scaffold(
-      
+
       body: Container(
         padding: ResponsiveLayout.mainWindowPadding(context),
-        child: Text(
-          "Assistiti",
-          style: Theme.of(context).textTheme.displayLarge,
+        child: Column(
+          children: [
+            Text(
+              "Assistiti",
+              style: Theme.of(context).textTheme.displayLarge,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/assistiti/nuovo");
+              },
+              child: const Text("Nuovo assistito"),
+            ),
+          ],
         ),
       ),
     );

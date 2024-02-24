@@ -1,38 +1,16 @@
-# lawli
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-# Layout builder
-
-Code for each new page:
-
-```dart
 import 'package:flutter/material.dart';
 import "../../shared/shared.dart";
 import "../../services/services.dart";
 
-class AssistitiScreen extends StatelessWidget {
-  const AssistitiScreen({super.key});
+class NuovoAssistitoScreen extends StatelessWidget {
+  const NuovoAssistitoScreen({super.key});
 
   Scaffold body(BuildContext context) {
     return Scaffold(
       body: Container(
         padding: ResponsiveLayout.mainWindowPadding(context),
         child: Text(
-          "Assistiti",
+          "Aggiungi un nuovo assistito",
           style: Theme.of(context).textTheme.displayLarge,
         ),
       ),
@@ -59,6 +37,3 @@ class AssistitiScreen extends StatelessWidget {
     );
   }
 }
-```
-
-The reason for this code is that there is a different menu on desktop.

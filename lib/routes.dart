@@ -8,6 +8,7 @@ import 'assistiti/assistito/assistito.dart';
 import "home/login/login.dart";
 import "home/recent/recent.dart";
 import "cases/cases.dart";
+import "assistiti/nuovo.dart";
 
 final Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => const HomeScreen(),
@@ -19,4 +20,5 @@ final Map<String, WidgetBuilder> routes = {
   '/login': (BuildContext context) => const LoginScreen(),
   '/recent': (BuildContext context) => const RecentScreen(),
   '/cases': (BuildContext context) => const CasesScreen(),
+  '/assistiti/nuovo': (BuildContext context) => const NuovoAssistitoScreen(),
 };
