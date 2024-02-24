@@ -5,16 +5,19 @@ class RecentScreen extends StatelessWidget {
   const RecentScreen({super.key});
 
   Scaffold body(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       
-      body: Center(
-        child: Text(
-          '''
+      body: Container(
+        padding: const EdgeInsets.all(30),
+        child: const Center(
+          child: Text(
+            '''
           In questa schermata verranno presentate le pratiche recenti dell'utente.
           Naviga le tue pratiche con il menù a sinistra.
           ''',
-          style: TextStyle(fontSize: 20),
-        )
+            style: TextStyle(fontSize: 20),
+          )
+        ),
       )
 
     );

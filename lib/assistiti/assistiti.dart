@@ -7,8 +7,9 @@ class AssistitiScreen extends StatelessWidget {
 
   Scaffold body(BuildContext context) {
     return Scaffold(
+      
       body: Container(
-        padding: ResponsiveLayout.padding(context),
+        padding: ResponsiveLayout.mainWindowPadding(context),
         child: Text(
           "Assistiti",
           style: Theme.of(context).textTheme.displayLarge,
