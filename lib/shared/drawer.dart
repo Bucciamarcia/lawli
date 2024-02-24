@@ -1,8 +1,29 @@
 import 'package:flutter/material.dart';
 import "../services/services.dart";
 
-class ResponsiveDrawer extends StatelessWidget {
+class ResponsiveDrawer extends StatefulWidget {
   const ResponsiveDrawer({super.key});
+
+  @override
+  State<ResponsiveDrawer> createState() => _ResponsiveDrawerState();
+}
+
+class _ResponsiveDrawerState extends State<ResponsiveDrawer> {
+  // State variable to track if user is signed in
+  bool isUserSignedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkUserSignInStatus();
+  }
+
+  void checkUserSignInStatus() async {
+    bool signedIn = await AuthService().isSignedIn();
+    setState(() {
+      isUserSignedIn = signedIn;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +34,9 @@ class ResponsiveDrawer extends StatelessWidget {
         borderRadius: BorderRadius.zero,
       ),
       child: ListView(
-        children:
-            AuthService().isSignedIn() ? MenuElements(context: context).loggedInElements() : MenuElements(context: context).loggedOutElements(),
+        children: isUserSignedIn
+            ? MenuElements(context: context).loggedInElements()
+            : MenuElements(context: context).loggedOutElements(),
       ),
     );
   }
@@ -31,8 +53,12 @@ class MenuElements {
       SizedBox(
           height: ResponsiveLayout.isDesktop(context) ? 100 : null,
           child: const DrawerHeader(child: Text('Menù principale'))),
-      const ListTile(title: Text('Item 1')),
-      const ListTile(title: Text('Item 2')),
+      ListTile(
+        title: const Text('Assistiti'),
+        onTap: () {
+          Navigator.pushNamed(context, '/assistiti');
+        },
+      ),
     ];
     return listElements;
   }
