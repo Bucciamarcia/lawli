@@ -40,6 +40,24 @@ class BuildTable extends StatelessWidget {
             DataCell(Text(assistito.nome)),
             DataCell(Text(assistito.cognome)),
             DataCell(Text(assistito.descrizione)),
+            DataCell(Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  tooltip: "Modifica",
+                  onPressed: () {
+                    // Your edit code here
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  tooltip: "Cancella",
+                  onPressed: () {
+                    // Your delete code here
+                  },
+                ),
+              ],
+            )),
           ],
         );
       }).toList();
@@ -64,7 +82,8 @@ class TableData {
     ),
     DataColumn(
       label: Text("Descrizione")
-    )
+    ),
+    DataColumn(label: Text("Azioni"))
   ];
 
 
