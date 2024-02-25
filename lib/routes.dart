@@ -4,7 +4,7 @@ import 'dashboard/dashboard.dart';
 import 'dashboard/uploadfile/uploadfile.dart';
 import 'dashboard/document/document.dart';
 import 'assistiti/assistiti.dart';
-import 'assistiti/assistito/assistito.dart';
+import 'assistiti/modifica/modifica.dart';
 import "home/login/login.dart";
 import "home/recent/recent.dart";
 import "cases/cases.dart";
