@@ -58,11 +58,13 @@ class BuildTable extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.delete),
                       tooltip: "Cancella",
-                      onPressed: () => BottoneCancellaAssistito(
-                              assistitoId: assistito.id,
-                              assistitoNome: assistito.nome,
-                              assistitoCognome: assistito.cognome)
-                          .showConfirmPopup(context),
+                      onPressed: () {
+                        BottoneCancellaAssistito(
+                                assistitoId: assistito.id,
+                                assistitoNome: assistito.nome,
+                                assistitoCognome: assistito.cognome)
+                            .showConfirmPopup(context);
+                      },
                     ),
                   ],
                 )),

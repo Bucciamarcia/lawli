@@ -1,3 +1,4 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:flutter/material.dart';
 import "package:lawli/services/firestore.dart";
 import "nuovo.dart";
@@ -101,6 +102,19 @@ class AddAssistitoToFirebase {
     final documentName = assistitoId.toString();
 
     await assistiti.doc(documentName).set(assistito);
+    final accountData = await account.get();
+    final listaAssistiti = accountData.data()?['lista_assistiti'];
+
+    if (listaAssistiti != null) {
+      final updatedListaAssistiti = [...listaAssistiti, "${assistito['nome']} ${assistito['cognome']}"];
+      await account.update({
+        "lista_assistiti": updatedListaAssistiti,
+      });
+    } else {
+      await account.set({
+        "lista_assistiti": ["${assistito['nome']} ${assistito['cognome']}"],
+      });
+    }
   }
 
   Map<String, dynamic> _buildAssistitoMap(

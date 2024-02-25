@@ -76,8 +76,24 @@ class AssistitoDb extends FirestoreService {
       final accountRef = await retrieveAccountObject();
       await accountRef.collection("assistiti").doc(assistitoId.toString()).delete();
       debugPrint("Deleted assistito $assistitoId");
+      await decreaseCounter();
     } catch (e) {
       debugPrint("Error deleting assistito: $e");
+    }
+  }
+
+  Future<void> decreaseCounter() async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      final statsRef = accountRef.collection("stats").doc("assistiti counter");
+      final statsDoc = await statsRef.get();
+      final activeAssistiti = statsDoc.get("active assistiti");
+      await statsRef.update({
+        "active assistiti": activeAssistiti - 1,
+      });
+      debugPrint("Decreased assistiti counter");
+    } catch (e) {
+      debugPrint("Error decreasing assistiti counter: $e");
     }
   }
 }

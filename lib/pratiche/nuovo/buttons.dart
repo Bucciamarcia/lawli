@@ -108,16 +108,9 @@ class AddAssistitoToFirebase {
     // Builds and returns the assistito map from formData
     return {
       "id": assistitoId,
-      "nome": formData.firstNameController.text,
-      "cognome": formData.lastNameController.text,
-      "ragioneSociale": formData.businessNameController.text,
-      "email": formData.emailController.text,
-      "descrizione": formData.descriptionController.text,
-      "telefono": formData.phoneController.text,
-      "indirizzo": formData.addressController.text,
-      "nazione": formData.countryController.text,
-      "citta": formData.cityController.text,
-      "cap": formData.capController.text,
+      "id_assistito": formData.assistitoIdController.text,
+      "titolo": formData.titoloController.text,
+      "descrizione": formData.descrizioneController.text,
     };
   }
 }

@@ -27,6 +27,7 @@ class BottoneCancellaAssistito {
               onPressed: () {
                 AssistitoDb().deleteAssistito(assistitoId);
                 Navigator.of(context).pop();
+                Navigator.pushNamedAndRemoveUntil(context, "/assistiti", (route) => false);
               },
               child: const Text("Conferma"),
             ),
