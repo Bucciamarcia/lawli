@@ -22,10 +22,9 @@ class _NuovaPraticaScreenState extends State<NuovaPraticaScreen> {
         style: Theme.of(context).textTheme.displayLarge,
       ),
       const SizedBox(height: 20),
-      CustomTextField(
-        controller: formState.assistitoIdController,
-        labelText: "Assistito",
-      ),
+      
+      CustomDropdownField(controller: formState.assistitoIdController, labelText: "Assistito"),
+
       CustomTextField(
         controller: formState.titoloController,
         labelText: "Titolo",

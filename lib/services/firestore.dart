@@ -65,6 +65,20 @@ class AccountDb extends FirestoreService {
 }
 
 class AssistitoDb extends FirestoreService {
+
+  Future<List> getAssistiti() async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      DocumentSnapshot docSnapshot = await accountRef.get();
+      List assistiti = docSnapshot.get("lista_assistiti");
+      return assistiti;
+
+    } catch (e) {
+      debugPrint("Error getting assistiti: $e");
+      return [];
+    }
+  }
+
   Future<void> deleteAssistito(final double assistitoId) async {
     await removeFromListaAssistiti(assistitoId);
     try {
@@ -103,7 +117,8 @@ class AssistitoDb extends FirestoreService {
     debugPrint("ASSISTITI: $assistiti");
     debugPrint("PRIMO ASSISTITO ID: ${assistiti[0].id}");
     debugPrint("ASSISTITO ID: $assistitoId");
-    Assistito assistito = assistiti.firstWhere((element) => element.id == assistitoId);
+    Assistito assistito =
+        assistiti.firstWhere((element) => element.id == assistitoId);
     debugPrint("ASSISTITO: $assistito");
 
     String firstname = assistito.nome;
@@ -112,19 +127,16 @@ class AssistitoDb extends FirestoreService {
     String fullName = "$firstname $lastname";
 
     try {
-  DocumentSnapshot docSnapshot = await docRef.get();
-  List listToUpdate = docSnapshot.get("lista_assistiti");
-  debugPrint("LISTA: $listToUpdate");
-  listToUpdate.remove(fullName);
-  await docRef.update({"lista_assistiti": listToUpdate});
-  debugPrint("Removed assistito from lista_assistiti");
-} on Exception catch (e) {
-  debugPrint("Error removing assistito from lista_assistiti: $e");
-  rethrow;
-}
-
-
-
+      DocumentSnapshot docSnapshot = await docRef.get();
+      List listToUpdate = docSnapshot.get("lista_assistiti");
+      debugPrint("LISTA: $listToUpdate");
+      listToUpdate.remove(fullName);
+      await docRef.update({"lista_assistiti": listToUpdate});
+      debugPrint("Removed assistito from lista_assistiti");
+    } on Exception catch (e) {
+      debugPrint("Error removing assistito from lista_assistiti: $e");
+      rethrow;
+    }
   }
 }
 
