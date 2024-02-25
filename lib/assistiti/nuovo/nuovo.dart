@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import "package:flutter/services.dart";
 import "../../../shared/shared.dart";
 import "../../../services/services.dart";
-import "customTextField.dart";
+import "custom_text_field.dart";
 import "buttons.dart";
 
 class NuovoAssistitoScreen extends StatefulWidget {

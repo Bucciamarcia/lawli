@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:lawli/services/services.dart";
 
-import "bottoneModifica.dart";
+import "bottone_cancella.dart";
 
 class AssistitiTable extends StatefulWidget {
   const AssistitiTable({super.key});
