@@ -51,7 +51,6 @@ class FirestoreService {
     }
   }
 
-  
 }
 
 class AccountDb extends FirestoreService {
@@ -68,6 +67,19 @@ class AccountDb extends FirestoreService {
   }
 
   
+}
+
+class AssistitoDb extends FirestoreService {
+
+  Future<void> deleteAssistito(final double assistitoId) async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      await accountRef.collection("assistiti").doc(assistitoId.toString()).delete();
+      debugPrint("Deleted assistito $assistitoId");
+    } catch (e) {
+      debugPrint("Error deleting assistito: $e");
+    }
+  }
 }
 
 class RetrieveObjectFromDb extends FirestoreService {
