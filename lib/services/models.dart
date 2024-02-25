@@ -13,7 +13,7 @@ class Assistito {
   final String indirizzo;
   final String citta;
   final String provincia;
-  final double cap;
+  final String cap;
   final String nazione;
 
   // Assign empty string to all the fields
@@ -28,7 +28,7 @@ class Assistito {
     this.indirizzo = '',
     this.citta = '',
     this.provincia = '',
-    this.cap = 0,
+    this.cap = '',
     this.nazione = '',
   });
 

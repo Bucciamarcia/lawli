@@ -10,6 +10,7 @@ class AssistitiScreen extends StatelessWidget {
     return Scaffold(
 
       body: Container(
+        width: double.infinity,
         padding: ResponsiveLayout.mainWindowPadding(context),
         child: Column(
           children: [
@@ -25,7 +26,7 @@ class AssistitiScreen extends StatelessWidget {
               child: const Text("Nuovo assistito"),
               
             ),
-            const AssistitiTable(),
+            const Expanded(child: AssistitiTable(),)
           ],
         ),
       ),

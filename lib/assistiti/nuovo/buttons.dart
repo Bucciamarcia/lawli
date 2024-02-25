@@ -116,7 +116,7 @@ class AddAssistitoToFirebase {
       "indirizzo": formData.addressController.text,
       "nazione": formData.countryController.text,
       "citta": formData.cityController.text,
-      "cap": double.parse(formData.capController.text),
+      "cap": formData.capController.text,
     };
   }
 }

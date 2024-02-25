@@ -17,7 +17,7 @@ Assistito _$AssistitoFromJson(Map<String, dynamic> json) => Assistito(
       indirizzo: json['indirizzo'] as String? ?? '',
       citta: json['citta'] as String? ?? '',
       provincia: json['provincia'] as String? ?? '',
-      cap: (json['cap'] as num?)?.toDouble() ?? 0,
+      cap: json['cap'] as String? ?? '',
       nazione: json['nazione'] as String? ?? '',
     );
 

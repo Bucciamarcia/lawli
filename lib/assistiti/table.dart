@@ -29,7 +29,7 @@ class BuildTable extends StatelessWidget {
   future: RetrieveObjectFromDb().getAssistiti(), // Your future here
   builder: (BuildContext context, AsyncSnapshot<List<Assistito>> snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return const CircularProgressIndicator(); // Show loading indicator
+      return const CircularProgressIndicator();
     } else if (snapshot.hasError) {
       return Text('Error: ${snapshot.error}');
     } else {
@@ -37,9 +37,9 @@ class BuildTable extends StatelessWidget {
       List<DataRow> dataRows = snapshot.data!.map<DataRow>((Assistito assistito) {
         return DataRow(
           cells: <DataCell>[
-            DataCell(Text(assistito.nome)), // Assuming Assistito has a firstName
-            DataCell(Text(assistito.cognome)), // Assuming Assistito has a lastName
-            DataCell(Text(assistito.descrizione)), // Assuming Assistito has a description
+            DataCell(Text(assistito.nome)),
+            DataCell(Text(assistito.cognome)),
+            DataCell(Text(assistito.descrizione)),
           ],
         );
       }).toList();
