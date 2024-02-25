@@ -37,3 +37,20 @@ class Assistito {
 
 
 }
+
+@JsonSerializable()
+class Pratica {
+  final double id;
+  final String assistitoId;
+  final String titolo;
+  final String descrizione;
+
+  Pratica({
+    this.id = 0,
+    this.assistitoId = '',
+    this.titolo = '',
+    this.descrizione = '',
+  });
+
+  factory Pratica.fromJson(Map<String, dynamic> json) => _$PraticaFromJson(json);
+}

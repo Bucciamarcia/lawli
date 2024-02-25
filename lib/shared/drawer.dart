@@ -59,6 +59,12 @@ class MenuElements {
           Navigator.pushNamed(context, '/assistiti');
         },
       ),
+      ListTile(
+        title: const Text("Pratiche"),
+        onTap: () {
+          Navigator.pushNamed(context, '/pratiche');
+        },
+      )
     ];
     return listElements;
   }

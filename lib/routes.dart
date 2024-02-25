@@ -6,7 +6,8 @@ import 'dashboard/document/document.dart';
 import 'assistiti/assistiti.dart';
 import "home/login/login.dart";
 import "home/recent/recent.dart";
-import "cases/cases.dart";
+import 'pratiche/nuovo/nuovo.dart';
+import "pratiche/pratiche.dart";
 import "assistiti/nuovo/nuovo.dart";
 
 final Map<String, WidgetBuilder> routes = {
@@ -17,6 +18,7 @@ final Map<String, WidgetBuilder> routes = {
   '/assistiti': (BuildContext context) => const AssistitiScreen(),
   '/login': (BuildContext context) => const LoginScreen(),
   '/recent': (BuildContext context) => const RecentScreen(),
-  '/cases': (BuildContext context) => const CasesScreen(),
+  '/pratiche': (BuildContext context) => const PraticheScreen(),
   '/assistiti/nuovo': (BuildContext context) => const NuovoAssistitoScreen(),
+  '/pratiche/nuovo': (BuildContext context) => const NuovaPraticaScreen(),
 };

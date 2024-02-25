@@ -35,3 +35,17 @@ Map<String, dynamic> _$AssistitoToJson(Assistito instance) => <String, dynamic>{
       'cap': instance.cap,
       'nazione': instance.nazione,
     };
+
+Pratica _$PraticaFromJson(Map<String, dynamic> json) => Pratica(
+      id: (json['id'] as num?)?.toDouble() ?? 0,
+      assistitoId: json['assistitoId'] as String? ?? '',
+      titolo: json['titolo'] as String? ?? '',
+      descrizione: json['descrizione'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$PraticaToJson(Pratica instance) => <String, dynamic>{
+      'id': instance.id,
+      'assistitoId': instance.assistitoId,
+      'titolo': instance.titolo,
+      'descrizione': instance.descrizione,
+    };
