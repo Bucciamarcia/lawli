@@ -65,17 +65,36 @@ class AccountDb extends FirestoreService {
 }
 
 class AssistitoDb extends FirestoreService {
-
   Future<List> getAssistiti() async {
     try {
       final accountRef = await retrieveAccountObject();
       DocumentSnapshot docSnapshot = await accountRef.get();
       List assistiti = docSnapshot.get("lista_assistiti");
       return assistiti;
-
     } catch (e) {
       debugPrint("Error getting assistiti: $e");
       return [];
+    }
+  }
+
+  Future<double> getIdFromNomeCognome(String nomeCompleto) async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      final assistitiRef = accountRef.collection("assistiti");
+      final querySnapshot = await assistitiRef
+          .where("nomeCompleto", isEqualTo: nomeCompleto)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        var result = querySnapshot
+            .docs.first.id;
+        return double.parse(result);
+      } else {
+        throw "No matching document found";
+      }
+    } catch (e) {
+      debugPrint("Error getting assistito id: $e");
+      return 0;
     }
   }
 

@@ -13,6 +13,7 @@ class NuovaPraticaScreen extends StatefulWidget {
 }
 
 class _NuovaPraticaScreenState extends State<NuovaPraticaScreen> {
+  double userId = 0;
   final NuovaPraticaFormState formState = NuovaPraticaFormState();
 
   Scaffold body(BuildContext context) {
@@ -22,9 +23,16 @@ class _NuovaPraticaScreenState extends State<NuovaPraticaScreen> {
         style: Theme.of(context).textTheme.displayLarge,
       ),
       const SizedBox(height: 20),
-      
-      CustomDropdownField(controller: formState.assistitoIdController, labelText: "Assistito"),
-
+      CustomDropdownField(
+          controller: formState.assistitoIdController,
+          labelText: "Assistito",
+          onValueChanged: (value) async {
+            formState.assistitoIdController.text = value.toString();
+            debugPrint("Assistito ID: ${formState.assistitoIdController.text}");
+            var newUserId = await AssistitoDb().getIdFromNomeCognome(formState.assistitoIdController.text);
+            debugPrint("User ID: $newUserId");
+            updateUserId(newUserId);
+          }),
       CustomTextField(
         controller: formState.titoloController,
         labelText: "Titolo",
@@ -34,9 +42,7 @@ class _NuovaPraticaScreenState extends State<NuovaPraticaScreen> {
         labelText: "Descrizione",
       ),
       const SizedBox(height: 20),
-      NuovaPraticaFormButtons(formData: formState, pageContext: context),
-
-
+      NuovaPraticaFormButtons(formData: formState, pageContext: context, userId: userId),
     ];
     return Scaffold(
       body: Container(
@@ -47,6 +53,12 @@ class _NuovaPraticaScreenState extends State<NuovaPraticaScreen> {
       ),
     );
   }
+
+  void updateUserId(double newUserId) {
+  setState(() {
+    userId = newUserId;
+  });
+}
 
   @override
   Widget build(BuildContext context) {

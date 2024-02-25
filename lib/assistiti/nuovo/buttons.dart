@@ -111,7 +111,7 @@ class AddAssistitoToFirebase {
         "lista_assistiti": updatedListaAssistiti,
       });
     } else {
-      await account.set({
+      await account.update({
         "lista_assistiti": ["${assistito['nome']} ${assistito['cognome']}"],
       });
     }
@@ -124,6 +124,8 @@ class AddAssistitoToFirebase {
       "id": assistitoId,
       "nome": formData.firstNameController.text,
       "cognome": formData.lastNameController.text,
+      "nomeCompleto":
+          "${formData.firstNameController.text} ${formData.lastNameController.text}",
       "ragioneSociale": formData.businessNameController.text,
       "email": formData.emailController.text,
       "descrizione": formData.descriptionController.text,

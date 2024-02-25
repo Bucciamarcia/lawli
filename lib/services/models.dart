@@ -6,6 +6,7 @@ class Assistito {
   final double id;
   final String nome;
   final String cognome;
+  final String nomeCompleto;
   final String ragioneSociale;
   final String email;
   final String descrizione;
@@ -21,6 +22,7 @@ class Assistito {
     this.id = 0,
     this.nome = '',
     this.cognome = '',
+    this.nomeCompleto = '',
     this.ragioneSociale = '',
     this.email = '',
     this.descrizione = '',

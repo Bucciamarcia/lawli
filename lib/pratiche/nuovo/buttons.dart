@@ -5,9 +5,10 @@ import "nuovo.dart";
 class NuovaPraticaFormButtons extends StatefulWidget {
   final NuovaPraticaFormState formData;
   final BuildContext pageContext;
+  final double userId;
 
   const NuovaPraticaFormButtons(
-      {super.key, required this.formData, required this.pageContext});
+      {super.key, required this.formData, required this.pageContext, required this.userId});
 
   @override
   State<NuovaPraticaFormButtons> createState() =>
@@ -23,7 +24,7 @@ class _NuovaPraticaFormButtonsState extends State<NuovaPraticaFormButtons> {
           child: ElevatedButton(
             onPressed: () {
               Navigator.pushNamedAndRemoveUntil(
-                  context, "/assistiti", (route) => false);
+                  context, "/pratiche", (route) => false);
             },
             child: const Text("Cancella"),
           ),
@@ -32,7 +33,8 @@ class _NuovaPraticaFormButtonsState extends State<NuovaPraticaFormButtons> {
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              AddAssistitoToFirebase(formData: widget.formData).addAssistito();
+              debugPrint("User ID: ${widget.userId}");
+              AddPraticaToFirebase(formData: widget.formData, assistitoId: widget.userId).addPratica();
               postAdditionPushAndRemove();
             },
             child: const Text("Salva"),
@@ -47,13 +49,13 @@ class _NuovaPraticaFormButtonsState extends State<NuovaPraticaFormButtons> {
       context: widget.pageContext,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Assistito aggiunto"),
-          content: const Text("L'assistito è stato aggiunto correttamente"),
+          title: const Text("pratica aggiunto"),
+          content: const Text("L'pratica è stato aggiunto correttamente"),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
-                    context, "/assistiti", (route) => false);
+                    context, "/pratiche", (route) => false);
               },
               child: const Text("Chiudi"),
             ),
@@ -64,53 +66,73 @@ class _NuovaPraticaFormButtonsState extends State<NuovaPraticaFormButtons> {
   }
 }
 
-class AddAssistitoToFirebase {
+class AddPraticaToFirebase {
   final NuovaPraticaFormState formData;
+  final double assistitoId;
 
-  const AddAssistitoToFirebase({required this.formData});
+  const AddPraticaToFirebase({required this.formData, required this.assistitoId});
 
-  Future<double> _getAssistitoId(account) async {
+  Future<void> addPratica() async {
+    final account = await FirestoreService().retrieveAccountObject();
+    final pratiche = account.collection("pratiche");
+    final titolo = formData.titoloController.text;
+    final descrizione = formData.descrizioneController.text;
+    final double praticaId = await _getPraticaId(account);
+    final pratica = _buildPraticaMap(titolo, descrizione, praticaId);
+    final documentName = praticaId.toString();
+
+    await pratiche.doc(documentName).set(pratica);
+    final praticaData = await account.get();
+    final listaPratiche = praticaData.data()?['lista_pratiche'];
+
+    if (listaPratiche != null) {
+      final updatedListaPratiche = [...listaPratiche, "${pratica['titolo']}"];
+      await account.update({
+        "lista_pratiche": updatedListaPratiche,
+      });
+    } else {
+      await account.update({
+        "lista_pratiche": ["${pratica['titolo']}"],
+      });
+    }
+
+  }
+
+  Map<String, dynamic> _buildPraticaMap(
+      String titolo, String descrizione, double praticaId) {
+    return {
+      "assistitoId": assistitoId,
+      "titolo": titolo,
+      "descrizione": descrizione,
+      "id": praticaId
+    };
+  }
+
+
+  Future<double> _getPraticaId(account) async {
     final stats = account.collection("stats");
-    final docRef = stats.doc("assistiti counter");
+    final docRef = stats.doc("pratiche counter");
     final docSnapshot = await docRef.get(); // Get the document snapshot
 
     if (!docSnapshot.exists) {
       await docRef.set({
         "total counter": 1,
-        "active assistiti": 1
+        "active pratiche": 1
       }); // Initialize if not exists
       return 1; // Make sure to return a double
     } else {
-      final assistiti = docSnapshot.data(); // Get the data from the snapshot
-      final assistitoId = assistiti["total counter"] + 1;
-      final activeAssistiti = assistiti["active assistiti"] + 1;
+      final pratiche = docSnapshot.data(); // Get the data from the snapshot
+      final praticaId = pratiche["total counter"] + 1;
+      final activepratiche = pratiche["active pratiche"] + 1;
       await docRef.set({
-        "total counter": assistitoId,
-        "active assistiti": activeAssistiti
+        "total counter": praticaId,
+        "active pratiche": activepratiche
       }); // Update the counter
-      return assistitoId
+      return praticaId
           .toDouble(); // Ensure the return type matches the method signature
     }
   }
 
-  Future<void> addAssistito() async {
-    final account = await FirestoreService().retrieveAccountObject();
-    final assistiti = account.collection("assistiti");
-    final double assistitoId = await _getAssistitoId(account);
-    final assistito = _buildAssistitoMap(assistitoId, formData);
-    final documentName = assistitoId.toString();
 
-    await assistiti.doc(documentName).set(assistito);
-  }
 
-  Map<String, dynamic> _buildAssistitoMap(
-      double assistitoId, NuovaPraticaFormState formData) {
-    // Builds and returns the assistito map from formData
-    return {
-      "id": assistitoId,
-      "id_assistito": formData.assistitoIdController.text,
-      "titolo": formData.titoloController.text,
-      "descrizione": formData.descrizioneController.text,
-    };
-  }
 }

@@ -20,8 +20,12 @@ class CustomTextField extends StatelessWidget {
 class CustomDropdownField extends StatefulWidget {
   final TextEditingController controller;
   final String labelText;
+  final Function(dynamic) onValueChanged;
   const CustomDropdownField(
-      {super.key, required this.controller, required this.labelText});
+      {super.key,
+      required this.controller,
+      required this.labelText,
+      required this.onValueChanged});
 
   @override
   State<CustomDropdownField> createState() => _CustomDropdownFieldState();
@@ -51,6 +55,10 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
                 _selectedValue = value;
                 widget.controller.text = value.toString();
               });
+              if (widget.onValueChanged != null) {
+                // Check if callback is provided
+                widget.onValueChanged(value); // Pass the selected value
+              }
             },
             hint: Text(widget.labelText),
           );
