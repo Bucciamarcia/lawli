@@ -6,7 +6,8 @@ import "custom_text_field.dart";
 import "buttons.dart";
 
 class ModificaAssistitoScreen extends StatefulWidget {
-  const ModificaAssistitoScreen({super.key});
+  final Assistito assistito;
+  const ModificaAssistitoScreen({super.key, required this.assistito});
 
   @override
   State<ModificaAssistitoScreen> createState() => _ModificaAssistitoScreenState();
@@ -15,10 +16,17 @@ class ModificaAssistitoScreen extends StatefulWidget {
 class _ModificaAssistitoScreenState extends State<ModificaAssistitoScreen> {
     final ModificaAssistitoFormState formState = ModificaAssistitoFormState();
 
+    @override
+    // Fill the form with the assistito's data
+  void initState() {
+    super.initState();
+    formState.defineControllers(widget.assistito);
+  }
+
   Scaffold body(BuildContext context) {
     List<Widget> formInputs = [
       Text(
-        "Aggiungi un nuovo assistito",
+        "Modifica assistito",
         style: Theme.of(context).textTheme.displayLarge,
       ),
       const SizedBox(height: 20),
@@ -80,10 +88,11 @@ class _ModificaAssistitoScreenState extends State<ModificaAssistitoScreen> {
         labelText: "Nazione",
       ),
       const SizedBox(height: 20),
-      ModificaAssistitoFormButtons(formData: formState, pageContext: context),
+      ModificaAssistitoFormButtons(formData: formState, pageContext: context, id: widget.assistito.id),
 
 
     ];
+
     return Scaffold(
       body: Container(
         padding: ResponsiveLayout.mainWindowPadding(context),
@@ -117,6 +126,21 @@ class _ModificaAssistitoScreenState extends State<ModificaAssistitoScreen> {
 }
 
 class ModificaAssistitoFormState {
+
+  defineControllers(Assistito assistito) {
+    firstNameController.text = assistito.nome;
+    lastNameController.text = assistito.cognome;
+    businessNameController.text = assistito.ragioneSociale;
+    emailController.text = assistito.email;
+    descriptionController.text = assistito.descrizione;
+    phoneController.text = assistito.telefono;
+    addressController.text = assistito.indirizzo;
+    cityController.text = assistito.citta;
+    provinceController.text = assistito.provincia;
+    capController.text = assistito.cap;
+    countryController.text = assistito.nazione;
+  }
+
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController businessNameController = TextEditingController();
@@ -127,8 +151,7 @@ class ModificaAssistitoFormState {
   final TextEditingController cityController = TextEditingController();
   final TextEditingController provinceController = TextEditingController();
   final TextEditingController capController = TextEditingController();
-  final TextEditingController countryController =
-      TextEditingController(text: "Italia");
+  final TextEditingController countryController = TextEditingController();
 
   void clearAll() {
     firstNameController.clear();

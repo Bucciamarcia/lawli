@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:lawli/services/services.dart";
 
 import "bottone_cancella.dart";
+import "modifica/modifica.dart";
 
 class AssistitiTable extends StatefulWidget {
   const AssistitiTable({super.key});
@@ -46,7 +47,13 @@ class BuildTable extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.edit),
                       tooltip: "Modifica",
-                      onPressed: () {},
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ModificaAssistitoScreen(assistito: assistito),
+                        ),
+                      ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete),

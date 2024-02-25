@@ -3,11 +3,12 @@ import "package:lawli/services/firestore.dart";
 import "modifica.dart";
 
 class ModificaAssistitoFormButtons extends StatefulWidget {
+  final double id;
   final ModificaAssistitoFormState formData;
   final BuildContext pageContext;
 
   const ModificaAssistitoFormButtons(
-      {super.key, required this.formData, required this.pageContext});
+      {super.key, required this.formData, required this.pageContext, required this.id});
 
   @override
   State<ModificaAssistitoFormButtons> createState() =>
@@ -22,7 +23,8 @@ class ModificaAssistitoFormButtonsState extends State<ModificaAssistitoFormButto
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              widget.formData.clearAll();
+              Navigator.pushNamedAndRemoveUntil(
+                  context, "/assistiti", (route) => false);
             },
             child: const Text("Cancella"),
           ),
@@ -31,7 +33,7 @@ class ModificaAssistitoFormButtonsState extends State<ModificaAssistitoFormButto
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              AddAssistitoToFirebase(formData: widget.formData).addAssistito();
+              AddAssistitoToFirebase(formData: widget.formData, id: widget.id).addAssistito();
               postAdditionPushAndRemove();
             },
             child: const Text("Salva"),
@@ -65,41 +67,17 @@ class ModificaAssistitoFormButtonsState extends State<ModificaAssistitoFormButto
 
 class AddAssistitoToFirebase {
   final ModificaAssistitoFormState formData;
+  final double id;
 
-  const AddAssistitoToFirebase({required this.formData});
+  const AddAssistitoToFirebase({required this.formData, required this.id});
 
-  Future<double> _getAssistitoId(account) async {
-    final stats = account.collection("stats");
-    final docRef = stats.doc("assistiti counter");
-    final docSnapshot = await docRef.get(); // Get the document snapshot
-
-    if (!docSnapshot.exists) {
-      await docRef.set({
-        "total counter": 1,
-        "active assistiti": 1
-      }); // Initialize if not exists
-      return 1; // Make sure to return a double
-    } else {
-      final assistiti = docSnapshot.data(); // Get the data from the snapshot
-      final assistitoId = assistiti["total counter"] + 1;
-      final activeAssistiti = assistiti["active assistiti"] + 1;
-      await docRef.set({
-        "total counter": assistitoId,
-        "active assistiti": activeAssistiti
-      }); // Update the counter
-      return assistitoId
-          .toDouble(); // Ensure the return type matches the method signature
-    }
-  }
 
   Future<void> addAssistito() async {
     final account = await FirestoreService().retrieveAccountObject();
     final assistiti = account.collection("assistiti");
-    final double assistitoId = await _getAssistitoId(account);
-    final assistito = _buildAssistitoMap(assistitoId, formData);
-    final documentName = assistitoId.toString();
+    final assistito = _buildAssistitoMap(id, formData);
 
-    await assistiti.doc(documentName).set(assistito);
+    await assistiti.doc(id.toString()).set(assistito);
   }
 
   Map<String, dynamic> _buildAssistitoMap(

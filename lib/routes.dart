@@ -4,7 +4,6 @@ import 'dashboard/dashboard.dart';
 import 'dashboard/uploadfile/uploadfile.dart';
 import 'dashboard/document/document.dart';
 import 'assistiti/assistiti.dart';
-import 'assistiti/modifica/modifica.dart';
 import "home/login/login.dart";
 import "home/recent/recent.dart";
 import "cases/cases.dart";
@@ -16,7 +15,6 @@ final Map<String, WidgetBuilder> routes = {
   '/dashboard/uploadfile': (BuildContext context) => const UploadFileScreen(),
   '/dashboard/document': (BuildContext context) => const DocumentScreen(),
   '/assistiti': (BuildContext context) => const AssistitiScreen(),
-  '/assistiti/assistito': (BuildContext context) => const ModificaAssistitoScreen(),
   '/login': (BuildContext context) => const LoginScreen(),
   '/recent': (BuildContext context) => const RecentScreen(),
   '/cases': (BuildContext context) => const CasesScreen(),

@@ -22,7 +22,8 @@ class _NuovoAssistitoFormButtonsState extends State<NuovoAssistitoFormButtons> {
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              widget.formData.clearAll();
+              Navigator.pushNamedAndRemoveUntil(
+                  context, "/assistiti", (route) => false);
             },
             child: const Text("Cancella"),
           ),
