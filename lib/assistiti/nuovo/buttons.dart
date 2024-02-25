@@ -109,14 +109,14 @@ class AddAssistitoToFirebase {
       "id": assistitoId,
       "nome": formData.firstNameController.text,
       "cognome": formData.lastNameController.text,
-      "ragione sociale": formData.businessNameController.text,
+      "ragioneSociale": formData.businessNameController.text,
       "email": formData.emailController.text,
       "descrizione": formData.descriptionController.text,
       "telefono": formData.phoneController.text,
       "indirizzo": formData.addressController.text,
       "nazione": formData.countryController.text,
       "citta": formData.cityController.text,
-      "cap": formData.capController.text,
+      "cap": double.parse(formData.capController.text),
     };
   }
 }

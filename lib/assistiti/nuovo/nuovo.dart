@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import "package:flutter/services.dart";
 import "../../../shared/shared.dart";
 import "../../../services/services.dart";
 import "customTextField.dart";
@@ -66,9 +67,13 @@ class _NuovoAssistitoScreenState extends State<NuovoAssistitoScreen> {
         controller: formState.provinceController,
         labelText: "Provincia",
       ),
-      CustomTextField(
+      TextFormField(
         controller: formState.capController,
-        labelText: "CAP",
+        decoration: const InputDecoration(labelText: "CAP"),
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly
+          ],
       ),
       CustomTextField(
         controller: formState.countryController,

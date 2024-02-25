@@ -74,12 +74,12 @@ class RetrieveObjectFromDb extends FirestoreService {
 
   Future<List<Assistito>> getAssistiti() async {
     String accountName = await AccountDb().getAccountName();
-    var ref = _db.collection("accounts").doc(accountName).collection(accountName);
+
+    var ref = _db.collection("accounts").doc(accountName).collection("assistiti");
     var snapshot = await ref.get();
     var data = snapshot.docs.map((s) => s.data());
     var topics = data.map((d) => Assistito.fromJson(d));
     return topics.toList();
-
   }
   
 }

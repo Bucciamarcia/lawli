@@ -4,32 +4,32 @@ part "models.g.dart";
 @JsonSerializable()
 class Assistito {
   final double id;
-  final String firstName;
-  final String lastName;
-  final String businessName;
+  final String nome;
+  final String cognome;
+  final String ragioneSociale;
   final String email;
-  final String description;
-  final String phone;
-  final String address;
-  final String city;
-  final String province;
+  final String descrizione;
+  final String telefono;
+  final String indirizzo;
+  final String citta;
+  final String provincia;
   final double cap;
-  final String country;
+  final String nazione;
 
   // Assign empty string to all the fields
   Assistito({
     this.id = 0,
-    this.firstName = '',
-    this.lastName = '',
-    this.businessName = '',
+    this.nome = '',
+    this.cognome = '',
+    this.ragioneSociale = '',
     this.email = '',
-    this.description = '',
-    this.phone = '',
-    this.address = '',
-    this.city = '',
-    this.province = '',
+    this.descrizione = '',
+    this.telefono = '',
+    this.indirizzo = '',
+    this.citta = '',
+    this.provincia = '',
     this.cap = 0,
-    this.country = '',
+    this.nazione = '',
   });
 
     factory Assistito.fromJson(Map<String, dynamic> json) => _$AssistitoFromJson(json);
