@@ -13,10 +13,10 @@ import "assistiti/nuovo/nuovo.dart";
 final Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => const HomeScreen(),
   '/dashboard': (BuildContext context) => const DashboardScreen(),
-  'dashboard/uploadfile': (BuildContext context) => const UploadFileScreen(),
-  'dashboard/document': (BuildContext context) => const DocumentScreen(),
+  '/dashboard/uploadfile': (BuildContext context) => const UploadFileScreen(),
+  '/dashboard/document': (BuildContext context) => const DocumentScreen(),
   '/assistiti': (BuildContext context) => const AssistitiScreen(),
-  'assistiti/assistito': (BuildContext context) => const ModificaAssistitoScreen(),
+  '/assistiti/assistito': (BuildContext context) => const ModificaAssistitoScreen(),
   '/login': (BuildContext context) => const LoginScreen(),
   '/recent': (BuildContext context) => const RecentScreen(),
   '/cases': (BuildContext context) => const CasesScreen(),
