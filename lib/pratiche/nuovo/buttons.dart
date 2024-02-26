@@ -33,9 +33,18 @@ class _NuovaPraticaFormButtonsState extends State<NuovaPraticaFormButtons> {
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              debugPrint("User ID: ${widget.userId}");
-              AddPraticaToFirebase(formData: widget.formData, assistitoId: widget.userId).addPratica();
-              postAdditionPushAndRemove();
+              debugPrint("Assistito ID: ${widget.formData.assistitoIdController.text}");
+              if (widget.formData.assistitoIdController.text == ""){
+
+                debugPrint("Assistito ID non presente. Ritorna errore");
+                AddPraticaToFirebase(formData: widget.formData, assistitoId: widget.userId).showErrorPopup(context);
+
+
+              } else {
+                debugPrint("User ID: ${widget.userId}");
+                AddPraticaToFirebase(formData: widget.formData, assistitoId: widget.userId).addPratica();
+                postAdditionPushAndRemove();
+              }
             },
             child: const Text("Salva"),
           ),
@@ -49,8 +58,8 @@ class _NuovaPraticaFormButtonsState extends State<NuovaPraticaFormButtons> {
       context: widget.pageContext,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("pratica aggiunto"),
-          content: const Text("L'pratica è stato aggiunto correttamente"),
+          title: const Text("Pratica aggiunta"),
+          content: const Text("La pratica è stata aggiunta correttamente"),
           actions: [
             TextButton(
               onPressed: () {
@@ -118,6 +127,26 @@ class AddPraticaToFirebase {
       return praticaId
           .toDouble(); // Ensure the return type matches the method signature
     }
+  }
+
+  showErrorPopup(context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Errore"),
+          content: const Text("Devi selezionare un assistito per poter aggiungere una pratica."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Chiudi"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
 
