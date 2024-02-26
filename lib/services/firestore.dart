@@ -113,6 +113,19 @@ class AssistitoDb extends FirestoreService {
     await decreaseCounter();
   }
 
+  Future<void> deletePratica(final double praticaId) async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      await accountRef
+          .collection("pratiche")
+          .doc(praticaId.toString())
+          .delete();
+    } catch (e) {
+      debugPrint("Error deleting pratica: $e");
+      rethrow;
+    }
+  }
+
   Future<void> decreaseCounter() async {
     try {
       final accountRef = await retrieveAccountObject();

@@ -61,8 +61,8 @@ class BuildTable extends StatelessWidget {
                       onPressed: () {
                         BottoneCancellaPratica(
                                 praticaId: pratica.id,
-                                titolo: pratica.titolo,
-                                descrizione: pratica.descrizione)
+                                titolo: pratica.titolo
+                                )
                             .showConfirmPopup(context);
                       },
                     ),

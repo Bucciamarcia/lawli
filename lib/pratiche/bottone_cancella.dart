@@ -4,9 +4,8 @@ import '../services/firestore.dart';
 class BottoneCancellaPratica {
   final double praticaId;
   final String titolo;
-  final String descrizione;
 
-  BottoneCancellaPratica({required this.praticaId, required this.titolo, required this.descrizione});
+  BottoneCancellaPratica({required this.praticaId, required this.titolo});
 
 
   void showConfirmPopup(BuildContext context) {
@@ -15,7 +14,7 @@ class BottoneCancellaPratica {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Conferma cancellazione"),
-            content: Text("Sei sicuro di voler cancellare l'assistito '$titolo $descrizione'?"),
+            content: Text("Sei sicuro di voler cancellare la pratica '$titolo'?"),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -25,9 +24,9 @@ class BottoneCancellaPratica {
             ),
             TextButton(
               onPressed: () {
-                AssistitoDb().deleteAssistito(praticaId);
+                AssistitoDb().deletePratica(praticaId);
                 Navigator.of(context).pop();
-                Navigator.pushNamedAndRemoveUntil(context, "/assistiti", (route) => false);
+                Navigator.pushNamedAndRemoveUntil(context, "/pratiche", (route) => false);
               },
               child: const Text("Conferma"),
             ),
