@@ -144,17 +144,11 @@ class AssistitoDb extends FirestoreService {
 
   Future<void> removeFromListaAssistiti(assistitoId) async {
     DocumentReference docRef = await retrieveAccountObject();
-    debugPrint("DOCREF: $docRef");
     List<Assistito> assistiti = await RetrieveObjectFromDb().getAssistiti();
-    debugPrint("ASSISTITI: $assistiti");
-    debugPrint("PRIMO ASSISTITO ID: ${assistiti[0].id}");
-    debugPrint("ASSISTITO ID: $assistitoId");
     Assistito assistito =
         assistiti.firstWhere((element) => element.id == assistitoId);
-    debugPrint("ASSISTITO: $assistito");
 
     String firstname = assistito.nome;
-    debugPrint("FIRSTNAME: $firstname");
     String lastname = assistito.cognome;
     String fullName = "$firstname $lastname";
 
@@ -182,6 +176,17 @@ class RetrieveObjectFromDb extends FirestoreService {
     var data = snapshot.docs.map((s) => s.data());
     var topics = data.map((d) => Assistito.fromJson(d));
     return topics.toList();
+  }
+
+  Future<Assistito> getAssistito(String assistitoId) async {
+    String accountName = await AccountDb().getAccountName();
+    debugPrint("STARTING GET ASSISTITO");
+    var ref = _db.collection("accounts").doc(accountName).collection("assistiti").doc(assistitoId);
+    debugPrint("REF: $ref");
+    var snapshot = await ref.get();
+    debugPrint("SNAPSHOT: $snapshot");
+    return Assistito.fromJson(snapshot.data() ?? {});
+
   }
 
   Future<List<Pratica>> getPratiche() async {

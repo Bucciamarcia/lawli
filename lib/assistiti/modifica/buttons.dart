@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:lawli/services/firestore.dart";
+import "package:lawli/services/models.dart";
 import "modifica.dart";
 
 class ModificaAssistitoFormButtons extends StatefulWidget {
@@ -32,7 +33,8 @@ class ModificaAssistitoFormButtonsState extends State<ModificaAssistitoFormButto
         const SizedBox(width: 20),
         Expanded(
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              await AddAssistitoToFirebase(formData: widget.formData, id: widget.id).editListaAssistiti();
               AddAssistitoToFirebase(formData: widget.formData, id: widget.id).addAssistito();
               postAdditionPushAndRemove();
             },
@@ -73,6 +75,7 @@ class AddAssistitoToFirebase {
 
 
   Future<void> addAssistito() async {
+    debugPrint("STARTING ADD ASSISTITO");
     final account = await FirestoreService().retrieveAccountObject();
     final assistiti = account.collection("assistiti");
     final assistito = _buildAssistitoMap(id, formData);
@@ -97,5 +100,21 @@ class AddAssistitoToFirebase {
       "citta": formData.cityController.text,
       "cap": formData.capController.text,
     };
+  }
+
+  Future<void> editListaAssistiti() async {
+    final account = await FirestoreService().retrieveAccountObject();
+    final Assistito assistito = await RetrieveObjectFromDb().getAssistito(id.toString());
+    final String oldNomeCompleto = assistito.nomeCompleto;
+    final String newName = "${formData.firstNameController.text} ${formData.lastNameController.text}";
+
+    var snapshot = await account.get();
+    List listaAssistiti = snapshot.get("lista_assistiti");
+    listaAssistiti.remove(oldNomeCompleto);
+    listaAssistiti.add(newName);
+    // Write the new list to the account
+    await account.update({"lista_assistiti": listaAssistiti});
+    
+    
   }
 }
