@@ -34,49 +34,71 @@ class BuildTable extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          // Convert your list of Pratica to List<DataRow>
-          List<DataRow> dataRows =
-              snapshot.data!.map<DataRow>((Pratica pratica) {
-            return DataRow(
-              cells: <DataCell>[
-                DataCell(Text(pratica.titolo)),
-                DataCell(Text(pratica.descrizione)),
-                DataCell(Text(pratica.assistitoId.toString())),
-                DataCell(Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      tooltip: "Modifica",
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ModificaPraticaScreen(pratica: pratica),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      tooltip: "Cancella",
-                      onPressed: () {
-                        BottoneCancellaPratica(
-                                praticaId: pratica.id,
-                                titolo: pratica.titolo
-                                )
-                            .showConfirmPopup(context);
-                      },
-                    ),
-                  ],
-                )),
-              ],
-            );
-          }).toList();
+          return FutureBuilder<String>(
+              // Nested FutureBuilder for nomeCompleto
+              future: getNomeCompleto(snapshot),
+              builder: (context, nomeCompletoSnapshot) {
+                if (nomeCompletoSnapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(
+                      child:
+                          CircularProgressIndicator()); // Handle waiting for name
+                } else if (nomeCompletoSnapshot.hasError) {
+                  return const Text(
+                      "Error retrieving name"); // Handle name retrieval errors
+                } else {
+                  // Build your rows using nomeCompletoSnapshot.data!
+                  List<DataRow> dataRows =
+                      snapshot.data!.map<DataRow>((Pratica pratica) {
+                    return DataRow(
+                      cells: <DataCell>[
+                        DataCell(Text(pratica.titolo)),
+                        DataCell(Text(pratica.descrizione)),
+                        DataCell(Text(nomeCompletoSnapshot
+                            .data!)), // Access the retrieved name
+                        DataCell(Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              tooltip: "Modifica",
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ModificaPraticaScreen(pratica: pratica),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              tooltip: "Cancella",
+                              onPressed: () {
+                                BottoneCancellaPratica(
+                                        praticaId: pratica.id,
+                                        titolo: pratica.titolo)
+                                    .showConfirmPopup(context);
+                              },
+                            ),
+                          ],
+                        )),
+                      ],
+                    );
+                  }).toList();
 
-          // Return your DataTable or whatever widget you're populating
-          return DataTable(rows: dataRows, columns: TableData().dataColumns);
+                  return DataTable(
+                      rows: dataRows, columns: TableData().dataColumns);
+                }
+              });
         }
       },
     );
+  }
+
+  Future<String> getNomeCompleto(AsyncSnapshot<List<Pratica>> snapshot) async {
+    // Made async
+    final assistito = await RetrieveObjectFromDb().getAssistito(
+        snapshot.data!.first.assistitoId.toString()); // await keyword added
+    return assistito.nomeCompleto;
   }
 }
 
@@ -89,7 +111,7 @@ class TableData {
       label: Text("Descrizione"),
     ),
     DataColumn(
-      label: Text("ID Assistito"),
+      label: Text("Assistito"),
     ),
     DataColumn(label: Text("Azioni"))
   ];
