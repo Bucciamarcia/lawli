@@ -24,7 +24,7 @@ class ModificaPraticaFormButtonsState extends State<ModificaPraticaFormButtons> 
           child: ElevatedButton(
             onPressed: () {
               Navigator.pushNamedAndRemoveUntil(
-                  context, "/assistiti", (route) => false);
+                  context, "/pratiche", (route) => false);
             },
             child: const Text("Cancella"),
           ),
@@ -33,7 +33,7 @@ class ModificaPraticaFormButtonsState extends State<ModificaPraticaFormButtons> 
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              AddAssistitoToFirebase(formData: widget.formData, id: widget.id).addAssistito();
+              AddPraticaToFirebase(formData: widget.formData, id: widget.id).addPratica();
               postAdditionPushAndRemove();
             },
             child: const Text("Salva"),
@@ -48,13 +48,13 @@ class ModificaPraticaFormButtonsState extends State<ModificaPraticaFormButtons> 
       context: widget.pageContext,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Assistito aggiunto"),
-          content: const Text("L'assistito è stato aggiunto correttamente"),
+          title: const Text("Pratica aggiunta"),
+          content: const Text("La pratica è stato aggiunta correttamente"),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
-                    context, "/assistiti", (route) => false);
+                    context, "/pratiche", (route) => false);
               },
               child: const Text("Chiudi"),
             ),
@@ -65,29 +65,28 @@ class ModificaPraticaFormButtonsState extends State<ModificaPraticaFormButtons> 
   }
 }
 
-class AddAssistitoToFirebase {
+class AddPraticaToFirebase {
   final ModificaPraticaFormState formData;
   final double id;
 
-  const AddAssistitoToFirebase({required this.formData, required this.id});
+  const AddPraticaToFirebase({required this.formData, required this.id});
 
-
-  Future<void> addAssistito() async {
+  Future<void> addPratica() async {
     final account = await FirestoreService().retrieveAccountObject();
-    final assistiti = account.collection("assistiti");
-    final assistito = _buildAssistitoMap(id, formData);
+    final pratiche = account.collection("pratiche");
+    final pratica = _buildPraticaMap(id, formData);
 
-    await assistiti.doc(id.toString()).set(assistito);
+    await pratiche.doc(id.toString()).set(pratica);
   }
 
-  Map<String, dynamic> _buildAssistitoMap(
-      double assistitoId, ModificaPraticaFormState formData) {
-    // Builds and returns the assistito map from formData
+  Map<String, dynamic> _buildPraticaMap(
+      double praticaId, ModificaPraticaFormState formData) {
+    // Builds and returns the pratica map from formData
     return {
       "id": id,
       "titolo": formData.titoloController.text,
       "descrizione": formData.descrizioneController.text,
-      "assistitoId": formData.assistitoIdController.text,
+      "assistitoId": double.parse(formData.assistitoIdController.text),
       
     };
   }

@@ -65,7 +65,7 @@ class _ModificaPraticaScreenState extends State<ModificaPraticaScreen> {
     AppBar appBar(BuildContext context) {
       return AppBar(
         centerTitle: true,
-        title: const Text("Assistiti"),
+        title: const Text("Modifica pratica"),
       );
     }
 
@@ -87,7 +87,7 @@ class ModificaPraticaFormState {
   defineControllers(Pratica pratica) {
     titoloController.text = pratica.titolo;
     descrizioneController.text = pratica.descrizione;
-    assistitoIdController.text = pratica.assistitoId as String;
+    assistitoIdController.text = pratica.assistitoId.toString();
   }
 
   final TextEditingController titoloController = TextEditingController();
