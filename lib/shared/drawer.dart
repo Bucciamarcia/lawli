@@ -19,7 +19,7 @@ class _ResponsiveDrawerState extends State<ResponsiveDrawer> {
   }
 
   void checkUserSignInStatus() async {
-    bool signedIn = await AuthService().isSignedIn();
+    bool signedIn = AuthService().isSignedIn();
     setState(() {
       isUserSignedIn = signedIn;
     });

@@ -55,11 +55,9 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
                 _selectedValue = value;
                 widget.controller.text = value.toString();
               });
-              if (widget.onValueChanged != null) {
-                // Check if callback is provided
-                widget.onValueChanged(value); // Pass the selected value
-              }
-            },
+              // Check if callback is provided
+              widget.onValueChanged(value); // Pass the selected value
+                        },
             hint: Text(widget.labelText),
           );
         } else {
