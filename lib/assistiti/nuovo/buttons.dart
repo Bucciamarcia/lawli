@@ -111,7 +111,7 @@ class AddAssistitoToFirebase {
         "lista_assistiti": updatedListaAssistiti,
       });
     } else {
-      await account.update({
+      await account.set({
         "lista_assistiti": ["${assistito['nome']} ${assistito['cognome']}"],
       });
     }

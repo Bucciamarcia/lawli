@@ -110,7 +110,7 @@ class AssistitoDb extends FirestoreService {
       debugPrint("Error deleting assistito: $e");
       rethrow;
     }
-    await decreaseCounter();
+    await decreaseCounterAssistiti();
   }
 
   Future<void> deletePratica(final double praticaId) async {
@@ -124,9 +124,10 @@ class AssistitoDb extends FirestoreService {
       debugPrint("Error deleting pratica: $e");
       rethrow;
     }
+    await decreaseCounterPratiche();
   }
 
-  Future<void> decreaseCounter() async {
+  Future<void> decreaseCounterAssistiti() async {
     try {
       final accountRef = await retrieveAccountObject();
       final statsRef = accountRef.collection("stats").doc("assistiti counter");
@@ -138,6 +139,22 @@ class AssistitoDb extends FirestoreService {
       debugPrint("Decreased assistiti counter");
     } catch (e) {
       debugPrint("Error decreasing assistiti counter: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> decreaseCounterPratiche() async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      final statsRef = accountRef.collection("stats").doc("pratiche counter");
+      final statsDoc = await statsRef.get();
+      final activePratiche = statsDoc.get("active pratiche");
+      await statsRef.update({
+        "active pratiche": activePratiche - 1,
+      });
+      debugPrint("Decreased pratiche counter");
+    } catch (e) {
+      debugPrint("Error decreasing pratiche counter: $e");
       rethrow;
     }
   }

@@ -82,19 +82,6 @@ class AddPraticaToFirebase {
     final documentName = praticaId.toString();
 
     await pratiche.doc(documentName).set(pratica);
-    final praticaData = await account.get();
-    final listaPratiche = praticaData.data()?['lista_pratiche'];
-
-    if (listaPratiche != null) {
-      final updatedListaPratiche = [...listaPratiche, "${pratica['titolo']}"];
-      await account.update({
-        "lista_pratiche": updatedListaPratiche,
-      });
-    } else {
-      await account.update({
-        "lista_pratiche": ["${pratica['titolo']}"],
-      });
-    }
 
   }
 
