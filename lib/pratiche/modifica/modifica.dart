@@ -13,6 +13,7 @@ class ModificaPraticaScreen extends StatefulWidget {
 }
 
 class _ModificaPraticaScreenState extends State<ModificaPraticaScreen> {
+  double userId = 0;
     final ModificaPraticaFormState formState = ModificaPraticaFormState();
 
     @override
@@ -37,10 +38,18 @@ class _ModificaPraticaScreenState extends State<ModificaPraticaScreen> {
         controller: formState.descrizioneController,
         labelText: "Descrizione",
       ),
-      CustomTextField(
-        controller: formState.assistitoIdController,
-        labelText: "ID Assistito",
-      ),
+      CustomDropdownField(
+          controller: formState.assistitoIdController,
+          labelText: "Assistito",
+          onValueChanged: (value) async {
+            formState.assistitoIdController.text = value.toString();
+            debugPrint("Assistito ID: ${formState.assistitoIdController.text}");
+            var newUserId = await AssistitoDb().getIdFromNomeCognome(formState.assistitoIdController.text);
+            debugPrint("User ID: $newUserId");
+            updateUserId(newUserId);
+            formState.assistitoIdController.text = newUserId.toString();
+            udpateFormState(formState);
+          }),
       const SizedBox(height: 20),
 
       
@@ -57,6 +66,17 @@ class _ModificaPraticaScreenState extends State<ModificaPraticaScreen> {
         ),
       ),
     );
+  }
+
+  void updateUserId(double newUserId) {
+  setState(() {
+    userId = newUserId;
+  });
+  }
+  void udpateFormState(ModificaPraticaFormState formState) {
+  setState(() {
+    formState.assistitoIdController.text = userId.toString();
+  });
   }
 
   @override
