@@ -43,13 +43,13 @@ class Assistito {
 @JsonSerializable()
 class Pratica {
   final double id;
-  final String assistitoId;
+  final double assistitoId;
   final String titolo;
   final String descrizione;
 
   Pratica({
     this.id = 0,
-    this.assistitoId = '',
+    this.assistitoId = 0,
     this.titolo = '',
     this.descrizione = '',
   });

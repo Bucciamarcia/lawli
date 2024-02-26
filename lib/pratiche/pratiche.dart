@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import "../../shared/shared.dart";
 import "../../services/services.dart";
+import "table.dart";
 
 class PraticheScreen extends StatelessWidget {
   const PraticheScreen({super.key});
@@ -22,8 +23,8 @@ class PraticheScreen extends StatelessWidget {
                 Navigator.pushNamed(context, "/pratiche/nuovo");
               },
               child: const Text("Nuova pratica"),
-              
             ),
+            const Expanded(child: PraticheTable(),)
           ],
         ),
       ),
