@@ -55,7 +55,14 @@ class BuildTable extends StatelessWidget {
                         DataCell(Text(pratica.titolo)),
                         DataCell(Text(pratica.descrizione)),
                         DataCell(Text(nomeCompletoSnapshot
-                            .data!)), // Access the retrieved name
+                            .data!)),
+                        DataCell(ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, "/pratica",
+                                arguments: pratica.id);
+                          },
+                          child: const Text("Apri"),
+                        )),
                         DataCell(Row(
                           children: [
                             IconButton(
@@ -112,6 +119,9 @@ class TableData {
     ),
     DataColumn(
       label: Text("Assistito"),
+    ),
+    DataColumn(
+      label: Text("Apri")
     ),
     DataColumn(label: Text("Azioni"))
   ];
