@@ -58,7 +58,7 @@ class BuildTable extends StatelessWidget {
                             .data!)),
                         DataCell(ElevatedButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, "/pratica",
+                            Navigator.pushNamed(context, "/dashboard",
                                 arguments: pratica.id);
                           },
                           child: const Text("Apri"),
