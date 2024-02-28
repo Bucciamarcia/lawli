@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lawli/shared/shared.dart';
 
 class DesktopVersion extends StatelessWidget {
-  final Scaffold body;
+  final Widget body;
   final AppBar appBar;
   const DesktopVersion({super.key, required this.body, required this.appBar});
 

@@ -27,7 +27,7 @@ class BuildTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Pratica>>(
-      future: RetrieveObjectFromDb().getPratiche(), // Your future here
+      future: RetrieveObjectFromDb().getPratiche(),
       builder: (BuildContext context, AsyncSnapshot<List<Pratica>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
@@ -35,19 +35,17 @@ class BuildTable extends StatelessWidget {
           return Text('Error: ${snapshot.error}');
         } else {
           return FutureBuilder<String>(
-              // Nested FutureBuilder for nomeCompleto
               future: getNomeCompleto(snapshot),
               builder: (context, nomeCompletoSnapshot) {
                 if (nomeCompletoSnapshot.connectionState ==
                     ConnectionState.waiting) {
                   return const Center(
                       child:
-                          CircularProgressIndicator()); // Handle waiting for name
+                          CircularProgressIndicator());
                 } else if (nomeCompletoSnapshot.hasError) {
                   return const Text(
-                      "Error retrieving name"); // Handle name retrieval errors
+                      "Error retrieving name");
                 } else {
-                  // Build your rows using nomeCompletoSnapshot.data!
                   List<DataRow> dataRows =
                       snapshot.data!.map<DataRow>((Pratica pratica) {
                     return DataRow(
@@ -58,6 +56,7 @@ class BuildTable extends StatelessWidget {
                             .data!)),
                         DataCell(ElevatedButton(
                           onPressed: () {
+                            debugPrint(pratica.id.toString());
                             Navigator.pushNamed(context, "/dashboard",
                                 arguments: pratica.id);
                           },
