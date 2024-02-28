@@ -1,39 +1,33 @@
-# lawli
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-# Layout builder
-
-Code for each new page:
-
-```dart
 import 'package:flutter/material.dart';
 import "../../shared/shared.dart";
 import "../../services/services.dart";
+import "table.dart";
 
 class AssistitiScreen extends StatelessWidget {
   const AssistitiScreen({super.key});
 
   Scaffold body(BuildContext context) {
     return Scaffold(
+
       body: Container(
+        width: double.infinity,
         padding: ResponsiveLayout.mainWindowPadding(context),
-        child: Text(
-          "Assistiti",
-          style: Theme.of(context).textTheme.displayLarge,
+        child: Column(
+          children: [
+            Text(
+              "Assistiti",
+              style: Theme.of(context).textTheme.displayLarge,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/assistiti/nuovo");
+              },
+              child: const Text("Nuovo assistito"),
+              
+            ),
+            const Expanded(child: AssistitiTable(),)
+          ],
         ),
       ),
     );
@@ -59,6 +53,3 @@ class AssistitiScreen extends StatelessWidget {
     );
   }
 }
-```
-
-The reason for this code is that there is a different menu on desktop.

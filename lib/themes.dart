@@ -2,8 +2,9 @@ import "package:flutter/material.dart";
 
 class LightTheme {
   ThemeData get themeData {
+    
     return ThemeData(
-      primarySwatch: Colors.lightBlue,
+      colorSchemeSeed: Colors.lightBlue,
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.lightBlue,
         titleTextStyle: TextStyle(
@@ -11,7 +12,12 @@ class LightTheme {
           fontSize: 20,
         ),
       ),
-
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          color: Colors.black,
+          fontSize: 40,
+        ),
+      )
     );
   } 
 }
