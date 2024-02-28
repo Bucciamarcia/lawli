@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import "package:provider/provider.dart";
 import "../../shared/shared.dart";
 import "../../services/services.dart";
 
@@ -6,9 +7,10 @@ class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   Widget body(BuildContext context) {
-    final double praticaId = ModalRoute.of(context)!.settings.arguments as double? ?? 0;
+    final userPraticaId = Provider.of<DashboardProvider>(context).idPratica;
+    debugPrint("userPraticaId: $userPraticaId");
     return FutureBuilder<Pratica>(
-        future: RetrieveObjectFromDb().getPratica(praticaId),
+        future: RetrieveObjectFromDb().getPratica(userPraticaId),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Pratica pratica = snapshot.data!;

@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:lawli/services/services.dart";
+import "package:provider/provider.dart";
 
 import "bottone_cancella.dart";
 import "modifica/modifica.dart";
@@ -56,9 +57,10 @@ class BuildTable extends StatelessWidget {
                             .data!)),
                         DataCell(ElevatedButton(
                           onPressed: () {
+                            Provider.of<DashboardProvider>(context, listen: false)
+                                .setIdPratica(pratica.id);
                             debugPrint(pratica.id.toString());
-                            Navigator.pushNamed(context, "/dashboard",
-                                arguments: pratica.id);
+                            Navigator.pushNamed(context, "/dashboard");
                           },
                           child: const Text("Apri"),
                         )),
