@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import "package:lawli/dashboard/main_window.dart";
 import "package:provider/provider.dart";
 import "../../shared/shared.dart";
 import "../../services/services.dart";
@@ -14,20 +15,13 @@ class DashboardScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Pratica pratica = snapshot.data!;
-            return Scaffold(
-                body: Container(
-              padding: ResponsiveLayout.mainWindowPadding(context),
-              child: Text(
-                pratica.titolo,
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
-            ));
+            return MainWindow(pratica: pratica);
           } else if (snapshot.hasError) {
             return Scaffold(
               body: Container(
                 padding: ResponsiveLayout.mainWindowPadding(context),
                 child: Text(
-                  "Error loading data",
+                  "Errore: ${snapshot.error}",
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
               ),
