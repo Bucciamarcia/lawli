@@ -17,6 +17,10 @@ class LightTheme {
           color: Colors.black,
           fontSize: 40,
         ),
+        displayMedium: TextStyle(
+          color: Colors.black,
+          fontSize: 30,
+        ),
       )
     );
   } 
