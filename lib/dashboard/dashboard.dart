@@ -80,7 +80,7 @@ class CasoIdZero extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Errore: nessuna pratica selezionata",
+                "Nessuna pratica selezionata",
                 style: Theme.of(context).textTheme.displayLarge,
               ),
               const SizedBox(height: 20),
