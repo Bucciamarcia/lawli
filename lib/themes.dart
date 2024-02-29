@@ -26,6 +26,16 @@ class LightTheme {
           fontSize: 14,
         ),
       ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.lightBlue[700]),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+        ),
+      ),
     );
   } 
 }

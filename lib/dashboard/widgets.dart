@@ -77,22 +77,41 @@ class Documenti extends StatelessWidget {
           children: [
             Text("Documenti", style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 20),
-            Column(children: [
-              ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlue[700],
-                  ),
-                  child: Text(
-                    "Nuovo Documento",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall
-                        ?.copyWith(color: Colors.white),
-                  ))
-            ])
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: documentiButton(context, () {}, Colors.lightBlue[700],
+                      "Nuovo Documento", Colors.white),
+                ),
+                documentiButton(context, () {}, Colors.grey, "Ricrea Riassunto",
+                    Colors.white),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: documentiButton(context, () {}, Colors.teal,
+                      "Ricrea timeline", Colors.white),
+                ),
+              ],
+            )
           ],
         ),
+      ),
+    );
+  }
+
+  ElevatedButton documentiButton(
+      BuildContext context, onPressed, backgroundColor, text, textColor) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
+            backgroundColor: MaterialStateProperty.all(backgroundColor),
+          ),
+
+      child: Text(
+        text,
+        style:
+            Theme.of(context).textTheme.labelSmall?.copyWith(color: textColor),
       ),
     );
   }
