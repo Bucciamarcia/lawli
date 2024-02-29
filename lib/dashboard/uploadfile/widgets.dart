@@ -130,7 +130,6 @@ class _FormDataState extends State<FormData> {
     );
   }
 
-
   Row bottoni(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -154,21 +153,37 @@ class _FormDataState extends State<FormData> {
         ElevatedButton(
           style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
               backgroundColor: MaterialStateProperty.all(Colors.green[700])),
-          onPressed: () {
+          onPressed: () async {
             if (_uploadedFile.isNotEmpty) {
-              FutureBuilder(
-                future: functionUploadDocument(),
-                builder:(context, snapshot) {
-                  if (snapshot.connectionState ==ConnectionState.waiting) {
-                    return const AlertDialog(
-                      title: Text("Caricamento in corso"),
-                      content: LinearProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text("Errore: ${snapshot.error}");
-                  } else {
-                    return const Text("Documento caricato con successo!");
-                  }
+              var result = await FirebaseFunctions
+                  .instance
+                  .httpsCallable("upload_document")
+                  .call(
+                {
+                  "idPratica": widget.idPratica,
+                  "data": data.toString().substring(0, 10),
+                  "filename": formState.filenameController.text,
+                  "file": _uploadedFile.single.bytes,
+                },
+              );
+              debugPrint(result.toString());
+
+              // Display success message
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text("Successo"),
+                    content: const Text("Documento caricato con successo."),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  );
                 },
               );
             }
@@ -183,13 +198,6 @@ class _FormDataState extends State<FormData> {
       ],
     );
   }
-
-  Future<void> functionUploadDocument() async {FirebaseFunctions.instance.httpsCallable("upload_document").call({
-                  "idPratica": widget.idPratica,
-                  "data": data.toString().substring(0, 10),
-                  "filename": formState.filenameController.text,
-                  "file": _uploadedFile.single.bytes,
-                });}
 
   // Logica per caricare un file
   void _pickFile() async {

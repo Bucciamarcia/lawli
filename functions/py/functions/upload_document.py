@@ -17,4 +17,4 @@ class Upload_Document:
     def main(self):
         self.logger.info("Starting upload_document")
 
-        return "ok"
+        return "MEGARISPOSTA"
