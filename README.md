@@ -24,16 +24,21 @@ import 'package:flutter/material.dart';
 import "../../shared/shared.dart";
 import "../../services/services.dart";
 
-class AssistitiScreen extends StatelessWidget {
-  const AssistitiScreen({super.key});
+class UploadFileScreen extends StatelessWidget {
+  const UploadFileScreen({super.key});
 
   Scaffold body(BuildContext context) {
     return Scaffold(
       body: Container(
+        alignment: Alignment.topCenter,
         padding: ResponsiveLayout.mainWindowPadding(context),
-        child: Text(
-          "Assistiti",
-          style: Theme.of(context).textTheme.displayLarge,
+        child: Column(
+          children: [
+            Text(
+              "Assistiti",
+              style: Theme.of(context).textTheme.displayLarge,
+            ),
+          ],
         ),
       ),
     );
