@@ -73,8 +73,26 @@ class Documenti extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Text("Documenti",
-            style: Theme.of(context).textTheme.displayMedium),
+        child: Column(
+          children: [
+            Text("Documenti", style: Theme.of(context).textTheme.displayMedium),
+            const SizedBox(height: 20),
+            Column(children: [
+              ElevatedButton(
+                  onPressed: () => {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue[700],
+                  ),
+                  child: Text(
+                    "Nuovo Documento",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelSmall
+                        ?.copyWith(color: Colors.white),
+                  ))
+            ])
+          ],
+        ),
       ),
     );
   }

@@ -21,7 +21,11 @@ class LightTheme {
           color: Colors.black,
           fontSize: 30,
         ),
-      )
+        labelSmall: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+        ),
+      ),
     );
   } 
 }
