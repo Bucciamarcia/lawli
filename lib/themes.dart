@@ -22,8 +22,9 @@ class LightTheme {
           fontSize: 30,
         ),
         labelSmall: TextStyle(
-          color: Colors.black,
+          color: Color.fromARGB(255, 75, 75, 75),
           fontSize: 14,
+          fontStyle: FontStyle.italic,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
