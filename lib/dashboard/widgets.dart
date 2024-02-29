@@ -79,7 +79,7 @@ class Documenti extends StatelessWidget {
             const SizedBox(height: 20),
             Column(children: [
               ElevatedButton(
-                  onPressed: () => {},
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.lightBlue[700],
                   ),
