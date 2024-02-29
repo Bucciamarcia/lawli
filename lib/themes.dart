@@ -29,6 +29,12 @@ class LightTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.lightBlue[700]),
+          textStyle: MaterialStateProperty.all(
+            const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),

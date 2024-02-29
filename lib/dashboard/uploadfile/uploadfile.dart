@@ -21,7 +21,7 @@ class UploadFileScreen extends StatelessWidget {
                 "Aggiungi documento alla pratica",
                 style: Theme.of(context).textTheme.displayLarge,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               Expanded(
                 child: FormData(idPratica: idPratica),
               ),
