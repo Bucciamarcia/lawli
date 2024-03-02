@@ -135,128 +135,156 @@ class _FormDataState extends State<FormData> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ElevatedButton(
-          style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
-              ),
-          onPressed: () {
-            formState.clearAll();
-            _uploadedFile.clear();
-          },
-          child: const Text(
-            "Cancella",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
+        bottoneCancella(context),
         const SizedBox(width: 20),
-        ElevatedButton(
-          style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-              backgroundColor: MaterialStateProperty.all(Colors.green[700])),
-          onPressed: () async {
-            if (_uploadedFile.isNotEmpty && (formState.filenameController.text.endsWith(".txt") || formState.filenameController.text.endsWith(".docx") || formState.filenameController.text.endsWith(".pdf"))) {
-              try {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
-              );
-
-              await PraticheDb().addNewDocument(formState.filenameController.text, data, widget.idPratica);
-              debugPrint("File caricato con successo.");
-
-              await StorageService().uploadNewDocument(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
-              
-              Navigator.of(context).pop();
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Successo"),
-                    content: const Text("Documento caricato con successo."),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  );
-                },
-              );
-              } catch (e) {
-                Navigator.of(context).pop();
-                debugPrint("ERROR: ${e.toString()}");
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text("Errore"),
-                      content: const Text("Errore durante il caricamento del documento."),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("OK"),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
-            } else if (_uploadedFile.isEmpty || formState.filenameController.text.isEmpty || formState.dateController.text.isEmpty) {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Errore"),
-                    content: const Text("Seleziona un file da caricare e una data valida."),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  );
-                },
-              );
-            } else {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Errore"),
-                    content: const Text("Formato file non valido. Carica un file .pdf, .docx o .txt."),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
-          },
-          child: const Text(
-            "Carica documento",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
+        bottoneCarica(context),
       ],
     );
+  }
+
+  ElevatedButton bottoneCarica(BuildContext context) {
+    return ElevatedButton(
+        style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+            backgroundColor: MaterialStateProperty.all(Colors.green[700])),
+        onPressed: () async {
+          if (_uploadedFile.isNotEmpty && (formState.filenameController.text.endsWith(".txt") || formState.filenameController.text.endsWith(".docx") || formState.filenameController.text.endsWith(".pdf"))) {
+            try {
+            showCircularProgressIndicator(context);
+
+            await PraticheDb().addNewDocument(formState.filenameController.text, data, widget.idPratica);
+            debugPrint("File caricato con successo.");
+
+            await StorageService().uploadNewDocument(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
+            
+            Navigator.of(context).pop();
+            showConfirmationDialog(context);
+            } catch (e) {
+              Navigator.of(context).pop();
+              debugPrint("ERROR: ${e.toString()}");
+              showErrorDialog(context);
+            }
+          } else if (_uploadedFile.isEmpty || formState.filenameController.text.isEmpty || formState.dateController.text.isEmpty) {
+            showFillFieldsDialog(context);
+          } else {
+            showWrongFormatDialog(context);
+          }
+        },
+        child: const Text(
+          "Carica documento",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      );
+  }
+
+  Future<dynamic> showWrongFormatDialog(BuildContext context) {
+    return showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Errore"),
+                content: const Text("Formato file non valido. Carica un file .pdf, .docx o .txt."),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+  }
+
+  Future<dynamic> showFillFieldsDialog(BuildContext context) {
+    return showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Errore"),
+                content: const Text("Seleziona un file da caricare e una data valida."),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+  }
+
+  Future<dynamic> showErrorDialog(BuildContext context) {
+    return showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text("Errore"),
+                  content: const Text("Errore durante il caricamento del documento."),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("OK"),
+                    ),
+                  ],
+                );
+              },
+            );
+  }
+
+  Future<dynamic> showConfirmationDialog(BuildContext context) {
+    return showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Successo"),
+                content: const Text("Documento caricato con successo."),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+  }
+
+  Future<dynamic> showCircularProgressIndicator(BuildContext context) {
+    return showDialog(
+            context: context,
+            builder: (context) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
+  }
+
+  ElevatedButton bottoneCancella(BuildContext context) {
+    return ElevatedButton(
+        style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+              backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+            ),
+        onPressed: () {
+          formState.clearAll();
+          _uploadedFile.clear();
+        },
+        child: const Text(
+          "Cancella",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      );
   }
 
   // Logica per caricare un file
