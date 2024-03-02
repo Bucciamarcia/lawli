@@ -30,6 +30,7 @@ logger.addHandler(consoleHandler)
 
 @https_fn.on_request()
 def upload_document(req: https_fn.Request) -> https_fn.Response:
+    print("Starting upload_document")
     
     # Add CORS headers
     if req.method == 'OPTIONS':
@@ -38,7 +39,4 @@ def upload_document(req: https_fn.Request) -> https_fn.Response:
     # Sleep for 1 second to simulate a slow function
     sleep(3)
 
-    response = Upload_Document(req, logger).main()
-    response_data = json.dumps({"data": {"result": "OK"}})
-
-    return commons.cors_headers(https_fn.Response(response_data, status=500, headers={"Content-Type": "application/json"}))
+    return commons.cors_headers(https_fn.Response(json.dumps({"data": "ok"}), status=200, headers={"Content-Type": "application/json"}))

@@ -155,6 +155,7 @@ class _FormDataState extends State<FormData> {
               backgroundColor: MaterialStateProperty.all(Colors.green[700])),
           onPressed: () async {
             if (_uploadedFile.isNotEmpty) {
+              try {
               var result = await FirebaseFunctions
                   .instance
                   .httpsCallable("upload_document")
@@ -166,7 +167,11 @@ class _FormDataState extends State<FormData> {
                   "file": _uploadedFile.single.bytes,
                 },
               );
-              debugPrint(result.toString());
+              // Debugprint the response
+              debugPrint("RESPONSE: ${result.data}");
+              } catch (e) {
+                debugPrint("ERROR: ${e.toString()}");
+              }
 
               // Display success message
               showDialog(
