@@ -59,23 +59,34 @@ class Pdf_Transformer:
         for process in individual_process_statuses:
             matches = re.match(r"gs://(.*?)/(.*)", process.output_gcs_destination)
             if not matches:
-                logging.info(f"Could not parse output GCS destination:{process.output_gcs_destination}")
+                self.logger.error(f"Could not parse output GCS destination:{process.output_gcs_destination}")
                 continue
+            else:
+                self.logger.info(f"Processing output GCS destination: {process.output_gcs_destination}")
 
             output_bucket, output_prefix = matches.groups()
             storage_client = storage.Client()
             output_blobs = storage_client.list_blobs(output_bucket, prefix=output_prefix)
             for blob in output_blobs:
                 if ".json" not in blob.name:
-                    logging.info(f"Skipping non-supported file: {blob.name} - Mimetype: {blob.content_type}")
+                    self.logger.warning(f"Skipping non-supported file: {blob.name} - Mimetype: {blob.content_type}")
                     continue
 
-                logging.info(f"Fetching {blob.name}")
+                self.logger.info(f"Fetching {blob.name}")
                 document = documentai.Document.from_json(
                     blob.download_as_bytes(), ignore_unknown_fields=True
                 )
 
                 extracted_text = document.text
+
                 self.logger.info(f"Extracted text: {extracted_text}")
                 blob_txt = storage_client.bucket(bucket_name).blob(destination_txt)
                 blob_txt.upload_from_string(extracted_text, content_type="text/plain; charset=utf-8")
+
+                # Delete the file from the bucket
+                try:
+                    blob.delete()
+                    self.logger.info(f"Deleted file: {blob.name}")
+                except Exception as e:
+                    self.logger.error(f"Error deleting file: {blob.name} - {e}")
+                    raise e

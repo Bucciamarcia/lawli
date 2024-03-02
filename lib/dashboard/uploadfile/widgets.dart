@@ -157,17 +157,16 @@ class _FormDataState extends State<FormData> {
             await PraticheDb().addNewDocument(formState.filenameController.text, data, widget.idPratica);
 
             final String fileExtension = p.extension(formState.filenameController.text);
-            
-            if (fileExtension == ".txt") {
-              await StorageService().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
-            } else if (fileExtension == ".docx") {
+            await StorageService().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
+
+            // if .txt, nothing else to be done
+
+            if (fileExtension == ".docx") {
               var filenameWithoutExtension = p.withoutExtension(formState.filenameController.text);
-              await StorageService().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
               final String docxText = docxToText(_uploadedFile.first.bytes!);
               await StorageService().uploadNewDocumentText(widget.idPratica.toString(), "$filenameWithoutExtension.txt", docxText);
 
             } else if (fileExtension == ".pdf") {
-              await StorageService().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
               await FirebaseFunctions.instance.httpsCallable("get_text_from_pdf").call(<String, dynamic>{
                 "idPratica": widget.idPratica,
                 "fileName": formState.filenameController.text,
@@ -175,7 +174,7 @@ class _FormDataState extends State<FormData> {
                 "accountName": await AccountDb().getAccountName(),
               });
 
-              // TODO: Cancella file .json generato da document ai
+              StorageService().deleteDocumentRecursive("accounts/${await AccountDb().getAccountName()}/pratiche/${widget.idPratica}/documenti/${formState.filenameController.text}");
             }
             
             Navigator.of(context).pop();

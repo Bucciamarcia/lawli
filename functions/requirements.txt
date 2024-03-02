@@ -1,6 +1,4 @@
 firebase_functions~=0.2.0
 firebase-admin
 google-cloud-logging
-docx
 google-cloud-documentai-toolbox
-pytesseract

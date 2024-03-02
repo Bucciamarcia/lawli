@@ -30,6 +30,7 @@ class StorageService {
       await docRef.putData(file, SettableMetadata(contentType: contentType));
     } catch (e) {
       debugPrint("Error uploading file: $e");
+      rethrow;
     }
   }
 
@@ -42,6 +43,17 @@ class StorageService {
       await docRef.putString(text, metadata: SettableMetadata(contentType: "text/plain"));
     } catch (e) {
       debugPrint("Error uploading file: $e");
+      rethrow;
+    }
+  }
+
+  // Given a folder path, delete all the files in the folder and all the subfolders
+  Future<void> deleteDocumentRecursive(String path) async {
+    try {
+      
+    } catch (e) {
+      debugPrint("Error deleting file: $e");
+      rethrow;
     }
   }
 }
