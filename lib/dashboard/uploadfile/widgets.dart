@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:file_picker/file_picker.dart";
 import "package:cloud_functions/cloud_functions.dart";
+import 'package:lawli/services/firestore.dart';
 
 class FormData extends StatefulWidget {
   final double idPratica;
@@ -165,15 +166,9 @@ class _FormDataState extends State<FormData> {
                   "data": data.toString().substring(0, 10),
                   "filename": formState.filenameController.text,
                   "file": _uploadedFile.single.bytes,
+                  "accountName": await AccountDb().getAccountName(),
                 },
               );
-              // Debugprint the response
-              debugPrint("RESPONSE: ${result.data}");
-              } catch (e) {
-                debugPrint("ERROR: ${e.toString()}");
-              }
-
-              // Display success message
               showDialog(
                 context: context,
                 builder: (context) {
@@ -191,6 +186,11 @@ class _FormDataState extends State<FormData> {
                   );
                 },
               );
+              // Debugprint the response
+              debugPrint("RESPONSE: ${result.data}");
+              } catch (e) {
+                debugPrint("ERROR: ${e.toString()}");
+              }
             }
           },
           child: const Text(

@@ -6,10 +6,7 @@ from firebase_functions import https_fn
 from firebase_admin import initialize_app
 import google.cloud.logging
 import logging
-from py import commons
-import json
-from time import sleep
-from py.functions.upload_document import Upload_Document
+from py.functions.upload_document import New_Document
 
 initialize_app()
 
@@ -23,20 +20,9 @@ logger.addHandler(handler)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 
-# Add console logger
-consoleHandler = logging.StreamHandler()
-consoleHandler.setFormatter(formatter)
-logger.addHandler(consoleHandler)
-
-@https_fn.on_request()
-def upload_document(req: https_fn.Request) -> https_fn.Response:
-    print("Starting upload_document")
+@https_fn.on_call()
+def upload_document(req: https_fn.CallableRequest) -> dict:    
     
-    # Add CORS headers
-    if req.method == 'OPTIONS':
-        return commons.cors_headers_preflight(req)
-    
-    # Sleep for 1 second to simulate a slow function
-    sleep(3)
+    response = New_Document(req, logger).upload_document()
 
-    return commons.cors_headers(https_fn.Response(json.dumps({"data": "ok"}), status=200, headers={"Content-Type": "application/json"}))
+    return response
