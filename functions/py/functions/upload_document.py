@@ -48,10 +48,17 @@ class New_Document:
         except Exception as e:
             self.logger.error(f"Error while setting document to Firestore: {e}")
             raise ValueError(f"Error while setting document to Firestore: {e}")
+    
+    def upload_storage(self):
+        """
+        Upload the new document to Firebase Storage.
+        """
+        self.logger.info("Uploading to Storage")
+        
 
     def upload_document(self):
         """
-        Upload the new document to Firestore.
+        Upload the new document to Firestore. Entrypoint for the Cloud Function.
         """
         self.logger.info("Starting upload_document")
 

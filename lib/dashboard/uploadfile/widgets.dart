@@ -2,7 +2,6 @@ import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:file_picker/file_picker.dart";
-import "package:cloud_functions/cloud_functions.dart";
 import 'package:lawli/services/firestore.dart';
 
 class FormData extends StatefulWidget {
@@ -165,18 +164,12 @@ class _FormDataState extends State<FormData> {
                   );
                 },
               );
-              HttpsCallableResult result = await FirebaseFunctions
-                  .instance
-                  .httpsCallable("upload_document")
-                  .call(
-                {
-                  "idPratica": widget.idPratica,
-                  "data": data.toString().substring(0, 10),
-                  "filename": formState.filenameController.text,
-                  "file": _uploadedFile.single.bytes,
-                  "accountName": await AccountDb().getAccountName(),
-                },
-              );
+
+              await PraticheDb().addNewDocument(formState.filenameController.text, data, widget.idPratica);
+              debugPrint("File caricato con successo.");
+
+              
+              
               Navigator.of(context).pop();
               showDialog(
                 context: context,
@@ -195,8 +188,6 @@ class _FormDataState extends State<FormData> {
                   );
                 },
               );
-              // Debugprint the response
-              debugPrint("RESPONSE: ${result.data}");
               } catch (e) {
                 Navigator.of(context).pop();
                 debugPrint("ERROR: ${e.toString()}");

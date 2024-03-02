@@ -64,6 +64,26 @@ class AccountDb extends FirestoreService {
   }
 }
 
+class PraticheDb extends FirestoreService {
+  Future<void> addNewDocument(String filename, DateTime date, double idPratica) async {
+    final String accountName = await AccountDb().getAccountName();
+
+    final data = <String, dynamic>{
+      "filename": filename,
+      "data": date,
+    };
+
+    try {
+      final DocumentReference docs = _db.collection("accounts").doc(accountName).collection("pratiche").doc(idPratica.toString()).collection("documenti").doc(filename);
+      await docs.set(data);
+    } catch (e) {
+      debugPrint("Error adding new document: $e");
+      rethrow;
+    }
+
+  }
+}
+
 class AssistitoDb extends FirestoreService {
   Future<List> getAssistiti() async {
     try {
