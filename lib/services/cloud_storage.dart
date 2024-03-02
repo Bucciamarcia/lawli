@@ -8,7 +8,7 @@ class StorageService {
   final FirebaseStorage storage = FirebaseStorage.instance;
   final Reference storageRef = FirebaseStorage.instance.ref();
 
-  Future<void> uploadNewDocument(
+  Future<void> uploadNewDocumentOriginal(
       String idPratica, String fileName, Uint8List file) async {
     final String accountName = await AccountDb().getAccountName();
     final String extension = p.extension(fileName);
@@ -28,6 +28,18 @@ class StorageService {
       var docRef = storageRef.child(
           "accounts/$accountName/pratiche/$idPratica/documenti/originale_$fileName");
       await docRef.putData(file, SettableMetadata(contentType: contentType));
+    } catch (e) {
+      debugPrint("Error uploading file: $e");
+    }
+  }
+
+  Future<void> uploadNewDocumentText(
+      String idPratica, String fileName, String text) async {
+    final String accountName = await AccountDb().getAccountName();
+    try {
+      var docRef = storageRef.child(
+          "accounts/$accountName/pratiche/$idPratica/documenti/$fileName");
+      await docRef.putString(text, metadata: SettableMetadata(contentType: "text/plain"));
     } catch (e) {
       debugPrint("Error uploading file: $e");
     }

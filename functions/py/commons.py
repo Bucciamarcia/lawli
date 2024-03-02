@@ -14,5 +14,5 @@ def get_data(req:https_fn.CallableRequest, logger:logging.Logger, keys:list) -> 
     except Exception as e:
         logger.error(f"Error while extracting data from request: {e}")
         raise f"Error while extracting data from request: {e}"
-    logger.info(f"Data received: {data}")
+
     return tuple(data[key] for key in keys)

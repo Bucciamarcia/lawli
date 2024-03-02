@@ -6,7 +6,9 @@ from firebase_functions import https_fn
 from firebase_admin import initialize_app
 import google.cloud.logging
 import logging
+from functions.py.functions.get_text_from_pdf import Docx_Transformer
 from py import commons
+import os
 
 initialize_app()
 
@@ -21,11 +23,10 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 
 @https_fn.on_call()
-def get_text_from_new_document(req: https_fn.CallableRequest) -> dict:
+def get_text_from_pdf(req: https_fn.CallableRequest) -> dict:
     keys = ["idPratica", "fileName", "fileBytes", "accountName"]
 
     id_pratica, file_name, file_bytes, account_name = commons.get_data(req, logger, keys)
 
-    logging.info(f"Received data: {id_pratica}, {file_name}, {file_bytes}, {account_name}")
 
     return {"status": "ok"}

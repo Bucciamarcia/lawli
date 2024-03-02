@@ -6,6 +6,7 @@ import "package:file_picker/file_picker.dart";
 import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/services/firestore.dart';
 import "package:path/path.dart" as p;
+import 'package:docx_to_text/docx_to_text.dart';
 
 class FormData extends StatefulWidget {
   final double idPratica;
@@ -154,13 +155,18 @@ class _FormDataState extends State<FormData> {
             showCircularProgressIndicator(context);
 
             await PraticheDb().addNewDocument(formState.filenameController.text, data, widget.idPratica);
-            debugPrint("Db aggiornato col nuovo documento.");
 
             final String fileExtension = p.extension(formState.filenameController.text);
             
-            if (fileExtension == "txt") {
-              await StorageService().uploadNewDocument(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
-            } else {
+            if (fileExtension == ".txt") {
+              await StorageService().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
+            } else if (fileExtension == ".docx") {
+              var filenameWithoutExtension = p.withoutExtension(formState.filenameController.text);
+              await StorageService().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
+              final String docxText = docxToText(_uploadedFile.first.bytes!);
+              await StorageService().uploadNewDocumentText(widget.idPratica.toString(), "$filenameWithoutExtension.txt", docxText);
+
+            } else if (fileExtension == ".pdf") {
               await FirebaseFunctions.instance.httpsCallable("get_text_from_new_document").call(<String, dynamic>{
                 "idPratica": widget.idPratica,
                 "fileName": formState.filenameController.text,
