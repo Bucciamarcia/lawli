@@ -112,7 +112,7 @@ class _FormDataState extends State<FormData> {
                 controller: formState.filenameController,
               ),
               const SizedBox(height: 5),
-              Text("Seleziona un file da caricare.",
+              Text("Seleziona un file da caricare. Formati supportati. pdf, docx, txt.",
                   style: Theme.of(context).textTheme.labelSmall)
             ],
           ),
@@ -155,9 +155,17 @@ class _FormDataState extends State<FormData> {
           style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
               backgroundColor: MaterialStateProperty.all(Colors.green[700])),
           onPressed: () async {
-            if (_uploadedFile.isNotEmpty) {
+            if (_uploadedFile.isNotEmpty && (formState.filenameController.text.endsWith(".txt") || formState.filenameController.text.endsWith(".docx") || formState.filenameController.text.endsWith(".pdf"))) {
               try {
-              var result = await FirebaseFunctions
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              );
+              HttpsCallableResult result = await FirebaseFunctions
                   .instance
                   .httpsCallable("upload_document")
                   .call(
@@ -169,6 +177,7 @@ class _FormDataState extends State<FormData> {
                   "accountName": await AccountDb().getAccountName(),
                 },
               );
+              Navigator.of(context).pop();
               showDialog(
                 context: context,
                 builder: (context) {
@@ -189,8 +198,62 @@ class _FormDataState extends State<FormData> {
               // Debugprint the response
               debugPrint("RESPONSE: ${result.data}");
               } catch (e) {
+                Navigator.of(context).pop();
                 debugPrint("ERROR: ${e.toString()}");
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("Errore"),
+                      content: const Text("Errore durante il caricamento del documento."),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    );
+                  },
+                );
               }
+            } else if (_uploadedFile.isEmpty || formState.filenameController.text.isEmpty || formState.dateController.text.isEmpty) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text("Errore"),
+                    content: const Text("Seleziona un file da caricare e una data valida."),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text("Errore"),
+                    content: const Text("Formato file non valido. Carica un file .pdf, .docx o .txt."),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  );
+                },
+              );
             }
           },
           child: const Text(
