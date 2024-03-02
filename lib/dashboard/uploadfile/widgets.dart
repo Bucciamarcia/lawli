@@ -167,12 +167,15 @@ class _FormDataState extends State<FormData> {
               await StorageService().uploadNewDocumentText(widget.idPratica.toString(), "$filenameWithoutExtension.txt", docxText);
 
             } else if (fileExtension == ".pdf") {
+              await StorageService().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
               await FirebaseFunctions.instance.httpsCallable("get_text_from_pdf").call(<String, dynamic>{
                 "idPratica": widget.idPratica,
                 "fileName": formState.filenameController.text,
                 "fileBytes": _uploadedFile.first.bytes!,
                 "accountName": await AccountDb().getAccountName(),
               });
+
+              // TODO: Cancella file .json generato da document ai
             }
             
             Navigator.of(context).pop();

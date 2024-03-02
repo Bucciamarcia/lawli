@@ -3,3 +3,4 @@ firebase-admin
 google-cloud-logging
 docx
 google-cloud-documentai-toolbox
+pytesseract
