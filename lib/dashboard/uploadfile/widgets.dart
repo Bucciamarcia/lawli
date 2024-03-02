@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -159,7 +160,12 @@ class _FormDataState extends State<FormData> {
 
             final String fileExtension = p.extension(formState.filenameController.text);
             if (fileExtension != ".txt") {
-              // TODO: Implement OCR w/ functions
+              await FirebaseFunctions.instance.httpsCallable("get_text_from_new_document").call(<String, dynamic>{
+                "idPratica": widget.idPratica,
+                "fileName": formState.filenameController.text,
+                "fileBytes": _uploadedFile.first.bytes!,
+                "accountName": await AccountDb().getAccountName(),
+              });
             }
             
             Navigator.of(context).pop();

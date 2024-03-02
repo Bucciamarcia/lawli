@@ -6,7 +6,7 @@ from firebase_functions import https_fn
 from firebase_admin import initialize_app
 import google.cloud.logging
 import logging
-from py.functions.upload_document import New_Document
+from py import commons
 
 initialize_app()
 
@@ -21,8 +21,11 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 
 @https_fn.on_call()
-def upload_document(req: https_fn.CallableRequest) -> dict:    
-    
-    response = New_Document(req, logger).upload_document()
+def get_text_from_new_document(req: https_fn.CallableRequest) -> dict:
+    keys = ["idPratica", "fileName", "fileBytes", "accountName"]
 
-    return response
+    id_pratica, file_name, file_bytes, account_name = commons.get_data(req, logger, keys)
+
+    logging.info(f"Received data: {id_pratica}, {file_name}, {file_bytes}, {account_name}")
+
+    return {"status": "ok"}
