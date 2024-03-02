@@ -154,12 +154,13 @@ class _FormDataState extends State<FormData> {
             showCircularProgressIndicator(context);
 
             await PraticheDb().addNewDocument(formState.filenameController.text, data, widget.idPratica);
-            debugPrint("File caricato con successo.");
-
-            await StorageService().uploadNewDocument(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
+            debugPrint("Db aggiornato col nuovo documento.");
 
             final String fileExtension = p.extension(formState.filenameController.text);
-            if (fileExtension != ".txt") {
+            
+            if (fileExtension == "txt") {
+              await StorageService().uploadNewDocument(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
+            } else {
               await FirebaseFunctions.instance.httpsCallable("get_text_from_new_document").call(<String, dynamic>{
                 "idPratica": widget.idPratica,
                 "fileName": formState.filenameController.text,
