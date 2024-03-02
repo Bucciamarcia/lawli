@@ -2,6 +2,7 @@ import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:file_picker/file_picker.dart";
+import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/services/firestore.dart';
 
 class FormData extends StatefulWidget {
@@ -168,7 +169,7 @@ class _FormDataState extends State<FormData> {
               await PraticheDb().addNewDocument(formState.filenameController.text, data, widget.idPratica);
               debugPrint("File caricato con successo.");
 
-              
+              await StorageService().uploadNewDocument(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
               
               Navigator.of(context).pop();
               showDialog(
