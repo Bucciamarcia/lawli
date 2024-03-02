@@ -12,7 +12,7 @@ class StorageService {
     final String accountName = await AccountDb().getAccountName();
 
     try {
-      var docRef = storageRef.child("accounts/$accountName/pratiche/$idPratica/documenti/$fileName");
+      var docRef = storageRef.child("accounts/$accountName/pratiche/$idPratica/documenti/originale_$fileName");
       await docRef.putData(file);
     } catch (e) {
       debugPrint("Error uploading file: $e");

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import "package:file_picker/file_picker.dart";
 import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/services/firestore.dart';
+import "package:path/path.dart" as p;
 
 class FormData extends StatefulWidget {
   final double idPratica;
@@ -155,6 +156,11 @@ class _FormDataState extends State<FormData> {
             debugPrint("File caricato con successo.");
 
             await StorageService().uploadNewDocument(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
+
+            final String fileExtension = p.extension(formState.filenameController.text);
+            if (fileExtension != ".txt") {
+              
+            }
             
             Navigator.of(context).pop();
             showConfirmationDialog(context);
