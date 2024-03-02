@@ -159,7 +159,7 @@ class _FormDataState extends State<FormData> {
 
             final String fileExtension = p.extension(formState.filenameController.text);
             if (fileExtension != ".txt") {
-              
+              // TODO: Implement OCR w/ functions
             }
             
             Navigator.of(context).pop();
