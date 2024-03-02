@@ -13,7 +13,7 @@ class StorageService {
 
     try {
       var docRef = storageRef.child("accounts/$accountName/pratiche/$idPratica/documenti/originale_$fileName");
-      await docRef.putData(file);
+      await docRef.putData(file, SettableMetadata(contentType: "text/plain"));
     } catch (e) {
       debugPrint("Error uploading file: $e");
     }
