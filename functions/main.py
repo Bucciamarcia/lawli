@@ -6,7 +6,7 @@ from firebase_functions import https_fn
 from firebase_admin import initialize_app
 import google.cloud.logging
 import logging
-from functions.py.functions.get_text_from_pdf import Docx_Transformer
+from functions.py.functions.get_text_from_pdf import Pdf_Transformer
 from py import commons
 import os
 
@@ -28,5 +28,9 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict:
 
     id_pratica, file_name, file_bytes, account_name = commons.get_data(req, logger, keys)
 
+    result = Pdf_Transformer(id_pratica, file_name, file_bytes, account_name).batch_process_documents(
+        location="eu",
+    )
+    pass
 
     return {"status": "ok"}

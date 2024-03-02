@@ -167,7 +167,7 @@ class _FormDataState extends State<FormData> {
               await StorageService().uploadNewDocumentText(widget.idPratica.toString(), "$filenameWithoutExtension.txt", docxText);
 
             } else if (fileExtension == ".pdf") {
-              await FirebaseFunctions.instance.httpsCallable("get_text_from_new_document").call(<String, dynamic>{
+              await FirebaseFunctions.instance.httpsCallable("get_text_from_pdf").call(<String, dynamic>{
                 "idPratica": widget.idPratica,
                 "fileName": formState.filenameController.text,
                 "fileBytes": _uploadedFile.first.bytes!,
