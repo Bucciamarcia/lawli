@@ -14,7 +14,7 @@ class StorageService {
     final String extension = p.extension(fileName);
     late String contentType;
     if (extension == ".txt") {
-      contentType = "text/plain";
+      contentType = "text/plain; charset=utf-8";
     } else if (extension == ".pdf") {
       contentType = "application/pdf";
     } else if (extension == ".docx") {
@@ -40,7 +40,7 @@ class StorageService {
     try {
       var docRef = storageRef.child(
           "accounts/$accountName/pratiche/$idPratica/documenti/$fileName");
-      await docRef.putString(text, metadata: SettableMetadata(contentType: "text/plain"));
+      await docRef.putString(text, metadata: SettableMetadata(contentType: "text/plain; charset=utf-8"));
     } catch (e) {
       debugPrint("Error uploading file: $e");
       rethrow;
