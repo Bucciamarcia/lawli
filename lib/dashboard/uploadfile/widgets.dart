@@ -159,12 +159,14 @@ class _FormDataState extends State<FormData> {
             final String fileExtension = p.extension(formState.filenameController.text);
             await StorageService().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
 
-            // if .txt, nothing else to be done
+            
 
             if (fileExtension == ".docx") {
               var filenameWithoutExtension = p.withoutExtension(formState.filenameController.text);
               final String docxText = docxToText(_uploadedFile.first.bytes!);
               await StorageService().uploadNewDocumentText(widget.idPratica.toString(), "$filenameWithoutExtension.txt", docxText);
+              Navigator.of(context).pop();
+              showConfirmationDialog(context, "Documento caricato con successo.");
 
             } else if (fileExtension == ".pdf") {
               await FirebaseFunctions.instance.httpsCallable("get_text_from_pdf").call(<String, dynamic>{
@@ -174,11 +176,15 @@ class _FormDataState extends State<FormData> {
                 "accountName": await AccountDb().getAccountName(),
               });
 
-              StorageService().deleteDocumentRecursive("accounts/${await AccountDb().getAccountName()}/pratiche/${widget.idPratica}/documenti/${formState.filenameController.text}");
+              Navigator.of(context).pop();
+              showConfirmationDialog(context, "Documento caricato con successo.\n\nNOTA: Elaborare un file PDF potrebbe richiedere da 1 a 10 minuti a seconda di lunghezza e complessità.");
+
+            } else if (fileExtension == ".txt") {
+              Navigator.of(context).pop();
+              showConfirmationDialog(context, "Documento caricato con successo.");
             }
             
-            Navigator.of(context).pop();
-            showConfirmationDialog(context);
+            
             } catch (e) {
               Navigator.of(context).pop();
               debugPrint("ERROR: ${e.toString()}");
@@ -259,13 +265,13 @@ class _FormDataState extends State<FormData> {
             );
   }
 
-  Future<dynamic> showConfirmationDialog(BuildContext context) {
+  Future<dynamic> showConfirmationDialog(BuildContext context, String message) {
     return showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
                 title: const Text("Successo"),
-                content: const Text("Documento caricato con successo."),
+                content: Text(message),
                 actions: [
                   TextButton(
                     onPressed: () {

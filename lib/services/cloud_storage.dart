@@ -46,14 +46,4 @@ class StorageService {
       rethrow;
     }
   }
-
-  // Given a folder path, delete all the files in the folder and all the subfolders
-  Future<void> deleteDocumentRecursive(String path) async {
-    try {
-      
-    } catch (e) {
-      debugPrint("Error deleting file: $e");
-      rethrow;
-    }
-  }
 }
