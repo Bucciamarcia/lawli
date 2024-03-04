@@ -1,6 +1,7 @@
 from google.cloud import documentai_v1 as documentai
-from google.cloud import storage
+from google.cloud import storage, pubsub_v1
 import os
+from .. import constants
 import re
 from google.api_core.client_options import ClientOptions
 import logging
@@ -22,8 +23,8 @@ class Pdf_Transformer:
         Entrypoit for the class.
         """
         # Document AI client, project ID, location, and processor ID
-        project_id = 'lawli-bab83'
-        bucket_name = "lawli-bab83.appspot.com"
+        project_id = constants.PROJECT_ID
+        bucket_name = constants.BUCKET_NAME
         location = 'eu'
         processor_id = 'a1de2c755caca3e6' 
 
@@ -47,7 +48,7 @@ class Pdf_Transformer:
         operation = client.batch_process_documents(request=request)
         self.logger.info(f"Operation started")
 
-        operation.result(timeout=180)
+        """ operation.result(timeout=180)
 
         metadata = documentai.BatchProcessMetadata(operation.metadata)
 
@@ -89,4 +90,4 @@ class Pdf_Transformer:
                     self.logger.info(f"Deleted file: {blob.name}")
                 except Exception as e:
                     self.logger.error(f"Error deleting file: {blob.name} - {e}")
-                    raise e
+                    raise e """
