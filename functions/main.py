@@ -9,6 +9,7 @@ import google.cloud.logging
 import logging
 from py.functions.get_text_from_pdf import Pdf_Transformer
 from py.functions.get_txt_from_docai_json import Json_Transformer
+from py.functions.generate_document_summary import Generated_Document
 from py import commons
 import functions_framework
 import base64
@@ -48,5 +49,16 @@ def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     decoded = base64.b64decode(event.data["message"]["data"]).decode()
     
     result = Json_Transformer(logger, decoded, object_id).process_json()
+
+    return {"status": "ok"}
+
+@functions_framework.cloud_event
+def generate_document_summary(event: CloudEvent) -> dict[str, str]:
+    logger.info("generate_document_summary called")
+    logger.info(event)
+    object_id = event.data["message"]["attributes"]["objectId"]
+    decoded = base64.b64decode(event.data["message"]["data"]).decode()
+
+    result = Generated_Document(logger, decoded, object_id).process_document()
 
     return {"status": "ok"}
