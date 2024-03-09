@@ -42,7 +42,6 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
-    print("TEST PRINT - STARTING LOGGING")
     logger.info("on_pubsub_message called")
     logger.info(event)
     object_id = event.data["message"]["attributes"]["objectId"]
