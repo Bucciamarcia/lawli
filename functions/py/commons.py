@@ -29,3 +29,12 @@ class Cloud_Storege_Util:
         self.storage_client = storage.Client()
         self.bucket_name = constants.BUCKET_NAME
         self.bucket = self.storage_client.create_bucket(self.bucket_name)
+    
+    def read_text_file(self, blob_name: str) -> str:
+        """
+        Read a text file from the bucket.
+        Returns the content of the file.
+        """
+        blob = self.bucket.blob(blob_name)
+        with blob.open("r") as f:
+            return f.read()
