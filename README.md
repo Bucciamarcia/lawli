@@ -68,10 +68,12 @@ class UploadFileScreen extends StatelessWidget {
 
 The reason for this code is that there is a different menu on desktop.
 
-## Deploy gcloud get text from json new document
+## Deploy gcloud pubsub triggered functions
 
-This has to be deployed separately because it doesn't use firebase but gcloud:
+These have to be deployed separately because they don't use firebase but gcloud:
 
 ```bash
-cloud functions deploy get_txt_from_docai_json --trigger-topic=documentai_pdf_new_doc --gen2 --runtime=python311 --entry-point=get_txt_from_docai_json --region=europe-west3
+gcloud functions deploy get_txt_from_docai_json --trigger-topic=documentai_pdf_new_doc --gen2 --runtime=python311 --entry-point=get_txt_from_docai_json --region=europe-west3
+
+gcloud functions deploy generate_document_summary --trigger-topic=generate_document_summary --gen2 --runtime=python311 --entry-point=generate_document_summary --region=europe-west3
 ```
