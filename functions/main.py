@@ -27,7 +27,7 @@ handler.setFormatter(formatter)
 
 
 @https_fn.on_call()
-def get_text_from_pdf(req: https_fn.CallableRequest) -> dict:
+def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 
     logger.info("get_text_from_pdf called")
 
