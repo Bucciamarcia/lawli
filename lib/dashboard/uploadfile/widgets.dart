@@ -182,6 +182,9 @@ class _FormDataState extends State<FormData> {
             } else if (fileExtension == ".txt") {
               Navigator.of(context).pop();
               showConfirmationDialog(context, "Documento caricato con successo.");
+            } else {
+              Navigator.of(context).pop();
+              showWrongFormatDialog(context);
             }
             
             
