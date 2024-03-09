@@ -46,3 +46,14 @@ class Cloud_Storege_Util:
         except Exception as e:
             self.logger.error(f"Error while reading text file: {e}")
             raise f"Error while reading text file: {e}"
+    
+    def write_text_file(self, blob_name: str, content: str) -> None:
+        """
+        Write a text file to the bucket.
+        """
+        try:
+            blob = self.bucket.blob(blob_name)
+            blob.upload_from_string(content, content_type="text/plain; charset=utf-8")
+        except Exception as e:
+            self.logger.error(f"Error while writing text file: {e}")
+            raise f"Error while writing text file: {e}"

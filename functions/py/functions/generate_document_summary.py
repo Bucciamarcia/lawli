@@ -15,6 +15,8 @@ class Generated_Document:
             self.logger.error(f"Error loading json: {e}")
             raise e
         self.filename = os.path.basename(self.object_id)
+        self.pathname = os.path.dirname(self.object_id)
+        self.praticapath = os.path.dirname(self.pathname)
         
     def check_ext(self):
         """Check if the file is a txt file."""
@@ -47,6 +49,13 @@ class Generated_Document:
             raise f"Error while summarizing the file: {e}"
 
         return summary
+    
+    def get_blob_output_name(self):
+        """Get the name of the output blob."""
+        if "originale_" in self.filename:
+            return self.filename.replace("originale_", "")
+        else:
+            return self.filename
         
     def process_document(self) -> str:
         """Process the document."""
@@ -56,6 +65,9 @@ class Generated_Document:
             text = commons.Cloud_Storege_Util(self.logger).read_text_file(self.object_id)
             self.logger.info(f"Text from file: {text}")
             summary = self.get_summary(text)
+            blob_filename = self.get_blob_output_name()
+            self.logger.info(f"Writing summary to {blob_filename}...")
+            commons.Cloud_Storege_Util(self.logger).write_text_file(f"{self.praticapath}/riassunti/{blob_filename}", summary)   
             return
         else:
             self.logger.info(f"File {self.object_id} is not a txt file - exiting.")
