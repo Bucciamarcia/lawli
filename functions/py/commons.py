@@ -20,6 +20,13 @@ def get_data(req:https_fn.CallableRequest, logger:logging.Logger, keys:list) -> 
 
     return tuple(data[key] for key in keys)
 
+def check_ext(filename:str) -> bool:
+    """Check if the file is a txt file."""
+    if filename.endswith(".txt"):
+        return True
+    else:
+        return False
+
 class Cloud_Storege_Util:
     """
     Utility class for Cloud Storage operations.

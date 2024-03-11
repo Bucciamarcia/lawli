@@ -4,12 +4,14 @@
 
 from firebase_functions import https_fn
 from cloudevents.http import CloudEvent
+import os
 from firebase_admin import initialize_app
 import google.cloud.logging
 import logging
 from py.functions.get_text_from_pdf import Pdf_Transformer
 from py.functions.get_txt_from_docai_json import Json_Transformer
 from py.functions.generate_document_summary import Generated_Document
+from py.functions.generate_brief_description import Brief_Description
 from py import commons
 import functions_framework
 import base64
@@ -58,7 +60,11 @@ def generate_document_summary(event: CloudEvent) -> dict[str, str]:
     logger.info(event)
     object_id = event.data["message"]["attributes"]["objectId"]
     decoded = base64.b64decode(event.data["message"]["data"]).decode()
+    filename = os.path.basename(object_id)
+    is_txt = commons.check_ext(filename)
 
-    result = Generated_Document(logger, decoded, object_id).process_document()
+    if is_txt:
+        result_1 = Generated_Document(logger, decoded, object_id).process_document()
+        result_2 = Brief_Description(logger, decoded, object_id).process_brief_description()
 
     return {"status": "ok"}
