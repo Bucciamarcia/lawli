@@ -1,7 +1,7 @@
 import logging
 import json
 import os
-from .. import commons, constants
+from .. import commons
 import libreria_ai_per_tutti as ai
 from py.commons import *
 
@@ -29,8 +29,7 @@ class Generated_Document:
         """
         Uses the GPT engine to create a summary of the legal document.
         """
-        logger = logging.getLogger(__name__)
-        logger.info("Building messages array...")
+        self.logger.info("Building messages array...")
         messages=[
             {
                 "role": "system",
@@ -41,7 +40,7 @@ class Generated_Document:
                 "content": text
             }
         ]
-        logger.info("Summarizing the file...")
+        self.logger.info("Summarizing the file...")
         try:
             summary = ai.gpt_call(messages=messages, engine=SUMMARY_ENGINE, temperature=0)
         except Exception as e:
