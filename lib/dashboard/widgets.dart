@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lawli/dashboard/dash_elements/document_table.dart';
 import 'package:lawli/services/services.dart';
 import 'package:expandable_text/expandable_text.dart';
 
@@ -99,6 +100,11 @@ class Documenti extends StatelessWidget {
                       "Ricrea timeline", Colors.white),
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.all(15),
+              child: DocumentTable(),
             )
           ],
         ),
@@ -133,8 +139,8 @@ class ChatBot extends StatefulWidget {
 class _ChatBotState extends State<ChatBot> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: const Placeholder()
+    return const Expanded(
+      child: Placeholder()
       );
   }
 }
