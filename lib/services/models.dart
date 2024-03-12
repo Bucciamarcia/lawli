@@ -56,3 +56,18 @@ class Pratica {
 
   factory Pratica.fromJson(Map<String, dynamic> json) => _$PraticaFromJson(json);
 }
+
+@JsonSerializable()
+class Documento {
+  final String filename;
+  final DateTime data;
+  final String brief_description;
+
+  Documento({
+    this.filename = '',
+    required this.data,
+    this.brief_description = '',
+  });
+
+  factory Documento.fromJson(Map<String, dynamic> json) => _$DocumentoFromJson(json);
+}
