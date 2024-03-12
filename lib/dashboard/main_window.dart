@@ -30,8 +30,8 @@ class MainWindow extends StatelessWidget {
               Expanded(
                 child: SizedBox(
                   height: 600,
-                  child: ListView(
-                    children: [Documenti(pratica: pratica)],
+                  child: Row(
+                    children: [Documenti(pratica: pratica), const SizedBox(height: 20, width: 20,), ChatBot(pratica: pratica)],
                   ),
                 ),
               ),

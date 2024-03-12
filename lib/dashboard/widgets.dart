@@ -59,6 +59,7 @@ class Documenti extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width * 0.5,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -114,5 +115,20 @@ class Documenti extends StatelessWidget {
             Theme.of(context).textTheme.labelSmall?.copyWith(color: textColor),
       ),
     );
+  }
+}
+
+class ChatBot extends StatefulWidget {
+  final Pratica pratica;
+  const ChatBot({super.key, required this.pratica});
+
+  @override
+  State<ChatBot> createState() => _ChatBotState();
+}
+
+class _ChatBotState extends State<ChatBot> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
