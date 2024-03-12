@@ -4,6 +4,7 @@ import os
 import libreria_ai_per_tutti as ai
 from py.commons import *
 from py.constants import *
+from firebase_admin.firestore import firestore
 
 class Brief_Description:
     def __init__(self, logger:logging.Logger, payload:str, object_id:str):
@@ -40,8 +41,22 @@ class Brief_Description:
         except Exception as e:
             self.logger.error(f"Error while generating the brief description: {e}")
             raise f"Error while generating the brief description: {e}"
+        
+    def get_blob_output_name(self):
+        """Get the name of the output blob."""
+        if "originale_" in self.filename:
+            return self.filename.replace("originale_", "")
+        else:
+            return self.filename
 
     def process_brief_description(self) -> str:
         """Entrypoint of the function. Process the brief description."""
         self.logger.info(f"File {self.object_id} is a txt file. Processing...")
         text = Cloud_Storege_Util(self.logger).read_text_file(self.object_id)
+
+        data = {
+            "brief_description": self.generate_brief_description(text, self.filename)
+        }
+
+        document_path = f"{self.praticapath}/documenti/{self.get_blob_output_name()}"
+        Firestore_Util.write_to_firestore(data, True, document_path)

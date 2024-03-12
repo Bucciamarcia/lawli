@@ -4,8 +4,22 @@ Common operations shared by multiple functions.
 
 from firebase_functions import https_fn
 import logging
-from google.cloud import storage
 from py.constants import *
+from google.cloud import storage
+from firebase_admin import firestore
+import google.cloud.logging
+import logging
+
+def initialize_logger() -> logging.Logger:
+    client = google.cloud.logging.Client()
+    handler = client.get_default_handler()
+    client.setup_logging()
+    logger = logging.getLogger("cloudLogger")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    return logger
 
 
 def get_data(req:https_fn.CallableRequest, logger:logging.Logger, keys:list) -> tuple:
@@ -64,3 +78,26 @@ class Cloud_Storege_Util:
         except Exception as e:
             self.logger.error(f"Error while writing text file: {e}")
             raise f"Error while writing text file: {e}"
+
+class Firestore_Util:
+    """
+    Utility class for Firestore operations.
+    """
+    def __init__(self):
+        self.logger = initialize_logger()
+        try:
+            self.db = firestore.client()
+        except Exception as e:
+            self.logger.error(f"Error while initializing firestore client: {e}")
+            raise f"Error while initializing firestore client: {e}"
+    
+    def write_to_firestore(self, data: dict, merge: bool, path:str) -> None:
+        """
+        Write data to Firestore.
+        """
+        try:
+            ref = self.db.document(path)
+            ref.set(data, merge=merge)
+        except Exception as e:
+            self.logger.error(f"Error while writing to Firestore: {e}")
+            raise f"Error while writing to Firestore: {e}"
