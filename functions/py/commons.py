@@ -3,6 +3,7 @@ Common operations shared by multiple functions.
 """
 
 from firebase_functions import https_fn
+import firebase_admin
 import logging
 from py.constants import *
 from google.cloud import storage

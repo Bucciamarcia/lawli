@@ -59,4 +59,4 @@ class Brief_Description:
         }
 
         document_path = f"{self.praticapath}/documenti/{self.get_blob_output_name()}"
-        Firestore_Util.write_to_firestore(data, True, document_path)
+        Firestore_Util().write_to_firestore(data=data, merge=True, path=document_path)

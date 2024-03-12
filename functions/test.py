@@ -1,5 +1,5 @@
 import base64
-from py.functions.generate_document_summary import Generated_Document as test
+from py.functions.generate_brief_description import Brief_Description as test
 import logging
 import json
 
@@ -11,6 +11,6 @@ data = {'attributes': {'specversion': '1.0', 'id': '10418148017162937', 'source'
 decoded = base64.b64decode(data['data']['message']['data']).decode()
 object_id = data["data"]["message"]["attributes"]["objectId"]
 
-result = test(logger, decoded, object_id).process_document()
+result = test(logger, decoded, object_id).process_brief_description()
 
 print(result)
