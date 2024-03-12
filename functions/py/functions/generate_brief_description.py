@@ -1,9 +1,9 @@
 import logging
 import json
 import os
-from ... import commons
 import libreria_ai_per_tutti as ai
 from py.commons import *
+from py.constants import *
 
 class Brief_Description:
     def __init__(self, logger:logging.Logger, payload:str, object_id:str):
@@ -18,6 +18,30 @@ class Brief_Description:
         self.pathname = os.path.dirname(self.object_id)
         self.praticapath = os.path.dirname(self.pathname)
 
+    def generate_brief_description(self, text:str, filename:str) -> str:
+        """
+        Uses the GPT engine to create a brief description of the legal document.
+        """
+        self.logger.info("Generating GPT message...")
+
+        messages = [
+            {
+                "role": "system",
+                "content": BRIEF_DESCRIPTION_GPT_MESSAGE
+            },
+            {
+                "role": "user",
+                "content": USR_MSG_TEMPLATE.format(filename=filename, text=text)
+            }
+        ]
+
+        try:
+            return(ai.gpt_call(messages=messages, engine=SUMMARY_ENGINE, temperature=0))
+        except Exception as e:
+            self.logger.error(f"Error while generating the brief description: {e}")
+            raise f"Error while generating the brief description: {e}"
+
     def process_brief_description(self) -> str:
         """Entrypoint of the function. Process the brief description."""
-        pass
+        self.logger.info(f"File {self.object_id} is a txt file. Processing...")
+        text = Cloud_Storege_Util(self.logger).read_text_file(self.object_id)
