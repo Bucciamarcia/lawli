@@ -83,8 +83,13 @@ class Documenti extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 15),
-                  child: documentiButton(context, () => Navigator.pushNamed(context, "/dashboard/uploadfile"), Colors.lightBlue[700],
-                      "Nuovo Documento", Colors.white),
+                  child: documentiButton(
+                      context,
+                      () =>
+                          Navigator.pushNamed(context, "/dashboard/uploadfile"),
+                      Colors.lightBlue[700],
+                      "Nuovo Documento",
+                      Colors.white),
                 ),
                 documentiButton(context, () {}, Colors.grey, "Ricrea Riassunto",
                     Colors.white),
@@ -108,7 +113,6 @@ class Documenti extends StatelessWidget {
       style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
             backgroundColor: MaterialStateProperty.all(backgroundColor),
           ),
-
       child: Text(
         text,
         style:
@@ -129,6 +133,8 @@ class ChatBot extends StatefulWidget {
 class _ChatBotState extends State<ChatBot> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Expanded(
+      child: const Placeholder()
+      );
   }
 }
