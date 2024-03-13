@@ -102,9 +102,9 @@ class Documenti extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.all(15),
-              child: DocumentTable(),
+            Padding(
+              padding: const EdgeInsets.all(15),
+                child: DocumentTable(pratica: pratica),
             )
           ],
         ),
