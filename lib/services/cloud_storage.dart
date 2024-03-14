@@ -46,4 +46,13 @@ class StorageService {
       rethrow;
     }
   }
+
+  Future<void> deleteDocument(String path, String fileName) async {
+    try {
+      await storageRef.child(path).child(fileName).delete();
+    } catch (e) {
+      debugPrint("Error deleting file: $e");
+      rethrow;
+    }
+  }
 }

@@ -4,6 +4,7 @@ import "dart:async";
 import "../services/auth.dart";
 import "../services/models.dart";
 import "dart:developer";
+import "cloud_storage.dart";
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -201,6 +202,52 @@ class AssistitoDb extends FirestoreService {
       rethrow;
     }
   }
+}
+
+class DocumentoDb extends FirestoreService {
+  Future<void> deleteDocumentFromPraticaid(double praticaId, String filename, [bool deleteStorage = true]) async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      await accountRef
+          .collection("pratiche")
+          .doc(praticaId.toString())
+          .collection("documenti")
+          .doc(filename)
+          .delete();
+    } catch (e) {
+      debugPrint("Error deleting document: $e");
+      rethrow;
+    }
+
+    if (deleteStorage) {
+      int idx = filename.lastIndexOf(".");
+      String filenameNoExtension = idx != -1 ? filename.substring(0, idx) : filename;
+      try {
+        await StorageService().deleteDocument(
+            "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/documenti",
+            "$filenameNoExtension.txt");
+      } catch (e) {
+        debugPrint("Error deleting file: $e");
+      }
+      // Delete originale
+      try {
+        await StorageService().deleteDocument(
+            "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/documenti",
+            "originale_$filename");
+      } catch (e) {
+        debugPrint("Error deleting file originale: $e");
+      }
+      // Delete in riassunti folder
+      try {
+        await StorageService().deleteDocument(
+            "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/riassunti",
+            filename);
+      } catch (e) {
+        debugPrint("Nessun riassunto, nessun rimorso: $e");
+      }
+    }
+  }
+
 }
 
 class RetrieveObjectFromDb extends FirestoreService {

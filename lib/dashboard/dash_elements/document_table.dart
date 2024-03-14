@@ -26,7 +26,8 @@ class DocumentTable extends StatelessWidget {
               documenti: documenti,
               documentiFilename: documentiFilename,
               documentiData: documentiData,
-              documentiBriefDescription: documentiBriefDescription);
+              documentiBriefDescription: documentiBriefDescription,
+              pratica: pratica);
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else {
@@ -40,12 +41,14 @@ class DocumentTable extends StatelessWidget {
 class DataTableEntry extends StatelessWidget {
   const DataTableEntry({
     super.key,
+    required this.pratica,
     required this.documenti,
     required this.documentiFilename,
     required this.documentiData,
     required this.documentiBriefDescription,
   });
 
+  final Pratica pratica;
   final List<Documento> documenti;
   final List<String> documentiFilename;
   final List<DateTime> documentiData;
@@ -80,7 +83,8 @@ class DataTableEntry extends StatelessWidget {
                   const SizedBox(width: 10),
                   IconButton(
                     onPressed: () {
-                      // TODO: Implement delete functionality
+                      DocumentoDb().deleteDocumentFromPraticaid(
+                          pratica.id, docId);
                     },
                     icon: const Icon(Icons.delete),
                     tooltip: "Elimina",

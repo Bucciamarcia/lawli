@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/foundation.dart';
@@ -180,6 +182,7 @@ class _FormDataState extends State<FormData> {
               showConfirmationDialog(context, "Documento caricato con successo.\n\nNOTA: Elaborare un file PDF potrebbe richiedere da 1 a 10 minuti a seconda di lunghezza e complessità.");
 
             } else if (fileExtension == ".txt") {
+              await StorageService().uploadNewDocumentText(widget.idPratica.toString(), formState.filenameController.text, String.fromCharCodes(_uploadedFile.first.bytes!));
               Navigator.of(context).pop();
               showConfirmationDialog(context, "Documento caricato con successo.");
             } else {
