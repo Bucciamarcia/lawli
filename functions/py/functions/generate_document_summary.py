@@ -34,8 +34,9 @@ class Generated_Document:
             }
         ]
         self.logger.info("Summarizing the file...")
+        self.logger.info(f"APIKEY: {os.environ.get('OPENAI_APIKEY')}")
         try:
-            summary = ai.gpt_call(messages=messages, engine=SUMMARY_ENGINE, temperature=0)
+            summary = ai.gpt_call(messages=messages, engine=SUMMARY_ENGINE, temperature=0, apikey=os.environ.get("OPENAI_APIKEY"))
         except Exception as e:
             self.logger.error(f"Error while summarizing the file: {e}")
             raise f"Error while summarizing the file: {e}"
@@ -52,7 +53,6 @@ class Generated_Document:
     def process_document(self) -> str:
         """Process the document."""
         
-        self.logger.info(f"File {self.object_id} is a txt file. Processing...")
         text = commons.Cloud_Storege_Util(self.logger).read_text_file(self.object_id)
         self.logger.info(f"Text from file: {text}")
         summary = self.get_summary(text)

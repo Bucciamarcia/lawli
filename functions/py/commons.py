@@ -102,3 +102,10 @@ class Firestore_Util:
         except Exception as e:
             self.logger.error(f"Error while writing to Firestore: {e}")
             raise f"Error while writing to Firestore: {e}"
+    
+    def search_document(self, path:str, filename:str) -> str:
+        ref = self.db.collection(path).get()
+        for doc in ref:
+            doc_dict = doc.to_dict()
+            if filename in doc_dict["filename"]:
+                return doc_dict["filename"]

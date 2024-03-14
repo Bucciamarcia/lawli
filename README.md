@@ -15,6 +15,10 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Environment variables
+
+Google Functions requires a .env.yaml file. Rename .env.yaml.template from `functions/` and enter the variables.
+
 # Layout builder
 
 Code for each new page:
@@ -72,8 +76,10 @@ The reason for this code is that there is a different menu on desktop.
 
 These have to be deployed separately because they don't use firebase but gcloud:
 
-```bash
-gcloud functions deploy get_txt_from_docai_json --trigger-topic=documentai_pdf_new_doc --gen2 --runtime=python311 --entry-point=get_txt_from_docai_json --region=europe-west3
+(`cd functions` first)
 
-gcloud functions deploy generate_document_summary --trigger-topic=generate_document_summary --gen2 --runtime=python311 --entry-point=generate_document_summary --region=europe-west3
+```bash
+gcloud functions deploy get_txt_from_docai_json --trigger-topic=documentai_pdf_new_doc --env-vars-file .env.yaml --gen2 --runtime=python311 --entry-point=get_txt_from_docai_json --region=europe-west3
+
+gcloud functions deploy generate_document_summary --trigger-topic=generate_document_summary --env-vars-file .env.yaml --gen2 --runtime=python311 --entry-point=generate_document_summary --region=europe-west3
 ```

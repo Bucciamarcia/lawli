@@ -37,17 +37,24 @@ class Brief_Description:
         ]
 
         try:
-            return(ai.gpt_call(messages=messages, engine=SUMMARY_ENGINE, temperature=0))
+            return(ai.gpt_call(messages=messages, engine=SUMMARY_ENGINE, temperature=0, apikey=os.environ.get("OPENAI_APIKEY")))
         except Exception as e:
             self.logger.error(f"Error while generating the brief description: {e}")
             raise f"Error while generating the brief description: {e}"
         
-    def get_blob_output_name(self):
+    def get_blob_output_name(self, original_filename) -> str:
         """Get the name of the output blob."""
+
         if "originale_" in self.filename:
-            return self.filename.replace("originale_", "")
+            return original_filename.replace("originale_", "")
         else:
-            return self.filename
+            return original_filename
+        
+    def get_original_filename(self):
+        """Get the original extension of the file."""
+        filname_no_ext = os.path.splitext(self.filename)[0]
+        original_filename = Firestore_Util().search_document(path = "accounts/lawli/pratiche/1/documenti", filename=filname_no_ext)
+        return original_filename
 
     def process_brief_description(self) -> str:
         """Entrypoint of the function. Process the brief description."""
@@ -58,5 +65,7 @@ class Brief_Description:
             "brief_description": self.generate_brief_description(text, self.filename)
         }
 
-        document_path = f"{self.praticapath}/documenti/{self.get_blob_output_name()}"
+        original_filename = self.get_original_filename()
+
+        document_path = f"{self.praticapath}/documenti/{self.get_blob_output_name(original_filename)}"
         Firestore_Util().write_to_firestore(data=data, merge=True, path=document_path)
