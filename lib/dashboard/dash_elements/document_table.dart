@@ -73,9 +73,11 @@ class DataTableEntry extends StatelessWidget {
                 DataCell(Row(children: [
                   IconButton(
                     onPressed: () async {
-                      Documento document = await RetrieveObjectFromDb().getDocumento(pratica.id, docId);
+                      Documento documento = await RetrieveObjectFromDb().getDocumento(pratica.id, docId);
                       Provider.of<DashboardProvider>(context, listen: false)
-                                .setIdDocument(document.filename);
+                                .setDocumento(documento);
+                      Provider.of<DashboardProvider>(context, listen: false)
+                                .setPratica(pratica);
                             debugPrint(pratica.id.toString());
                       Navigator.pushNamed(context, "/dashboard/document/update");
                     },

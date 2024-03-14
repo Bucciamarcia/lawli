@@ -7,8 +7,8 @@ class UpdateDocumentScreen extends StatelessWidget {
   const UpdateDocumentScreen({super.key});
 
   Scaffold body(BuildContext context) {
-    final praticaId = Provider.of<DashboardProvider>(context).idPratica;
-    final documentId = Provider.of<DashboardProvider>(context).idDocument;
+    final Pratica pratica = Provider.of<DashboardProvider>(context).pratica;
+    final Documento documento = Provider.of<DashboardProvider>(context).documento;
     return Scaffold(
       body: Container(
         alignment: Alignment.topCenter,
@@ -16,7 +16,7 @@ class UpdateDocumentScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              "Pratica: ${praticaId} - Documento: ${documentId}",
+              "Pratica: ${pratica.id} - Documento: ${documento.filename}",
               style: Theme.of(context).textTheme.displayLarge,
             ),
           ],
