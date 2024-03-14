@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/foundation.dart';
