@@ -102,10 +102,12 @@ class Documenti extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.all(15),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(15),
                 child: DocumentTable(pratica: pratica),
-            )
+              ),
+            ),
           ],
         ),
       ),
@@ -139,8 +141,6 @@ class ChatBot extends StatefulWidget {
 class _ChatBotState extends State<ChatBot> {
   @override
   Widget build(BuildContext context) {
-    return const Expanded(
-      child: Placeholder()
-      );
+    return const Expanded(child: Placeholder());
   }
 }

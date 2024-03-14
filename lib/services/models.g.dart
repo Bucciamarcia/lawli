@@ -54,12 +54,12 @@ Map<String, dynamic> _$PraticaToJson(Pratica instance) => <String, dynamic>{
 
 Documento _$DocumentoFromJson(Map<String, dynamic> json) => Documento(
       filename: json['filename'] as String? ?? '',
-      data: DateTime.parse(json['data'] as String),
+      data: Documento._fromJsonTimestamp(json['data'] as Timestamp),
       brief_description: json['brief_description'] as String? ?? '',
     );
 
 Map<String, dynamic> _$DocumentoToJson(Documento instance) => <String, dynamic>{
       'filename': instance.filename,
-      'data': instance.data.toIso8601String(),
+      'data': Documento._toJsonTimestamp(instance.data),
       'brief_description': instance.brief_description,
     };
