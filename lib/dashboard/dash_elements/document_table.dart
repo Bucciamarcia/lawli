@@ -23,7 +23,7 @@ class DocumentTable extends StatelessWidget {
             columns: const [
               DataColumn2(label: Text('Filename')),
               DataColumn2(label: Text('Data')),
-              DataColumn2(label: Text('Brief Description')),
+              DataColumn2(label: Text('Descrizione')),
             ],
             rows: List<DataRow>.generate(documenti.length, (index) => DataRow(
               cells: [
