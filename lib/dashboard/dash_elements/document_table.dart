@@ -62,26 +62,33 @@ class DataTableEntry extends StatelessWidget {
       ],
       rows: List<DataRow>.generate(
           documenti.length,
-          (index) => DataRow(
-                cells: [
-                  DataCell(Text(documentiFilename[index])),
-                  DataCell(Text(documentiData[index].toString())),
-                  DataCell(Text(documentiBriefDescription[index])),
-                  DataCell(Row(children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.edit),
-                      tooltip: "Modifica",
-                    ),
-                    const SizedBox(width: 10),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.delete),
-                      tooltip: "Elimina",
-                    ),
-                  ]))
-                ],
-              )),
+          (index) {
+            String docId = documenti[index].filename;
+            return DataRow(
+              cells: [
+                DataCell(Text(documentiFilename[index])),
+                DataCell(Text(documentiData[index].toString())),
+                DataCell(Text(documentiBriefDescription[index])),
+                DataCell(Row(children: [
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Implement edit functionality
+                    },
+                    icon: const Icon(Icons.edit),
+                    tooltip: "Modifica",
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Implement delete functionality
+                    },
+                    icon: const Icon(Icons.delete),
+                    tooltip: "Elimina",
+                  ),
+                ]))
+              ],
+            );
+          }),
     );
   }
 }
