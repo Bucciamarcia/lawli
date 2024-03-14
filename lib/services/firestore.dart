@@ -308,4 +308,17 @@ class RetrieveObjectFromDb extends FirestoreService {
     var topics = data.map((d) => Documento.fromJson(d));
     return topics.toList();
   }
+
+  Future<Documento> getDocumento(double praticaId, String filename) async {
+    String accountName = await AccountDb().getAccountName();
+    var ref = _db
+        .collection("accounts")
+        .doc(accountName)
+        .collection("pratiche")
+        .doc(praticaId.toString())
+        .collection("documenti")
+        .doc(filename);
+    var snapshot = await ref.get();
+    return Documento.fromJson(snapshot.data() ?? {});
+  }
 }

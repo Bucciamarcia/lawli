@@ -1,9 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-
-import '../../services/firestore.dart';
-import '../../services/models.dart';
+import 'package:provider/provider.dart';
+import '../../services/services.dart';
 
 class DocumentTable extends StatelessWidget {
   final Pratica pratica;
@@ -58,9 +56,9 @@ class DataTableEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     return DataTable2(
       columns: const [
-        DataColumn2(label: Text('Filename')),
+        DataColumn2(label: Text('Filename'), size: ColumnSize.L),
         DataColumn2(label: Text('Data')),
-        DataColumn2(label: Text('Descrizione')),
+        DataColumn2(label: Text('Descrizione'), size: ColumnSize.L),
         DataColumn2(label: Text('Azioni')),
       ],
       rows: List<DataRow>.generate(
@@ -74,8 +72,12 @@ class DataTableEntry extends StatelessWidget {
                 DataCell(Text(documentiBriefDescription[index])),
                 DataCell(Row(children: [
                   IconButton(
-                    onPressed: () {
-                      // TODO: Implement edit functionality
+                    onPressed: () async {
+                      Documento document = await RetrieveObjectFromDb().getDocumento(pratica.id, docId);
+                      Provider.of<DashboardProvider>(context, listen: false)
+                                .setIdDocument(document.filename);
+                            debugPrint(pratica.id.toString());
+                      Navigator.pushNamed(context, "/dashboard/document/update");
                     },
                     icon: const Icon(Icons.edit),
                     tooltip: "Modifica",
