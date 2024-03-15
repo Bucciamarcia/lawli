@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
+import "package:provider/provider.dart";
 import "../../services/auth.dart";
+import "../../services/services.dart";
 
 class LoginBlock extends StatefulWidget {
   const LoginBlock({super.key});
@@ -62,6 +64,8 @@ class _LoginBlockState extends State<LoginBlock> {
         } catch (e) {
           debugPrint("Error logging in: $e");
         } finally {
+          Provider.of<DashboardProvider>(context, listen: false)
+              .setAccountName(await AccountDb().getAccountName());
           setState(() {
             _isLoggingIn = false; // Reset login state
           });

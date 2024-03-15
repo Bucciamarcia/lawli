@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +53,20 @@ class StorageService {
       await storageRef.child(path).child(fileName).delete();
     } catch (e) {
       debugPrint("Error deleting file: $e");
+      rethrow;
+    }
+  }
+
+  Future<String> getTextDocument(String path, String filename) async {
+    try {
+      final Uint8List? u8list = await storageRef.child(path).child(filename).getData();
+      if (u8list != null) {
+        return utf8.decode(u8list);
+      } else {
+        return "Riassunto non presente";
+      }
+    } catch (e) {
+      debugPrint("Error getting file: $e");
       rethrow;
     }
   }
