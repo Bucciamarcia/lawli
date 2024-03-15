@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dashboard/document/update/update_document.dart';
+import 'dashboard/document/view/view_document.dart';
 import 'home/home.dart';
 import 'dashboard/dashboard.dart';
 import 'dashboard/uploadfile/uploadfile.dart';
@@ -22,5 +22,5 @@ final Map<String, WidgetBuilder> routes = {
   '/pratiche': (BuildContext context) => const PraticheScreen(),
   '/assistiti/nuovo': (BuildContext context) => const NuovoAssistitoScreen(),
   '/pratiche/nuovo': (BuildContext context) => const NuovaPraticaScreen(),
-  '/dashboard/document/update': (BuildContext context) => const UpdateDocumentScreen(),
+  '/dashboard/document/update': (BuildContext context) => const ViewDocumentScreen(),
 };

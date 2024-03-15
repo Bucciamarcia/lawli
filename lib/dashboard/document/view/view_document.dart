@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import "../../../services/services.dart";
 import '../../../shared/shared.dart';
 
-class UpdateDocumentScreen extends StatelessWidget {
-  const UpdateDocumentScreen({super.key});
+class ViewDocumentScreen extends StatelessWidget {
+  const ViewDocumentScreen({super.key});
 
   Scaffold body(BuildContext context) {
     final Pratica pratica = Provider.of<DashboardProvider>(context).pratica;
