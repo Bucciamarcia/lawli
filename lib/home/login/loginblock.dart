@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
-import "package:provider/provider.dart";
 import "../../services/services.dart";
 
 class LoginBlock extends StatefulWidget {
@@ -54,22 +53,23 @@ class _LoginBlockState extends State<LoginBlock> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
       onPressed: () async {
-        setState(() {
-          _isLoggingIn = true; // Start the login process
-        });
-        try {
-          await authServiceCallback(); // Call the authService function here
-          // Handle navigation or state changes after login if necessary
-        } catch (e) {
-          debugPrint("Error logging in: $e");
-        } finally {
-          Provider.of<DashboardProvider>(context, listen: false)
-              .setAccountName(await AccountDb().getAccountName());
-          setState(() {
-            _isLoggingIn = false; // Reset login state
-          });
-        }
-      },
+  setState(() {
+    _isLoggingIn = true; 
+  });
+
+  try {
+    await authServiceCallback();
+    debugPrint("LOGGED IN SUCCESSFULLY!");
+  } catch (e) {
+    debugPrint("Error logging in: $e");
+  } finally {
+    if (mounted) {
+      setState(() {
+        _isLoggingIn = false;
+      });
+    }
+  }
+},
       label: Text(text),
     );
   }

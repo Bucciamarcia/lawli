@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:lawli/services/firestore.dart';
 import 'package:lawli/services/models.dart';
 
 class DashboardProvider extends ChangeNotifier {
@@ -33,8 +34,8 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setAccountName(String name) {
-    accountName = name;
+  void setAccountName() async {
+    accountName = await AccountDb().getAccountName();
     notifyListeners();
   }
 }
