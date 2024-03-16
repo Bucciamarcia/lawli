@@ -57,16 +57,22 @@ class StorageService {
     }
   }
 
-  Future<String> getTextDocument(String path, String filename) async {
+  Future<String> getTextDocument(String path) async {
     try {
-      final Uint8List? u8list = await storageRef.child(path).child(filename).getData();
+      debugPrint("PATH GTD: $path");
+      debugPrint("STORAGE REF GTD: $storageRef");
+      final Uint8List? u8list = await storageRef.child(path).getData();
+      debugPrint("GTD: $u8list");
       if (u8list != null) {
         return utf8.decode(u8list);
       } else {
         return "Riassunto non presente";
       }
+    } on FirebaseException catch (e) {
+      debugPrint("Failed fe with error '${e.code}': ${e.message}");
+      rethrow;
     } catch (e) {
-      debugPrint("Error getting file: $e");
+      debugPrint("Error else getting file: $e");
       rethrow;
     }
   }
