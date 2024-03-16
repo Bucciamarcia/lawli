@@ -13,12 +13,20 @@ class ViewDocumentScreen extends StatelessWidget {
     final Documento documento =
         Provider.of<DashboardProvider>(context).documento;
     return Scaffold(
-        body: DataTable2(columns: const [
-      DataColumn2(
-        label: Text("Campo"),
-        size: ColumnSize.S,
+        body: Column(
+      children: [
+        dataTableExp(pratica, documento),
+        Text("test")
+      ],
+    ));
+  }
+
+  dataTableExp(Pratica pratica, Documento documento) {
+    return DataTable(columns: const [
+      DataColumn(
+        label: Text("")
       ),
-      DataColumn(label: Text("Valore")),
+      DataColumn(label: Text("")),
     ], rows: [
       DataRow(cells: [
         const DataCell(Text("Pratica")),
@@ -36,34 +44,18 @@ class ViewDocumentScreen extends StatelessWidget {
         const DataCell(Text("Descrizione breve")),
         DataCell(Text(documento.brief_description.toString()))
       ]),
-      DataRow(cells: [
-        const DataCell(Text("Descrizione")),
-        DataCell(FutureBuilder<String>(
-          future: getTextDocumentFuture(context, pratica, documento),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Text(snapshot.data.toString());
-            } else if (snapshot.hasError) {
-              return Text("Errore: ${snapshot.error}");
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        )),
-      ]),
-    ]));
+    ]);
   }
 
   Future<String> getTextDocumentFuture(
       BuildContext context, Pratica pratica, Documento documento) async {
-    return StorageService().getTextDocument(
-        await textDocumentPath(context, pratica, documento));
+    return StorageService()
+        .getTextDocument(await textDocumentPath(context, pratica, documento));
   }
 
   String textDocumentFilename(Documento documento) {
-      String filename = TransformDocumentName(documento.filename).getTxtVersion();
-      debugPrint("FILENAME: $filename");
-      return filename;
+    String filename = TransformDocumentName(documento.filename).getTxtVersion();
+    return filename;
   }
 
   Future<String> textDocumentPath(
@@ -72,7 +64,6 @@ class ViewDocumentScreen extends StatelessWidget {
         await AccountDb().getAccountName(),
         pratica.id.toString(),
         TransformDocumentName(documento.filename).getRootFilename());
-    debugPrint("PATH: $path");
     return path;
   }
 
