@@ -16,7 +16,7 @@ class DashboardProvider extends ChangeNotifier {
           data: DateTime.now())
       : Documento(data: DateTime.now());
 
-  String accountName = ""; // kDebugMode ? "lawli" : "";
+  String accountName = kDebugMode ? "lawli" : "";
 
   void setIdPratica(double id) {
     idPratica = id;
@@ -35,7 +35,11 @@ class DashboardProvider extends ChangeNotifier {
 
   void setAccountName(String name) {
     accountName = name;
-    notifyListeners();
+    try {
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error notifying listeners on setAccountName: $e");
+    }
   }
 
 }
