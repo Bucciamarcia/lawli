@@ -20,6 +20,9 @@ class ViewDocumentScreen extends StatelessWidget {
     ));
   }
 
+
+  // Everything below this is about the table at the top
+
   dataTableExp(Pratica pratica, Documento documento, BuildContext context) {
     return DataTable(columns: const [
       DataColumn(
