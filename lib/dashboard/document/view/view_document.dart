@@ -1,4 +1,3 @@
-import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:lawli/services/cloud_storage.dart';
 import 'package:provider/provider.dart';
@@ -15,13 +14,13 @@ class ViewDocumentScreen extends StatelessWidget {
     return Scaffold(
         body: Column(
       children: [
-        dataTableExp(pratica, documento),
+        dataTableExp(pratica, documento, context),
         Text("test")
       ],
     ));
   }
 
-  dataTableExp(Pratica pratica, Documento documento) {
+  dataTableExp(Pratica pratica, Documento documento, BuildContext context) {
     return DataTable(columns: const [
       DataColumn(
         label: Text("")
@@ -44,6 +43,27 @@ class ViewDocumentScreen extends StatelessWidget {
         const DataCell(Text("Descrizione breve")),
         DataCell(Text(documento.brief_description.toString()))
       ]),
+      DataRow(cells:[
+        const DataCell(Text("Descrizione")),
+        DataCell(FutureBuilder<String>(
+          future: getTextDocumentFuture(context, pratica, documento),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data == null) {
+                return const Text("Nessun testo disponibile");
+              } else {
+              return Text(snapshot.data!);
+              }
+            } else if (snapshot.hasError) {
+              return Text("Errore: ${snapshot.error}");
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        )
+        )
+      ]
+      )
     ]);
   }
 
@@ -51,11 +71,6 @@ class ViewDocumentScreen extends StatelessWidget {
       BuildContext context, Pratica pratica, Documento documento) async {
     return StorageService()
         .getTextDocument(await textDocumentPath(context, pratica, documento));
-  }
-
-  String textDocumentFilename(Documento documento) {
-    String filename = TransformDocumentName(documento.filename).getTxtVersion();
-    return filename;
   }
 
   Future<String> textDocumentPath(
