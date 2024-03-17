@@ -12,71 +12,104 @@ class ViewDocumentScreen extends StatelessWidget {
     final Documento documento =
         Provider.of<DashboardProvider>(context).documento;
     return Scaffold(
-        body: Column(
-      children: [
-        dataTableExp(pratica, documento, context),
-        Text("test")
-      ],
-    ));
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 20),
+            child: Text(
+              "Riassunto del documento",
+              style: Theme.of(context).textTheme.displayLarge,
+            ),
+          ),
+          SizedBox(
+            height: 300,
+            child: Row(
+              children: [
+                dataTableExp(pratica, documento, context),
+                const SizedBox(
+                  width: 20,
+                ),
+                riassuntoContainer(context, pratica, documento),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
+  Flexible riassuntoContainer(
+      BuildContext context, Pratica pratica, Documento documento) {
+    return Flexible(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          color: Colors.white,
+        ),
+        padding: const EdgeInsets.all(20),
+        child: FutureBuilder<String>(
+          future: getTextDocumentFuture(context, pratica, documento),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.hasData) {
+              return SelectableText(
+                  snapshot.data ?? "Nessun testo disponibile");
+            } else if (snapshot.hasError) {
+              return Text(
+                  "Errore nel caricamento della descrizione: ${snapshot.error}");
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
+  }
 
   // Everything below this is about the table at the top
 
   dataTableExp(Pratica pratica, Documento documento, BuildContext context) {
     return DataTable(columns: const [
-      DataColumn(
-        label: Text("")
-      ),
+      DataColumn(label: Text("")),
       DataColumn(label: Text("")),
     ], rows: [
       DataRow(cells: [
         const DataCell(Text("Pratica")),
-        DataCell(Text(pratica.titolo.toString()))
+        DataCell(SelectableText(pratica.titolo.toString()))
       ]),
       DataRow(cells: [
         const DataCell(Text("Documento")),
-        DataCell(Text(documento.filename.toString()))
+        DataCell(SelectableText(documento.filename.toString()))
       ]),
       DataRow(cells: [
         const DataCell(Text("Data")),
-        DataCell(Text(documento.data.toString()))
+        DataCell(SelectableText(documento.data.toString()))
       ]),
       DataRow(cells: [
         const DataCell(Text("Descrizione breve")),
-        DataCell(Text(documento.brief_description.toString()))
+        DataCell(SelectableText(documento.brief_description.toString()))
       ]),
-      DataRow(cells:[
-        const DataCell(Text("Descrizione")),
-        DataCell(FutureBuilder<String>(
-      future: getTextDocumentFuture(context, pratica, documento),
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.hasData) {
-          return SelectableText(snapshot.data ?? "Nessun testo disponibile");
-        } else if (snapshot.hasError) {
-          return Text("Errore nel caricamento della descrizione: ${snapshot.error}");
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
-    )), 
-      ]
-      )
     ]);
-
-    
   }
 
-  Future<Widget> buildDescriptionCell(BuildContext context, Pratica pratica, Documento documento) async {
+  Future<Widget> buildDescriptionCell(
+      BuildContext context, Pratica pratica, Documento documento) async {
     // Handle loading and error state directly
     try {
-      final descriptionText = await getTextDocumentFuture(context, pratica, documento);
+      final descriptionText =
+          await getTextDocumentFuture(context, pratica, documento);
       return Text(descriptionText);
     } catch (e) {
       return Text("Errore nel caricamento della descrizione: $e");
     }
   }
-  
 
   Future<String> getTextDocumentFuture(
       BuildContext context, Pratica pratica, Documento documento) async {
@@ -98,7 +131,7 @@ class ViewDocumentScreen extends StatelessWidget {
     AppBar appBar(BuildContext context) {
       return AppBar(
         centerTitle: true,
-        title: const Text("Assistiti"),
+        title: const Text("Dettagli del documento"),
       );
     }
 
