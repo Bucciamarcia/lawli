@@ -33,4 +33,9 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setAccountName(String name) {
+    accountName = name;
+    notifyListeners();
+  }
+
 }

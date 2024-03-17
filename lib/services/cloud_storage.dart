@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:lawli/services/firestore.dart';
 import "package:path/path.dart" as p;
 
+import 'services.dart';
+
 class StorageService {
   final FirebaseStorage storage = FirebaseStorage.instance;
   final Reference storageRef = FirebaseStorage.instance.ref();
@@ -72,5 +74,10 @@ class StorageService {
       debugPrint("Error else getting file: $e");
       rethrow;
     }
+  }
+
+  String getOriginalDocumentUrl(String filename, double idPratica, String accountName) {
+    final String url = "accounts/$accountName/pratiche/${idPratica.toString()}/documenti/originale_$filename";
+    return url;
   }
 }

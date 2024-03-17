@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lawli/home/login/login.dart';
 import 'package:lawli/home/recent/recent.dart';
-
-import '../services/auth.dart';
+import 'package:provider/provider.dart';
+import '../services/services.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -17,7 +17,19 @@ class HomeScreen extends StatelessWidget {
           } else if (snapshot.hasError) {
             return const Text("ERROR!");
           } else if (snapshot.hasData) {
-            return const RecentScreen();
+            return FutureBuilder(
+              future: AccountDb().getAccountName(), // Async operation here
+              builder: (context, accountNameSnapshot) {
+                if (accountNameSnapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (accountNameSnapshot.hasError) {
+                  return const Text('Error getting name');
+                } else {
+                  Provider.of<DashboardProvider>(context, listen: false).setAccountName(accountNameSnapshot.data!);
+                  return const RecentScreen(); 
+                }
+              },
+            );
           } else {
             return const LoginScreen();
           }

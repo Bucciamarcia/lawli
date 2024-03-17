@@ -76,6 +76,9 @@ class ViewDocumentScreen extends StatelessWidget {
   // Everything below this is about the table at the top
 
   dataTableExp(Pratica pratica, Documento documento, BuildContext context) {
+    String urlDocumento = StorageService().getOriginalDocumentUrl(
+        documento.filename, pratica.id, Provider.of<DashboardProvider>(context).accountName);
+    debugPrint("URL DOCUMENTO: $urlDocumento");
     return DataTable(columns: const [
       DataColumn(label: Text("")),
       DataColumn(label: Text("")),
