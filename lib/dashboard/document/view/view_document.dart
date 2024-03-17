@@ -46,26 +46,34 @@ class ViewDocumentScreen extends StatelessWidget {
       DataRow(cells:[
         const DataCell(Text("Descrizione")),
         DataCell(FutureBuilder<String>(
-          future: getTextDocumentFuture(context, pratica, documento),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data == null) {
-                return const Text("Nessun testo disponibile");
-              } else {
-              return Text(snapshot.data!);
-              }
-            } else if (snapshot.hasError) {
-              return Text("Errore: ${snapshot.error}");
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        )
-        )
+      future: getTextDocumentFuture(context, pratica, documento),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.hasData) {
+          return SelectableText(snapshot.data ?? "Nessun testo disponibile");
+        } else if (snapshot.hasError) {
+          return Text("Errore nel caricamento della descrizione: ${snapshot.error}");
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    )), 
       ]
       )
     ]);
+
+    
   }
+
+  Future<Widget> buildDescriptionCell(BuildContext context, Pratica pratica, Documento documento) async {
+    // Handle loading and error state directly
+    try {
+      final descriptionText = await getTextDocumentFuture(context, pratica, documento);
+      return Text(descriptionText);
+    } catch (e) {
+      return Text("Errore nel caricamento della descrizione: $e");
+    }
+  }
+  
 
   Future<String> getTextDocumentFuture(
       BuildContext context, Pratica pratica, Documento documento) async {
