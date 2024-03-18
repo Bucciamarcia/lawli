@@ -76,6 +76,23 @@ class StorageService {
     }
   }
 
+  Future<Uint8List> getDocument(String path) async {
+    try {
+      final Uint8List? u8list = await storageRef.child(path).getData();
+      if (u8list != null) {
+        return u8list;
+      } else {
+        throw Exception("File not found");
+      }
+    } on FirebaseException catch (e) {
+      debugPrint("Failed fe with error '${e.code}': ${e.message}");
+      rethrow;
+    } catch (e) {
+      debugPrint("Error else getting file: $e");
+      rethrow;
+    }
+  }
+
   String getOriginalDocumentUrl(String filename, double idPratica, String accountName) {
     final String url = "accounts/$accountName/pratiche/${idPratica.toString()}/documenti/originale_$filename";
     return url;

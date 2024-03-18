@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:lawli/services/cloud_storage.dart';
 import 'package:provider/provider.dart';
 import "../../../services/services.dart";
 import '../../../shared/shared.dart';
+import "package:file_saver/file_saver.dart";
 
 class ViewDocumentScreen extends StatelessWidget {
   const ViewDocumentScreen({super.key});
@@ -81,7 +82,6 @@ class ViewDocumentScreen extends StatelessWidget {
         documento.filename,
         pratica.id,
         Provider.of<DashboardProvider>(context).accountName);
-    final Uri url = Uri.parse(urlDocumento);
     debugPrint("URL DOCUMENTO: $urlDocumento");
     return DataTable(columns: const [
       DataColumn(label: Text("")),
@@ -94,7 +94,16 @@ class ViewDocumentScreen extends StatelessWidget {
       DataRow(
         cells: [
           const DataCell(Text("Documento")),
-          DataCell(InkWell(child: Text(documento.filename.toString())), onTap: () => launchUrl(url)),
+          DataCell(InkWell(child: Text(documento.filename.toString())),
+              onTap: () async {
+                debugPrint("Pressed on document");
+            final Uint8List document =
+                await StorageService().getDocument(urlDocumento);
+            await FileSaver.instance.saveFile(
+              name: documento.filename,
+              bytes: document,
+            );
+          }),
         ],
       ),
       DataRow(cells: [
