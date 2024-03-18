@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lawli/services/cloud_storage.dart';
 import 'package:provider/provider.dart';
 import "../../../services/services.dart";
@@ -94,16 +95,25 @@ class ViewDocumentScreen extends StatelessWidget {
       DataRow(
         cells: [
           const DataCell(Text("Documento")),
-          DataCell(InkWell(child: Text(documento.filename.toString())),
-              onTap: () async {
-                debugPrint("Pressed on document");
-            final Uint8List document =
-                await StorageService().getDocument(urlDocumento);
-            await FileSaver.instance.saveFile(
-              name: documento.filename,
-              bytes: document,
-            );
-          }),
+          DataCell(
+            Row(
+              children: [
+                SelectableText(documento.filename.toString()),
+                IconButton(
+                  icon: const FaIcon(FontAwesomeIcons.download),
+                  onPressed: () async {
+                    debugPrint("Pressed on document");
+                    final Uint8List document =
+                        await StorageService().getDocument(urlDocumento);
+                    await FileSaver.instance.saveFile(
+                      name: documento.filename,
+                      bytes: document,
+                    );
+                  },
+                )
+              ],
+            ),
+          ),
         ],
       ),
       DataRow(cells: [
