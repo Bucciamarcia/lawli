@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lawli/services/models.dart';
 import 'package:provider/provider.dart';
-
 import '../services/services.dart';
 
 class ChatView extends StatefulWidget {
@@ -27,9 +25,11 @@ class _ChatViewState extends State<ChatView> {
   final _inputController = TextEditingController();
   final FocusNode _inputFocusNode = FocusNode();
   final List<ChatMessage> _messages = [];
+  String? _currentThreadId;
   String? selectedDocName;
 
   void _clearChatHistory() {
+    _currentThreadId = null;
     setState(() {
       _messages.clear();
     });
@@ -42,12 +42,33 @@ class _ChatViewState extends State<ChatView> {
             .add(ChatMessage(text: _inputController.text, isUserMessage: true));
         _inputController.clear();
 
-        // Placeholder for sending to backend and getting a response:
-        _addBotMessage("Thinking...");
+        // Placeholder for sending to backend:
 
-        FocusScope.of(context).requestFocus(_inputFocusNode); // Request focus
+        // Create a thread if needed
+        if (_currentThreadId == null) {
+          _createThread().then((threadId) {
+            _currentThreadId = threadId;
+            // Now proceed to send the message with the threadId
+            _sendBackendMessage(_inputController.text, threadId); 
+          });          
+        } else {
+          _sendBackendMessage(_inputController.text, _currentThreadId!);
+        }
+
+        FocusScope.of(context).requestFocus(_inputFocusNode);
       });
     }
+  }
+
+  Future<String> _createThread() async {
+    // TODO: Implement backend call to create a new thread and return the thread id
+    return Future.delayed(const Duration(seconds: 1), () => 'testThreadId');
+  }
+
+  // Placeholder - Replace with your backend call
+  void _sendBackendMessage(String message, String threadId) {
+    // TODO: Implement backend call to send message and get the response, then use _addBotMessage to update the UI      
+    Future.delayed(const Duration(seconds: 1), () => _addBotMessage('Thinking...')); 
   }
 
   void _addBotMessage(String text) {
