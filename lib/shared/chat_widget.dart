@@ -1,13 +1,23 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lawli/services/models.dart';
+import 'package:provider/provider.dart';
+
+import '../services/services.dart';
 
 class ChatView extends StatefulWidget {
   final String lastMessage;
   final String? assistantId;
+  final Documento? documentoSelected;
   final String? filePath;
   final String? threadId;
-  const ChatView({super.key, required this.lastMessage, this.assistantId, this.filePath, this.threadId});
+  const ChatView(
+      {super.key,
+      required this.lastMessage,
+      this.assistantId,
+      this.filePath,
+      this.threadId,
+      this.documentoSelected});
 
   @override
   State<ChatView> createState() => _ChatViewState();
@@ -17,24 +27,25 @@ class _ChatViewState extends State<ChatView> {
   final _inputController = TextEditingController();
   final FocusNode _inputFocusNode = FocusNode();
   final List<ChatMessage> _messages = [];
+  String? selectedDocName;
 
   void _clearChatHistory() {
     setState(() {
-      _messages.clear(); 
+      _messages.clear();
     });
   }
 
   void _sendMessage() {
     if (_inputController.text.isNotEmpty) {
       setState(() {
-        _messages.add(ChatMessage(text: _inputController.text, isUserMessage: true));
+        _messages
+            .add(ChatMessage(text: _inputController.text, isUserMessage: true));
         _inputController.clear();
 
         // Placeholder for sending to backend and getting a response:
-        _addBotMessage("Thinking..."); 
+        _addBotMessage("Thinking...");
 
-                FocusScope.of(context).requestFocus(_inputFocusNode); // Request focus
-
+        FocusScope.of(context).requestFocus(_inputFocusNode); // Request focus
       });
     }
   }
@@ -47,61 +58,94 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
+    final Pratica pratica =
+        Provider.of<DashboardProvider>(context, listen: false).pratica;
     return Column(
+      children: <Widget>[
+        FutureBuilder(
+            future: RetrieveObjectFromDb().getDocumenti(pratica.id),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text("Errore nel caricamento dei documenti");
+              } else if (snapshot.data == null) {
+                return const Text("Nessun documento trovato");
+              } else if (snapshot.hasData && snapshot.data != null) {
+                List<String> docNames = [];
+                for (Documento doc in snapshot.data!) {
+                  docNames.add(doc.filename);
+                }
+                selectedDocName = docNames.isNotEmpty ? docNames[0] : null;
+                return DropdownButton<String>(
+          value: selectedDocName,
+          isExpanded: true,
+          items: docNames.map((String name) {
+            return DropdownMenuItem<String>(
+              value: name,
+              child: Text(name),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            setState(() {
+              selectedDocName = newValue;
+            });
+          },
+        );
+              } else {
+                return const CircularProgressIndicator();
+              }
+            }),
+        const ChatbotHeader(),
+        messagesList(),
+        messageInputField(),
+      ],
+    );
+  }
+
+  Container messageInputField() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
         children: <Widget>[
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(border: Border.all(color: Theme.of(context).colorScheme.secondary, width: 1), borderRadius: BorderRadius.circular(10), color: Theme.of(context).colorScheme.primaryContainer),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Chatta con l'assistente",
-                style: Theme.of(context).textTheme.headlineSmall,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
           Expanded(
-            child: ListView.builder(
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                return _buildMessageRow(_messages[index]);
-              },
+            child: TextField(
+              focusNode: _inputFocusNode,
+              controller: _inputController,
+              decoration:
+                  const InputDecoration(hintText: 'Scrivi un messaggio...'),
+              onSubmitted: (_) => _sendMessage(),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    focusNode: _inputFocusNode,
-                    controller: _inputController,
-                    decoration: const InputDecoration(hintText: 'Scrivi un messaggio...'),
-                    onSubmitted: (_) => _sendMessage(),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  tooltip: "Invia",
-                  onPressed: _sendMessage,
-                ),
-                IconButton(
-                  icon: const FaIcon(FontAwesomeIcons.trash),
-                  tooltip: "Cancella la chat",
-                  onPressed: _clearChatHistory,
-                ),
-              ],
-            ),
+          IconButton(
+            icon: const Icon(Icons.send),
+            tooltip: "Invia",
+            onPressed: _sendMessage,
+          ),
+          IconButton(
+            icon: const FaIcon(FontAwesomeIcons.trash),
+            tooltip: "Cancella la chat",
+            onPressed: _clearChatHistory,
           ),
         ],
-      );
+      ),
+    );
+  }
+
+  Expanded messagesList() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: _messages.length,
+        itemBuilder: (context, index) {
+          return _buildMessageRow(_messages[index]);
+        },
+      ),
+    );
   }
 
   Widget _buildMessageRow(ChatMessage message) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
-      alignment: message.isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+      alignment:
+          message.isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
@@ -109,6 +153,32 @@ class _ChatViewState extends State<ChatView> {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Text(message.text),
+      ),
+    );
+  }
+}
+
+class ChatbotHeader extends StatelessWidget {
+  const ChatbotHeader({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+          border: Border.all(
+              color: Theme.of(context).colorScheme.secondary, width: 1),
+          borderRadius: BorderRadius.circular(10),
+          color: Theme.of(context).colorScheme.primaryContainer),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          "Chatta con l'assistente",
+          style: Theme.of(context).textTheme.headlineSmall,
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

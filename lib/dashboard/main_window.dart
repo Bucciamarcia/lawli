@@ -32,22 +32,34 @@ class MainWindow extends StatelessWidget {
                 child: SizedBox(
                   height: 600,
                   child: Row(
-                    children: [Documenti(pratica: pratica), const SizedBox(height: 20, width: 20,), Flexible(child: Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-                      child: ChatView(lastMessage: "Ciao, chi sei?",)))],
+                    children: [
+                      Documenti(pratica: pratica),
+                      const SizedBox(
+                        height: 20,
+                        width: 20,
+                      ),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: ChatView(
+                            lastMessage: "Ciao, chi sei?",
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
