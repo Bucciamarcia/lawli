@@ -56,10 +56,12 @@ Documento _$DocumentoFromJson(Map<String, dynamic> json) => Documento(
       filename: json['filename'] as String? ?? '',
       data: Documento._fromJsonTimestamp(json['data'] as Timestamp),
       brief_description: json['brief_description'] as String? ?? '',
+      assistantId: json['assistantId'] as String?,
     );
 
 Map<String, dynamic> _$DocumentoToJson(Documento instance) => <String, dynamic>{
       'filename': instance.filename,
       'data': Documento._toJsonTimestamp(instance.data),
       'brief_description': instance.brief_description,
+      'assistantId': instance.assistantId,
     };

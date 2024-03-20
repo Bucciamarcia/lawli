@@ -27,7 +27,7 @@ class Create_Assistant:
         try:
             my_assistant = self.client.beta.assistants.create(model=self.engine, name=assistant_name)
             logger.info(f"MY_ASSISTANT: {my_assistant}")
-            return True
+            return my_assistant.id
         except Exception as e:
             logger.error(f"Error while creating assistant: {e}")
-            return False
+            raise f"Error while creating assistant: {e}"

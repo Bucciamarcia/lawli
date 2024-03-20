@@ -25,7 +25,7 @@ class _ChatViewState extends State<ChatView> {
   final FocusNode _inputFocusNode = FocusNode();
   final List<ChatMessage> _messages = [];
   String? _currentThreadId;
-  String? assistantId;
+  String? assistantName;
 
   void _clearChatHistory() {
     _currentThreadId = null;
@@ -34,9 +34,9 @@ class _ChatViewState extends State<ChatView> {
     });
   }
 
-  void _sendMessage() {
+  void _sendMessage(pratica) {
     if (_inputController.text.isNotEmpty) {
-      debugPrint("ASSISTANT ID: $assistantId");
+      debugPrint("ASSISTANT NAME: $assistantName");
       setState(() {
         _messages
             .add(ChatMessage(text: _inputController.text, isUserMessage: true));
@@ -49,10 +49,10 @@ class _ChatViewState extends State<ChatView> {
           _createThread().then((threadId) {
             _currentThreadId = threadId;
             // Now proceed to send the message with the threadId
-            _sendBackendMessage(_inputController.text, threadId);
+            _sendBackendMessage(_inputController.text, threadId, pratica);
           });
         } else {
-          _sendBackendMessage(_inputController.text, _currentThreadId!);
+          _sendBackendMessage(_inputController.text, _currentThreadId!, pratica);
         }
 
         FocusScope.of(context).requestFocus(_inputFocusNode);
@@ -66,13 +66,13 @@ class _ChatViewState extends State<ChatView> {
   }
 
   // Placeholder - Replace with your backend call
-  void _sendBackendMessage(String message, String threadId) async {
+  void _sendBackendMessage(String message, String threadId, Pratica pratica, ) async {
     _addBotMessage("Cercando l'assistente...");
     var doesAssistantExist = await FirebaseFunctions.instance
         .httpsCallable("does_assistant_exist")
         .call(
       {
-        "assistantId": assistantId,
+        "assistantName": assistantName,
       },
     );
     bool response = doesAssistantExist.data as bool;
@@ -81,13 +81,18 @@ class _ChatViewState extends State<ChatView> {
     if (response == false) {
       _removeLastMessage();
       _addBotMessage("Assistente non trovato. Creazione assistente...");
-      var createAssistant = await FirebaseFunctions.instance
+      var response = await FirebaseFunctions.instance
           .httpsCallable("create_assistant")
           .call(
         {
-          "assistantId": assistantId,
+          "assistantName": assistantName,
         },
       );
+      String assistantId = response.data as String;
+      debugPrint("ASSISTANT ID: $assistantId");
+      DocumentoDb().updateDocument(pratica.id, assistantName!, {
+        "assistantId": assistantId,
+      });
     } else {
       _removeLastMessage();
       _addBotMessage("Assistente trovato. Invio messaggio...");
@@ -130,9 +135,9 @@ class _ChatViewState extends State<ChatView> {
                 for (Documento doc in snapshot.data!) {
                   docNames.add(doc.filename);
                 }
-                assistantId = docNames.isNotEmpty ? docNames[0] : null;
+                assistantName = docNames.isNotEmpty ? docNames[0] : null;
                 return DropdownButton<String>(
-                  value: assistantId,
+                  value: assistantName,
                   isExpanded: true,
                   items: docNames.map((String name) {
                     return DropdownMenuItem<String>(
@@ -142,8 +147,8 @@ class _ChatViewState extends State<ChatView> {
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      assistantId = newValue;
-                      debugPrint("NEW ASSISTANT ID: $assistantId");
+                      assistantName = newValue;
+                      debugPrint("NEW ASSISTANT ID: $assistantName");
                     });
                   },
                 );
@@ -153,12 +158,12 @@ class _ChatViewState extends State<ChatView> {
             }),
         const ChatbotHeader(),
         messagesList(),
-        messageInputField(),
+        messageInputField(pratica),
       ],
     );
   }
 
-  Container messageInputField() {
+  Container messageInputField(pratica) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -169,13 +174,13 @@ class _ChatViewState extends State<ChatView> {
               controller: _inputController,
               decoration:
                   const InputDecoration(hintText: 'Scrivi un messaggio...'),
-              onSubmitted: (_) => _sendMessage(),
+              onSubmitted: (_) => _sendMessage(pratica),
             ),
           ),
           IconButton(
             icon: const Icon(Icons.send),
             tooltip: "Invia",
-            onPressed: _sendMessage,
+            onPressed: () => _sendMessage(pratica),
           ),
           IconButton(
             icon: const FaIcon(FontAwesomeIcons.trash),

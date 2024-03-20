@@ -37,18 +37,18 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 @https_fn.on_call()
 def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
     logger.info("does_assistant_exist called")
-    keys = ["assistantId"]
-    assistant_id, = commons.get_data(req, logger, keys)
-    result = Does_Assistant_Exist().process_assistant(assistant_id)
+    keys = ["assistantName"]
+    assistant_name, = commons.get_data(req, logger, keys)
+    result = Does_Assistant_Exist().process_assistant(assistant_name)
     return result
 
 @https_fn.on_call()
 def create_assistant(req: https_fn.CallableRequest) -> bool:
     logger.info("create_assistant called")
-    keys = ["assistantId"]
-    assistant_id, = commons.get_data(req, logger, keys)
-    logger.info(f"ASSISTANT_ID: {assistant_id}")
-    result = Create_Assistant().process_assistant(assistant_id)
+    keys = ["assistantName"]
+    assistant_name, = commons.get_data(req, logger, keys)
+    logger.info(f"ASSISTANT_ID: {assistant_name}")
+    result = Create_Assistant().process_assistant(assistant_name)
     return result
 
 @functions_framework.cloud_event

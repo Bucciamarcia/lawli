@@ -64,11 +64,13 @@ class Documento {
   @JsonKey(fromJson: _fromJsonTimestamp, toJson: _toJsonTimestamp)
   final DateTime data;
   final String brief_description;
+  final String? assistantId;
 
   Documento({
     this.filename = '',
     required this.data,
     this.brief_description = '',
+    this.assistantId,
   });
 
   factory Documento.fromJson(Map<String, dynamic> json) => _$DocumentoFromJson(json);

@@ -248,6 +248,21 @@ class DocumentoDb extends FirestoreService {
     }
   }
 
+  Future<void> updateDocument(double praticaId, String filename, Map<String, dynamic> addition) async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      await accountRef
+          .collection("pratiche")
+          .doc(praticaId.toString())
+          .collection("documenti")
+          .doc(filename)
+          .set(addition, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint("Error updating document: $e");
+      rethrow;
+    }
+  }
+
 }
 
 class RetrieveObjectFromDb extends FirestoreService {
