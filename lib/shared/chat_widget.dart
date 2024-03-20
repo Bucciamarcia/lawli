@@ -60,8 +60,8 @@ class _ChatViewState extends State<ChatView> {
   }
 
   Future<String> _createThread() async {
-    // TODO: Implement backend call to create a new thread and return the thread id
-    return Future.delayed(const Duration(seconds: 1), () => 'testThreadId');
+    var createThreadResponse = await FirebaseFunctions.instance.httpsCallable("create_thread").call();
+    return createThreadResponse.data as String;
   }
 
   // Placeholder - Replace with your backend call

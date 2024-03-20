@@ -12,6 +12,8 @@ from py.functions.generate_document_summary import Generated_Document
 from py.functions.generate_brief_description import Brief_Description
 from py.functions.does_assistant_exist import Does_Assistant_Exist
 from py.functions.create_assistant import Create_Assistant
+from py.functions.create_thread import Create_Thread
+from py.functions.interrogate_chatbot import Interrogate_Chatbot
 from py import commons
 import functions_framework
 import base64
@@ -50,6 +52,18 @@ def create_assistant(req: https_fn.CallableRequest) -> bool:
     logger.info(f"ASSISTANT_ID: {assistant_name}")
     result = Create_Assistant().process_assistant(assistant_name)
     return result
+
+@https_fn.on_call()
+def create_thread(req: https_fn.CallableRequest) -> str:
+    logger.info("create_thread called")
+    return Create_Thread().create_thread()
+
+@https_fn.on_call()
+def interrogate_chatbot(req: https_fn.CallableRequest) -> str:
+    logger.info("interrogate_chatbot called")
+    keys = ["assistantName", "message", "threadId"]
+    assistant_name, message, thread_id = commons.get_data(req, logger, keys)
+    result = Interrogate_Chatbot().process_interrogation(assistant_name, message, thread_id)
 
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
