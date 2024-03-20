@@ -4,6 +4,8 @@ SUCCESS_RESPONSE = {"status": 200, "response": "Success"}
 
 PROJECT_ID = "lawli-bab83"
 
+BEST_GPT_MODEL = "gpt-4-1106-preview"
+
 # GET TEXT FROM PDF
 PUBSUB_TOPIC = "documentai_pdf_new_doc"
 
@@ -33,4 +35,8 @@ TESTO:
 
 {text}"""
 
-BRIEF_DESCRIPTION_ENGINE = "gpt-4-1106-preview"
+BRIEF_DESCRIPTION_ENGINE = BEST_GPT_MODEL
+
+# CREATE ASSISTANT
+
+CREATE_ASSISTANT_ENGINE = BEST_GPT_MODEL

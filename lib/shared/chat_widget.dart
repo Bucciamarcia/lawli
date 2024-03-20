@@ -81,6 +81,16 @@ class _ChatViewState extends State<ChatView> {
     if (response == false) {
       _removeLastMessage();
       _addBotMessage("Assistente non trovato. Creazione assistente...");
+      var createAssistant = await FirebaseFunctions.instance
+          .httpsCallable("create_assistant")
+          .call(
+        {
+          "assistantId": assistantId,
+        },
+      );
+    } else {
+      _removeLastMessage();
+      _addBotMessage("Assistente trovato. Invio messaggio...");
     }
     // TODO: Implement backend call to send message and get the response, then use _addBotMessage to update the UI
     Future.delayed(

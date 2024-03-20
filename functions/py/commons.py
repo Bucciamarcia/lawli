@@ -69,6 +69,19 @@ class Cloud_Storege_Util:
             self.logger.error(f"Error while reading text file: {e}")
             raise f"Error while reading text file: {e}"
     
+    def get_file_bytes(self, blob_name: str) -> bytes:
+        """
+        Read a file from the bucket.
+        Returns the content of the file as bytes.
+        """
+        try:
+            blob = self.bucket.blob(blob_name)
+            self.logger.info(f"BLOB READ CORRECTLY: {blob}")
+            return blob.download_as_bytes()
+        except Exception as e:
+            self.logger.error(f"Error while reading file: {e}")
+            raise f"Error while reading file: {e}"
+    
     def write_text_file(self, blob_name: str, content: str) -> None:
         """
         Write a text file to the bucket.

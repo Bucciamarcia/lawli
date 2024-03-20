@@ -11,6 +11,7 @@ from py.functions.get_txt_from_docai_json import Json_Transformer
 from py.functions.generate_document_summary import Generated_Document
 from py.functions.generate_brief_description import Brief_Description
 from py.functions.does_assistant_exist import Does_Assistant_Exist
+from py.functions.create_assistant import Create_Assistant
 from py import commons
 import functions_framework
 import base64
@@ -37,8 +38,17 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
     logger.info("does_assistant_exist called")
     keys = ["assistantId"]
-    assistant_id = commons.get_data(req, logger, keys)
+    assistant_id, = commons.get_data(req, logger, keys)
     result = Does_Assistant_Exist().process_assistant(assistant_id)
+    return result
+
+@https_fn.on_call()
+def create_assistant(req: https_fn.CallableRequest) -> bool:
+    logger.info("create_assistant called")
+    keys = ["assistantId"]
+    assistant_id, = commons.get_data(req, logger, keys)
+    logger.info(f"ASSISTANT_ID: {assistant_id}")
+    result = Create_Assistant().process_assistant(assistant_id)
     return result
 
 @functions_framework.cloud_event
