@@ -6,15 +6,13 @@ import '../services/services.dart';
 
 class ChatView extends StatefulWidget {
   final String lastMessage;
-  final Documento? documentoSelected;
   final String? filePath;
   final String? threadId;
-  const ChatView(
+  ChatView(
       {super.key,
       required this.lastMessage,
       this.filePath,
-      this.threadId,
-      this.documentoSelected});
+      this.threadId,});
 
   @override
   State<ChatView> createState() => _ChatViewState();
@@ -24,6 +22,7 @@ class _ChatViewState extends State<ChatView> {
   final _inputController = TextEditingController();
   final FocusNode _inputFocusNode = FocusNode();
   final List<ChatMessage> _messages = [];
+  Documento? documentoSelected;
   String? _currentThreadId;
   String? assistantName;
 
@@ -68,17 +67,9 @@ class _ChatViewState extends State<ChatView> {
   // Placeholder - Replace with your backend call
   void _sendBackendMessage(String message, String threadId, Pratica pratica, ) async {
     _addBotMessage("Cercando l'assistente...");
-    var doesAssistantExist = await FirebaseFunctions.instance
-        .httpsCallable("does_assistant_exist")
-        .call(
-      {
-        "assistantName": assistantName,
-      },
-    );
-    bool response = doesAssistantExist.data as bool;
-    debugPrint("RESPONSE DOES ASSISTANT EXIST: $response");
+    var documento = documentoSelected;
 
-    if (response == false) {
+    if (documento?.assistantId == null) {
       _removeLastMessage();
       _addBotMessage("Assistente non trovato. Creazione assistente...");
       var response = await FirebaseFunctions.instance
@@ -89,7 +80,7 @@ class _ChatViewState extends State<ChatView> {
         },
       );
       String assistantId = response.data as String;
-      debugPrint("ASSISTANT ID: $assistantId");
+      debugPrint("CREATE ASSISTANT - ASSISTANT ID: $assistantId");
       DocumentoDb().updateDocument(pratica.id, assistantName!, {
         "assistantId": assistantId,
       });
@@ -123,44 +114,51 @@ class _ChatViewState extends State<ChatView> {
         Provider.of<DashboardProvider>(context, listen: false).pratica;
     return Column(
       children: <Widget>[
-        FutureBuilder(
-            future: RetrieveObjectFromDb().getDocumenti(pratica.id),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Text("Errore nel caricamento dei documenti");
-              } else if (snapshot.data == null) {
-                return const Text("Nessun documento trovato");
-              } else if (snapshot.hasData && snapshot.data != null) {
-                List<String> docNames = [];
-                for (Documento doc in snapshot.data!) {
-                  docNames.add(doc.filename);
-                }
-                assistantName = docNames.isNotEmpty ? docNames[0] : null;
-                return DropdownButton<String>(
-                  value: assistantName,
-                  isExpanded: true,
-                  items: docNames.map((String name) {
-                    return DropdownMenuItem<String>(
-                      value: name,
-                      child: Text(name),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      assistantName = newValue;
-                      debugPrint("NEW ASSISTANT ID: $assistantName");
-                    });
-                  },
-                );
-              } else {
-                return const CircularProgressIndicator();
-              }
-            }),
+        dropDownDocumentSelector(pratica),
         const ChatbotHeader(),
         messagesList(),
         messageInputField(pratica),
       ],
     );
+  }
+
+  FutureBuilder<List<Documento>> dropDownDocumentSelector(Pratica pratica) {
+    return FutureBuilder(
+          future: RetrieveObjectFromDb().getDocumenti(pratica.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text("Errore nel caricamento dei documenti");
+            } else if (snapshot.data == null) {
+              return const Text("Nessun documento trovato");
+            } else if (snapshot.hasData && snapshot.data != null) {
+              List<String> docNames = [];
+              for (Documento doc in snapshot.data!) {
+                docNames.add(doc.filename);
+              }
+              return DropdownButton<String>(
+                hint: const Text("Seleziona un documento"),
+                value: assistantName,
+                isExpanded: true,
+                items: docNames.map((String name) {
+                  return DropdownMenuItem<String>(
+                    value: name,
+                    child: Text(name),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    assistantName = newValue;
+                    documentoSelected = snapshot.data!.firstWhere(
+                      (object) => object.filename == newValue,
+                    );
+                    debugPrint("NEW ASSISTANT ID: $assistantName");
+                  });
+                },
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          });
   }
 
   Container messageInputField(pratica) {
