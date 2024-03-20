@@ -67,7 +67,7 @@ class _ChatViewState extends State<ChatView> {
 
   // Placeholder - Replace with your backend call
   void _sendBackendMessage(String message, String threadId) async {
-    _addBotMessage("Cercando il documento...");
+    _addBotMessage("Cercando l'assistente...");
     var doesAssistantExist = await FirebaseFunctions.instance
         .httpsCallable("does_assistant_exist")
         .call(
@@ -75,9 +75,13 @@ class _ChatViewState extends State<ChatView> {
         "assistantId": assistantId,
       },
     );
-    _removeLastMessage();
     bool response = doesAssistantExist.data as bool;
     debugPrint("RESPONSE DOES ASSISTANT EXIST: $response");
+
+    if (response == false) {
+      _removeLastMessage();
+      _addBotMessage("Assistente non trovato. Creazione assistente...");
+    }
     // TODO: Implement backend call to send message and get the response, then use _addBotMessage to update the UI
     Future.delayed(
         const Duration(seconds: 1), () => _addBotMessage('Sto pensando...'));

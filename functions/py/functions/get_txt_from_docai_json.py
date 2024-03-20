@@ -1,10 +1,11 @@
 import json
 import logging
+from py.logger_config import logger
 from google.cloud import storage, documentai_v1 as documentai
 from .. import constants
 
 class Json_Transformer:
-    def __init__(self, logger:logging.Logger, payload:str, object_id:str):
+    def __init__(self, payload:str, object_id:str):
         self.logger = logger
         try:
             self.payload = json.loads(payload)

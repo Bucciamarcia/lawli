@@ -1,4 +1,5 @@
 import logging
+from py.logger_config import logger
 import json
 import os
 import libreria_ai_per_tutti as ai
@@ -6,7 +7,7 @@ from py.commons import *
 from py.constants import *
 
 class Brief_Description:
-    def __init__(self, logger:logging.Logger, payload:str, object_id:str):
+    def __init__(self, payload:str, object_id:str):
         self.logger = logger
         try:
             self.payload = json.loads(payload)

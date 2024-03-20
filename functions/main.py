@@ -6,8 +6,6 @@ from firebase_functions import https_fn
 from cloudevents.http import CloudEvent
 import os
 from firebase_admin import initialize_app
-import google.cloud.logging
-import logging
 from py.functions.get_text_from_pdf import Pdf_Transformer
 from py.functions.get_txt_from_docai_json import Json_Transformer
 from py.functions.generate_document_summary import Generated_Document
@@ -16,19 +14,10 @@ from py.functions.does_assistant_exist import Does_Assistant_Exist
 from py import commons
 import functions_framework
 import base64
+import logging
+from py.logger_config import logger
 
 initialize_app()
-
-# Initialize cloud logger
-client = google.cloud.logging.Client()
-handler = client.get_default_handler()
-client.setup_logging()
-logger = logging.getLogger("cloudLogger")
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-
 
 @https_fn.on_call()
 def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
@@ -49,7 +38,7 @@ def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
     logger.info("does_assistant_exist called")
     keys = ["assistantId"]
     assistant_id = commons.get_data(req, logger, keys)
-    result = Does_Assistant_Exist(logger).process_assistant(assistant_id)
+    result = Does_Assistant_Exist().process_assistant(assistant_id)
     return result
 
 @functions_framework.cloud_event
@@ -59,7 +48,7 @@ def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     object_id = event.data["message"]["attributes"]["objectId"]
     decoded = base64.b64decode(event.data["message"]["data"]).decode()
     
-    result = Json_Transformer(logger, decoded, object_id).process_json()
+    result = Json_Transformer(decoded, object_id).process_json()
 
     return {"status": "ok"}
 
@@ -73,7 +62,7 @@ def generate_document_summary(event: CloudEvent) -> dict[str, str]:
     is_txt = commons.check_ext(filename)
 
     if is_txt:
-        result_1 = Generated_Document(logger, decoded, object_id).process_document()
-        result_2 = Brief_Description(logger, decoded, object_id).process_brief_description()
+        result_1 = Generated_Document(decoded, object_id).process_document()
+        result_2 = Brief_Description(decoded, object_id).process_brief_description()
 
     return {"status": "ok"}
