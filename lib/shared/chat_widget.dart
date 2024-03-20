@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -48,8 +49,8 @@ class _ChatViewState extends State<ChatView> {
           _createThread().then((threadId) {
             _currentThreadId = threadId;
             // Now proceed to send the message with the threadId
-            _sendBackendMessage(_inputController.text, threadId); 
-          });          
+            _sendBackendMessage(_inputController.text, threadId);
+          });
         } else {
           _sendBackendMessage(_inputController.text, _currentThreadId!);
         }
@@ -65,15 +66,36 @@ class _ChatViewState extends State<ChatView> {
   }
 
   // Placeholder - Replace with your backend call
-  void _sendBackendMessage(String message, String threadId) {
-    // TODO: Implement backend call to send message and get the response, then use _addBotMessage to update the UI      
-    Future.delayed(const Duration(seconds: 1), () => _addBotMessage('Sto pensando...')); 
+  void _sendBackendMessage(String message, String threadId) async {
+    _addBotMessage("Cercando il documento...");
+    var doesAssistantExist = await FirebaseFunctions.instance
+        .httpsCallable("does_assistant_exist")
+        .call(
+      {
+        "assistantId": assistantId,
+      },
+    );
+    _removeLastMessage();
+    bool response = doesAssistantExist.data as bool;
+    debugPrint("RESPONSE DOES ASSISTANT EXIST: $response");
+    // TODO: Implement backend call to send message and get the response, then use _addBotMessage to update the UI
+    Future.delayed(
+        const Duration(seconds: 1), () => _addBotMessage('Sto pensando...'));
   }
 
   void _addBotMessage(String text) {
     setState(() {
       _messages.add(ChatMessage(text: text, isUserMessage: false));
     });
+  }
+
+  // Removes the last message from the chat window
+  void _removeLastMessage() {
+    if (_messages.isNotEmpty) {
+      setState(() {
+        _messages.removeLast();
+      });
+    }
   }
 
   @override
@@ -96,21 +118,21 @@ class _ChatViewState extends State<ChatView> {
                 }
                 assistantId = docNames.isNotEmpty ? docNames[0] : null;
                 return DropdownButton<String>(
-          value: assistantId,
-          isExpanded: true,
-          items: docNames.map((String name) {
-            return DropdownMenuItem<String>(
-              value: name,
-              child: Text(name),
-            );
-          }).toList(),
-          onChanged: (newValue) {
-            setState(() {
-              assistantId = newValue;
-              debugPrint("NEW ASSISTANT ID: $assistantId");
-            });
-          },
-        );
+                  value: assistantId,
+                  isExpanded: true,
+                  items: docNames.map((String name) {
+                    return DropdownMenuItem<String>(
+                      value: name,
+                      child: Text(name),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      assistantId = newValue;
+                      debugPrint("NEW ASSISTANT ID: $assistantId");
+                    });
+                  },
+                );
               } else {
                 return const CircularProgressIndicator();
               }

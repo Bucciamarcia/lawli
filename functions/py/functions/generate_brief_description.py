@@ -4,7 +4,6 @@ import os
 import libreria_ai_per_tutti as ai
 from py.commons import *
 from py.constants import *
-from firebase_admin.firestore import firestore
 
 class Brief_Description:
     def __init__(self, logger:logging.Logger, payload:str, object_id:str):
