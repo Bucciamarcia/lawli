@@ -5,14 +5,12 @@ import '../services/services.dart';
 
 class ChatView extends StatefulWidget {
   final String lastMessage;
-  final String? assistantId;
   final Documento? documentoSelected;
   final String? filePath;
   final String? threadId;
   const ChatView(
       {super.key,
       required this.lastMessage,
-      this.assistantId,
       this.filePath,
       this.threadId,
       this.documentoSelected});
@@ -26,7 +24,7 @@ class _ChatViewState extends State<ChatView> {
   final FocusNode _inputFocusNode = FocusNode();
   final List<ChatMessage> _messages = [];
   String? _currentThreadId;
-  String? selectedDocName;
+  String? assistantId;
 
   void _clearChatHistory() {
     _currentThreadId = null;
@@ -37,6 +35,7 @@ class _ChatViewState extends State<ChatView> {
 
   void _sendMessage() {
     if (_inputController.text.isNotEmpty) {
+      debugPrint("ASSISTANT ID: $assistantId");
       setState(() {
         _messages
             .add(ChatMessage(text: _inputController.text, isUserMessage: true));
@@ -68,7 +67,7 @@ class _ChatViewState extends State<ChatView> {
   // Placeholder - Replace with your backend call
   void _sendBackendMessage(String message, String threadId) {
     // TODO: Implement backend call to send message and get the response, then use _addBotMessage to update the UI      
-    Future.delayed(const Duration(seconds: 1), () => _addBotMessage('Thinking...')); 
+    Future.delayed(const Duration(seconds: 1), () => _addBotMessage('Sto pensando...')); 
   }
 
   void _addBotMessage(String text) {
@@ -95,9 +94,9 @@ class _ChatViewState extends State<ChatView> {
                 for (Documento doc in snapshot.data!) {
                   docNames.add(doc.filename);
                 }
-                selectedDocName = docNames.isNotEmpty ? docNames[0] : null;
+                assistantId = docNames.isNotEmpty ? docNames[0] : null;
                 return DropdownButton<String>(
-          value: selectedDocName,
+          value: assistantId,
           isExpanded: true,
           items: docNames.map((String name) {
             return DropdownMenuItem<String>(
@@ -107,7 +106,8 @@ class _ChatViewState extends State<ChatView> {
           }).toList(),
           onChanged: (newValue) {
             setState(() {
-              selectedDocName = newValue;
+              assistantId = newValue;
+              debugPrint("NEW ASSISTANT ID: $assistantId");
             });
           },
         );
