@@ -90,7 +90,6 @@ class _ChatViewState extends State<ChatView> {
       _removeLastMessage();
       _addBotMessage("Assistente trovato. Invio messaggio...");
     }
-    // TODO: TEST backend call to send message and get the response, then use _addBotMessage to update the UI
     debugPrint("SENDING MESSAGE TO ASSISTANT PARAMETERS: $assistantName, ${documento?.assistantId}, $message, $threadId");
     var responseInterrogateChatbot = await FirebaseFunctions.instance.httpsCallable("interrogate_chatbot").call(
       {
