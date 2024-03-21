@@ -8,7 +8,7 @@ class ChatView extends StatefulWidget {
   final String lastMessage;
   final String? filePath;
   final String? threadId;
-  ChatView(
+  const ChatView(
       {super.key,
       required this.lastMessage,
       this.filePath,
@@ -27,6 +27,28 @@ class _ChatViewState extends State<ChatView> {
   String? _currentThreadId;
   String? assistantName;
   String? assistantId;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
 
   void _clearChatHistory() {
     _currentThreadId = null;
@@ -70,11 +92,13 @@ class _ChatViewState extends State<ChatView> {
   // Placeholder - Replace with your backend call
   void _sendBackendMessage(String message, String threadId, Pratica pratica, ) async {
     _addBotMessage("Cercando l'assistente...");
+     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     Documento? documento = documentoSelected;
 
     if (documento?.assistantId == null) {
       _removeLastMessage();
       _addBotMessage("Assistente non trovato. Creazione assistente...");
+       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
       var response = await FirebaseFunctions.instance
           .httpsCallable("create_assistant")
           .call(
@@ -91,9 +115,11 @@ class _ChatViewState extends State<ChatView> {
     } else {
       _removeLastMessage();
       _addBotMessage("Assistente trovato. Invio messaggio...");
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     }
     _removeLastMessage();
     _addBotMessage("Sto pensando...");
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     debugPrint("SENDING MESSAGE TO ASSISTANT PARAMETERS: $assistantName, ${documento?.assistantId}, $message, $threadId");
     var responseInterrogateChatbot = await FirebaseFunctions.instance.httpsCallable("interrogate_chatbot").call(
       {
@@ -107,6 +133,7 @@ class _ChatViewState extends State<ChatView> {
     _removeLastMessage();
     for (String response in chatbotResponses) {
       _addBotMessage(response);
+       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     }
   }
 
@@ -210,6 +237,7 @@ class _ChatViewState extends State<ChatView> {
   Expanded messagesList() {
     return Expanded(
       child: ListView.builder(
+        controller: _scrollController,
         itemCount: _messages.length,
         itemBuilder: (context, index) {
           return _buildMessageRow(_messages[index]);
