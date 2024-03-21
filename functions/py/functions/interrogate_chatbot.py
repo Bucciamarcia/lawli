@@ -1,9 +1,4 @@
-import json
 import os
-import libreria_ai_per_tutti as ai
-from py.commons import *
-from py.constants import *
-from firebase_admin.firestore import firestore
 from openai import OpenAI, OpenAIError
 import re
 import logging
@@ -47,10 +42,12 @@ class Interrogate_Chatbot:
             except:
                 raise Exception("Error retrieving run")
             if run.status == "completed":
+                logger.info("Run completed! Existing wait loop.")
                 break
+            logger.info("Run not completed. Waiting...")
             time.sleep(1)
 
-    def get_latest_assistant_message(self, thread_messages) -> list:
+    def get_latest_assistant_message(self, thread_messages:list) -> list:
         logging.info("Running get_latest_assistant_message")
         assistant_messages = []
 
@@ -59,6 +56,8 @@ class Interrogate_Chatbot:
                 assistant_messages.append(message)
             else:
                 break
+        
+        logger.info(f"ASSISTANT_MESSAGES: {assistant_messages}")
 
         return assistant_messages
 
@@ -75,12 +74,15 @@ class Interrogate_Chatbot:
         self.wait_loop(thread_id=thread_id, run_id=run_id, timeout=timeout)
 
         thread_messages = self.client.beta.threads.messages.list(thread_id=thread_id).data
-        logging.debug(f"THREAD_MESSAGES: {thread_messages}")
+        logging.info(f"THREAD_MESSAGES: {thread_messages}")
         latest_assistant_messages = self.get_latest_assistant_message(thread_messages)
 
         messages_text = self.get_messages_texts(latest_assistant_messages=latest_assistant_messages)
+
+        return messages_text
     
     def process_interrogation(self, assistant_name:str, assistant_id:str, message:str, thread_id:str) -> None:
+        """Entrypoint. Process the interrogation."""
         self.add_message_to_thread(message, thread_id)
         run_id = self.run_assistant(assistant_id, thread_id)
         messages = self.get_messages_from_thread(thread_id, run_id, 120)
