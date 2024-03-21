@@ -61,9 +61,9 @@ def create_thread(req: https_fn.CallableRequest) -> str:
 @https_fn.on_call()
 def interrogate_chatbot(req: https_fn.CallableRequest) -> str:
     logger.info("interrogate_chatbot called")
-    keys = ["assistantName", "message", "threadId"]
-    assistant_name, message, thread_id = commons.get_data(req, logger, keys)
-    result = Interrogate_Chatbot().process_interrogation(assistant_name, message, thread_id)
+    keys = ['assistantName', 'assistantId', 'message', 'threadId']
+    assistant_name, assistant_id, message, thread_id = commons.get_data(req, logger, keys)
+    result = Interrogate_Chatbot().process_interrogation(assistant_name, assistant_id, message, thread_id)
 
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:

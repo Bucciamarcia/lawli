@@ -80,8 +80,8 @@ class Interrogate_Chatbot:
 
         messages_text = self.get_messages_texts(latest_assistant_messages=latest_assistant_messages)
     
-    def process_interrogation(self, assistant_name:str, message:str, thread_id:str) -> None:
+    def process_interrogation(self, assistant_name:str, assistant_id:str, message:str, thread_id:str) -> None:
         self.add_message_to_thread(message, thread_id)
-        run_id = self.run_assistant(assistant_name, thread_id)
+        run_id = self.run_assistant(assistant_id, thread_id)
         messages = self.get_messages_from_thread(thread_id, run_id, 120)
         return [re.sub(r"【.*?】", "", message) for message in messages]

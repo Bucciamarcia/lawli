@@ -27,6 +27,8 @@ def get_data(req:https_fn.CallableRequest, logger:logging.Logger, keys:list) -> 
     """
     Extract the data from the request and return it as a tuple.
     """
+    logger.info(f"REQ DATA: {req.data}")
+    logger.info(f"KEYS: {keys}")
     try:
         data = req.data
     except Exception as e:

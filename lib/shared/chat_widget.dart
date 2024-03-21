@@ -22,6 +22,7 @@ class _ChatViewState extends State<ChatView> {
   final _inputController = TextEditingController();
   final FocusNode _inputFocusNode = FocusNode();
   final List<ChatMessage> _messages = [];
+  String? textforBackend;
   Documento? documentoSelected;
   String? _currentThreadId;
   String? assistantName;
@@ -36,6 +37,7 @@ class _ChatViewState extends State<ChatView> {
   void _sendMessage(pratica) {
     if (_inputController.text.isNotEmpty) {
       debugPrint("ASSISTANT NAME: $assistantName");
+      textforBackend = _inputController.text;
       setState(() {
         _messages
             .add(ChatMessage(text: _inputController.text, isUserMessage: true));
@@ -48,10 +50,10 @@ class _ChatViewState extends State<ChatView> {
           _createThread().then((threadId) {
             _currentThreadId = threadId;
             // Now proceed to send the message with the threadId
-            _sendBackendMessage(_inputController.text, threadId, pratica);
+            _sendBackendMessage(textforBackend!, threadId, pratica);
           });
         } else {
-          _sendBackendMessage(_inputController.text, _currentThreadId!, pratica);
+          _sendBackendMessage(textforBackend!, _currentThreadId!, pratica);
         }
 
         FocusScope.of(context).requestFocus(_inputFocusNode);
@@ -89,9 +91,11 @@ class _ChatViewState extends State<ChatView> {
       _addBotMessage("Assistente trovato. Invio messaggio...");
     }
     // TODO: TEST backend call to send message and get the response, then use _addBotMessage to update the UI
+    debugPrint("SENDING MESSAGE TO ASSISTANT PARAMETERS: $assistantName, ${documento?.assistantId}, $message, $threadId");
     var responseInterrogateChatbot = await FirebaseFunctions.instance.httpsCallable("interrogate_chatbot").call(
       {
         "assistantName": assistantName,
+        "assistantId": documento?.assistantId,
         "message": message,
         "threadId": threadId,
       },
