@@ -19,6 +19,9 @@ class Create_Assistant:
             response = self.client.files.create(file=filebytes, purpose="assistants")
             logger.info("Document uploaded successfully")
             return response.id
+        except OpenAIError as e:
+            logger.error(f"OpenAI error while uploading document: {e}")
+            raise f"OpenAI error while uploading document: {e}"
         except Exception as e:
             logger.error(f"Error while uploading document: {e}")
             raise f"Error while uploading document: {e}"
