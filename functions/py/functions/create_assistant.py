@@ -32,7 +32,7 @@ class Create_Assistant:
         """
         document_id = self.upload_document("accounts/lawli/pratiche/1/documenti/originale_Gmail - New Order Confirmation_ IN139829.pdf")
         try:
-            my_assistant = self.client.beta.assistants.create(model=self.engine, name=assistant_name, file_ids=[document_id], tools=[{"type": "retrieval"}])
+            my_assistant = self.client.beta.assistants.create(model=self.engine, name=assistant_name, file_ids=[document_id], tools=[{"type": "retrieval"}], instructions=CREATE_ASSISTANT_INSTRUCTIONS)
             logger.info(f"MY_ASSISTANT: {my_assistant}")
             return my_assistant.id
         except OpenAIError as e:
