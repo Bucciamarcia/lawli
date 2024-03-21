@@ -26,6 +26,7 @@ class _ChatViewState extends State<ChatView> {
   Documento? documentoSelected;
   String? _currentThreadId;
   String? assistantName;
+  String? assistantId;
 
   void _clearChatHistory() {
     _currentThreadId = null;
@@ -69,7 +70,7 @@ class _ChatViewState extends State<ChatView> {
   // Placeholder - Replace with your backend call
   void _sendBackendMessage(String message, String threadId, Pratica pratica, ) async {
     _addBotMessage("Cercando l'assistente...");
-    var documento = documentoSelected;
+    Documento? documento = documentoSelected;
 
     if (documento?.assistantId == null) {
       _removeLastMessage();
@@ -86,10 +87,13 @@ class _ChatViewState extends State<ChatView> {
       DocumentoDb().updateDocument(pratica.id, assistantName!, {
         "assistantId": assistantId,
       });
+      documento?.assistantId = assistantId;
     } else {
       _removeLastMessage();
       _addBotMessage("Assistente trovato. Invio messaggio...");
     }
+    _removeLastMessage();
+    _addBotMessage("Sto pensando...");
     debugPrint("SENDING MESSAGE TO ASSISTANT PARAMETERS: $assistantName, ${documento?.assistantId}, $message, $threadId");
     var responseInterrogateChatbot = await FirebaseFunctions.instance.httpsCallable("interrogate_chatbot").call(
       {
@@ -100,11 +104,10 @@ class _ChatViewState extends State<ChatView> {
       },
     );
     List chatbotResponses = responseInterrogateChatbot.data as List;
+    _removeLastMessage();
     for (String response in chatbotResponses) {
       _addBotMessage(response);
     }
-    Future.delayed(
-        const Duration(seconds: 1), () => _addBotMessage('Sto pensando...'));
   }
 
   void _addBotMessage(String text) {

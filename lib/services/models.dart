@@ -64,7 +64,7 @@ class Documento {
   @JsonKey(fromJson: _fromJsonTimestamp, toJson: _toJsonTimestamp)
   final DateTime data;
   final String brief_description;
-  final String? assistantId;
+  String? assistantId;
 
   Documento({
     this.filename = '',

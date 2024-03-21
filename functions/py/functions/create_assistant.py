@@ -1,6 +1,5 @@
-import logging
 from py.logger_config import logger
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
 import os
 from py.constants import *
 from py.commons import Cloud_Storege_Util
@@ -33,6 +32,9 @@ class Create_Assistant:
             my_assistant = self.client.beta.assistants.create(model=self.engine, name=assistant_name, file_ids=[document_id], tools=[{"type": "retrieval"}])
             logger.info(f"MY_ASSISTANT: {my_assistant}")
             return my_assistant.id
+        except OpenAIError as e:
+            logger.error(f"OpenAI Error while creating assistant: {e}")
+            raise f"OpenAI Error while creating assistant: {e}"
         except Exception as e:
             logger.error(f"Error while creating assistant: {e}")
             raise f"Error while creating assistant: {e}"
