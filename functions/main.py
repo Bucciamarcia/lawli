@@ -10,7 +10,6 @@ from py.functions import *
 from py import commons
 import functions_framework
 import base64
-import logging
 from py.logger_config import logger
 
 initialize_app()
