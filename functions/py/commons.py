@@ -3,27 +3,13 @@ Common operations shared by multiple functions.
 """
 
 from firebase_functions import https_fn
-import firebase_admin
-import logging
 from py.constants import *
 from google.cloud import storage
 from firebase_admin import firestore
-import google.cloud.logging
-import logging
-
-def initialize_logger() -> logging.Logger:
-    client = google.cloud.logging.Client()
-    handler = client.get_default_handler()
-    client.setup_logging()
-    logger = logging.getLogger("cloudLogger")
-    logger.setLevel(logging.INFO)
-    logger.addHandler(handler)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    return logger
+from py.logger_config import logger
 
 
-def get_data(req:https_fn.CallableRequest, logger:logging.Logger, keys:list) -> tuple:
+def get_data(req:https_fn.CallableRequest, keys:list) -> tuple:
     """
     Extract the data from the request and return it as a tuple.
     """
@@ -48,7 +34,7 @@ class Cloud_Storege_Util:
     """
     Utility class for Cloud Storage operations.
     """
-    def __init__(self, logger:logging.Logger):
+    def __init__(self):
         self.logger = logger
         try:
             self.storage_client = storage.Client()

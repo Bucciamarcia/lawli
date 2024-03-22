@@ -21,7 +21,7 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 
     keys = ["idPratica", "fileName", "fileBytes", "accountName"]
 
-    id_pratica, file_name, file_bytes, account_name = commons.get_data(req, logger, keys)
+    id_pratica, file_name, file_bytes, account_name = commons.get_data(req, keys)
 
     result = Pdf_Transformer(id_pratica, file_name, file_bytes, account_name, logger).process_pdf()
     pass
