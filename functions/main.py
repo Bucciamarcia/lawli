@@ -6,14 +6,7 @@ from firebase_functions import https_fn
 from cloudevents.http import CloudEvent
 import os
 from firebase_admin import initialize_app
-from py.functions.get_text_from_pdf import Pdf_Transformer
-from py.functions.get_txt_from_docai_json import Json_Transformer
-from py.functions.generate_document_summary import Generated_Document
-from py.functions.generate_brief_description import Brief_Description
-from py.functions.does_assistant_exist import Does_Assistant_Exist
-from py.functions.create_assistant import Create_Assistant
-from py.functions.create_thread import Create_Thread
-from py.functions.interrogate_chatbot import Interrogate_Chatbot
+from py.functions import *
 from py import commons
 import functions_framework
 import base64
