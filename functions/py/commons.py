@@ -35,12 +35,11 @@ class Cloud_Storege_Util:
     Utility class for Cloud Storage operations.
     """
     def __init__(self):
-        self.logger = logger
         try:
             self.storage_client = storage.Client()
             self.bucket = self.storage_client.bucket(BUCKET_NAME)
         except Exception as e:
-            self.logger.error(f"Error while initializing storage client: {e}")
+            logger.error(f"Error while initializing storage client: {e}")
             raise f"Error while initializing storage client: {e}"
 
     
@@ -54,7 +53,7 @@ class Cloud_Storege_Util:
             with blob.open("r") as f:
                 return f.read()
         except Exception as e:
-            self.logger.error(f"Error while reading text file: {e}")
+            logger.error(f"Error while reading text file: {e}")
             raise f"Error while reading text file: {e}"
     
     def get_file_bytes(self, blob_name: str) -> bytes:
@@ -64,10 +63,10 @@ class Cloud_Storege_Util:
         """
         try:
             blob = self.bucket.blob(blob_name)
-            self.logger.info(f"BLOB READ CORRECTLY: {blob}")
+            logger.info(f"BLOB READ CORRECTLY: {blob}")
             return blob.download_as_bytes()
         except Exception as e:
-            self.logger.error(f"Error while reading file: {e}")
+            logger.error(f"Error while reading file: {e}")
             raise f"Error while reading file: {e}"
     
     def write_text_file(self, blob_name: str, content: str) -> None:
@@ -78,7 +77,7 @@ class Cloud_Storege_Util:
             blob = self.bucket.blob(blob_name)
             blob.upload_from_string(content, content_type="text/plain; charset=utf-8")
         except Exception as e:
-            self.logger.error(f"Error while writing text file: {e}")
+            logger.error(f"Error while writing text file: {e}")
             raise f"Error while writing text file: {e}"
 
 class Firestore_Util:
@@ -86,11 +85,10 @@ class Firestore_Util:
     Utility class for Firestore operations.
     """
     def __init__(self):
-        self.logger = initialize_logger()
         try:
             self.db = firestore.client()
         except Exception as e:
-            self.logger.error(f"Error while initializing firestore client: {e}")
+            logger.error(f"Error while initializing firestore client: {e}")
             raise f"Error while initializing firestore client: {e}"
     
     def write_to_firestore(self, data: dict, merge: bool, path:str) -> None:
@@ -101,7 +99,7 @@ class Firestore_Util:
             ref = self.db.document(path)
             ref.set(data, merge=merge)
         except Exception as e:
-            self.logger.error(f"Error while writing to Firestore: {e}")
+            logger.error(f"Error while writing to Firestore: {e}")
             raise f"Error while writing to Firestore: {e}"
     
     def search_document(self, path:str, filename:str) -> str:
