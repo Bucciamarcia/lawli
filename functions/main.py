@@ -23,7 +23,7 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 
     id_pratica, file_name, file_bytes, account_name = commons.get_data(req, keys)
 
-    result = Pdf_Transformer(id_pratica, file_name, file_bytes, account_name, logger).process_pdf()
+    result = Pdf_Transformer(id_pratica, file_name, file_bytes, account_name).process_pdf()
     pass
 
     return {"status": "ok"}
@@ -32,7 +32,7 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
     logger.info("does_assistant_exist called")
     keys = ["assistantName"]
-    assistant_name, = commons.get_data(req, logger, keys)
+    assistant_name, = commons.get_data(req, keys)
     result = Does_Assistant_Exist().process_assistant(assistant_name)
     return result
 
@@ -40,7 +40,7 @@ def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
 def create_assistant(req: https_fn.CallableRequest) -> bool:
     logger.info("create_assistant called")
     keys = ["assistantName"]
-    assistant_name, = commons.get_data(req, logger, keys)
+    assistant_name, = commons.get_data(req, keys)
     logger.info(f"ASSISTANT_ID: {assistant_name}")
     result = Create_Assistant().process_assistant(assistant_name)
     return result
@@ -55,7 +55,7 @@ def interrogate_chatbot(req: https_fn.CallableRequest) -> str:
     logger.info("interrogate_chatbot called")
     logger.info(f"REQUEST: {req}")
     keys = ['assistantName', 'assistantId', 'message', 'threadId']
-    assistant_name, assistant_id, message, thread_id = commons.get_data(req, logger, keys)
+    assistant_name, assistant_id, message, thread_id = commons.get_data(req, keys)
     return Interrogate_Chatbot().process_interrogation(assistant_name, assistant_id, message, thread_id)
 
 @functions_framework.cloud_event
