@@ -223,7 +223,7 @@ class DocumentoDb extends FirestoreService {
       int idx = filename.lastIndexOf(".");
       String filenameNoExtension = idx != -1 ? filename.substring(0, idx) : filename;
       try {
-        await StorageService().deleteDocument(
+        await DocumentStorage().deleteDocument(
             "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/documenti",
             "$filenameNoExtension.txt");
       } catch (e) {
@@ -231,7 +231,7 @@ class DocumentoDb extends FirestoreService {
       }
       // Delete originale
       try {
-        await StorageService().deleteDocument(
+        await DocumentStorage().deleteDocument(
             "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/documenti",
             "originale_$filename");
       } catch (e) {
@@ -239,7 +239,7 @@ class DocumentoDb extends FirestoreService {
       }
       // Delete in riassunti folder
       try {
-        await StorageService().deleteDocument(
+        await DocumentStorage().deleteDocument(
             "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/riassunti",
             filename);
       } catch (e) {

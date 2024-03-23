@@ -79,7 +79,7 @@ class ViewDocumentScreen extends StatelessWidget {
   // Everything below this is about the table at the top
 
   dataTableExp(Pratica pratica, Documento documento, BuildContext context) {
-    String urlDocumento = StorageService().getOriginalDocumentUrl(
+    String urlDocumento = DocumentStorage().getOriginalDocumentUrl(
         documento.filename,
         pratica.id,
         Provider.of<DashboardProvider>(context).accountName);
@@ -104,7 +104,7 @@ class ViewDocumentScreen extends StatelessWidget {
                   onPressed: () async {
                     debugPrint("Pressed on document");
                     final Uint8List document =
-                        await StorageService().getDocument(urlDocumento);
+                        await DocumentStorage().getDocument(urlDocumento);
                     await FileSaver.instance.saveFile(
                       name: documento.filename,
                       bytes: document,
@@ -141,7 +141,7 @@ class ViewDocumentScreen extends StatelessWidget {
 
   Future<String> getTextDocumentFuture(
       BuildContext context, Pratica pratica, Documento documento) async {
-    return StorageService()
+    return DocumentStorage()
         .getTextDocument(await textDocumentPath(context, pratica, documento));
   }
 

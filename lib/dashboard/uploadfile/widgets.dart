@@ -157,14 +157,14 @@ class _FormDataState extends State<FormData> {
             await PraticheDb().addNewDocument(formState.filenameController.text, data, widget.idPratica);
 
             final String fileExtension = p.extension(formState.filenameController.text);
-            await StorageService().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
+            await DocumentStorage().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
 
             
 
             if (fileExtension == ".docx") {
               var filenameWithoutExtension = p.withoutExtension(formState.filenameController.text);
               final String docxText = docxToText(_uploadedFile.first.bytes!);
-              await StorageService().uploadNewDocumentText(widget.idPratica.toString(), "$filenameWithoutExtension.txt", docxText);
+              await DocumentStorage().uploadNewDocumentText(widget.idPratica.toString(), "$filenameWithoutExtension.txt", docxText);
               Navigator.of(context).pop();
               showConfirmationDialog(context, "Documento caricato con successo.");
 
@@ -180,7 +180,7 @@ class _FormDataState extends State<FormData> {
               showConfirmationDialog(context, "Documento caricato con successo.\n\nNOTA: Elaborare un file PDF potrebbe richiedere da 1 a 10 minuti a seconda di lunghezza e complessità.");
 
             } else if (fileExtension == ".txt") {
-              await StorageService().uploadNewDocumentText(widget.idPratica.toString(), formState.filenameController.text, String.fromCharCodes(_uploadedFile.first.bytes!));
+              await DocumentStorage().uploadNewDocumentText(widget.idPratica.toString(), formState.filenameController.text, String.fromCharCodes(_uploadedFile.first.bytes!));
               Navigator.of(context).pop();
               showConfirmationDialog(context, "Documento caricato con successo.");
             } else {

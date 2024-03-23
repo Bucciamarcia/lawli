@@ -73,6 +73,9 @@ class Documento {
     this.assistantId,
   });
 
+  // Sort the documents by date, from the oldest to the most recent
+  List<Documento> orderDocumentByDate(List<Documento> docs) => docs..sort((a, b) => a.data.compareTo(b.data));
+
   factory Documento.fromJson(Map<String, dynamic> json) => _$DocumentoFromJson(json);
 
   static DateTime _fromJsonTimestamp(Timestamp timestamp) => timestamp.toDate();

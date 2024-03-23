@@ -11,6 +11,11 @@ class StorageService {
   final FirebaseStorage storage = FirebaseStorage.instance;
   final Reference storageRef = FirebaseStorage.instance.ref();
 
+  
+
+}
+
+class DocumentStorage extends StorageService {
   Future<void> uploadNewDocumentOriginal(
       String idPratica, String fileName, Uint8List file) async {
     final String accountName = await AccountDb().getAccountName();

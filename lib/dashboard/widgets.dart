@@ -92,7 +92,9 @@ class Documenti extends StatelessWidget {
                       "Nuovo Documento",
                       Colors.white),
                 ),
-                documentiButton(context, () {}, Colors.grey, "Ricrea Riassunto",
+                documentiButton(context, () async {
+                  final List<Documento> docsForSummary = await RetrieveObjectFromDb().getDocumenti(pratica.id);
+                }, Colors.grey, "Ricrea Riassunto",
                     Colors.white),
                 Padding(
                   padding: const EdgeInsets.only(left: 15),
