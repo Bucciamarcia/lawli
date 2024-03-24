@@ -134,10 +134,10 @@ class DocumentiWidgetThreeButtons extends StatelessWidget {
   });
 
   final BuildContext context;
-  final onPressed;
-  final backgroundColor;
-  final text;
-  final textColor;
+  final dynamic onPressed;
+  final dynamic backgroundColor;
+  final String text;
+  final dynamic textColor;
 
   @override
   Widget build(BuildContext context) {
