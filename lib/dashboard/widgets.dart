@@ -10,17 +10,9 @@ import 'package:lawli/services/services.dart';
 import 'package:provider/provider.dart';
 import '../services/cloud_storage.dart';
 
-class ExpandableOverview extends StatefulWidget {
+class ExpandableOverview extends StatelessWidget {
   const ExpandableOverview({super.key});
 
-  @override
-  State<ExpandableOverview> createState() => _ExpandableOverviewState();
-}
-
-class _ExpandableOverviewState extends State<ExpandableOverview> {
-  bool _showCheckmark = false;
-
-  @override
   @override
   Widget build(BuildContext context) {
     return Container(
