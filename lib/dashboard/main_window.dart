@@ -17,7 +17,7 @@ class MainWindow extends StatelessWidget {
       body: Center(
         child: Container(
           padding: ResponsiveLayout.mainWindowPadding(context),
-          child: Column(
+          child: ListView(
             children: [
               Text(
                 pratica.titolo,

@@ -37,7 +37,7 @@ class ExpandableOverview extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: SizedBox(
-              width: 600,
+              width: 800,
               child: Center(
                 child: FutureBuilder(future: DocumentStorage().getTextDocument("accounts/${Provider.of<DashboardProvider>(context, listen:false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}/riassunto generale.txt"),
                 builder: (context, snapshot) {
