@@ -11,8 +11,6 @@ class StorageService {
   final FirebaseStorage storage = FirebaseStorage.instance;
   final Reference storageRef = FirebaseStorage.instance.ref();
 
-  
-
 }
 
 class DocumentStorage extends StorageService {

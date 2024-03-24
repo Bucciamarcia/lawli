@@ -1,9 +1,8 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:lawli/dashboard/dash_elements/document_table.dart';
 import 'package:lawli/services/services.dart';
-import 'package:expandable_text/expandable_text.dart';
 import 'package:provider/provider.dart';
-
 import '../services/cloud_storage.dart';
 
 class ExpandableOverview extends StatelessWidget {
@@ -41,12 +40,21 @@ class ExpandableOverview extends StatelessWidget {
             child: SizedBox(
               width: 600,
               child: Center(
-                child: ExpandableText(
-                  content,
-                  expandText: "Mostra di più",
-                  collapseText: "Mostra di meno",
-                  maxLines: 3,
-                ),
+                child: FutureBuilder(future: DocumentStorage().getTextDocument("accounts/${Provider.of<DashboardProvider>(context, listen:false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}/riassunto generale.txt"),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Text("Errore nel caricamento del riassunto generale");
+                  } else if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text("Caricamento in corso...");
+                  } else {
+                    if (snapshot.data == null) {
+                      return const Text("Nessun riassunto generale presente");
+                    } else {
+                    return Text(snapshot.data!);
+                  }
+                }
+                }
+                )
               ),
             ),
           ),
@@ -100,7 +108,17 @@ class Documenti extends StatelessWidget {
                   for (Documento doc in orderedDocs) {
                     summaries.add(await DocumentStorage(accountName: accountName).getSummaryTextFromDocumento(doc.filename, pratica.id));
                   }
-                  // TODO: Implement the logic to recreate the summary
+                  try {
+                    await FirebaseFunctions.instance.httpsCallable("create_general_summary").call(
+                      {
+                        "partialSummarties": summaries,
+                        "praticaId": pratica.id.toString(),
+                        "accountName": accountName,
+                      }
+                    );
+                  } catch (e) {
+                    debugPrint("Errore nella creazione del riassunto generale: $e");
+                  }
                 }, backgroundColor: Colors.grey, text: "Ricrea Riassunto", textColor: Colors.white),
                 Padding(
                   padding: const EdgeInsets.only(left: 15),

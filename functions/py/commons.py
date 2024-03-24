@@ -72,6 +72,8 @@ class Cloud_Storege_Util:
     def write_text_file(self, blob_name: str, content: str) -> None:
         """
         Write a text file to the bucket.
+        ## FORMAT BLOB NAME:
+        "path/to/file.txt"
         """
         try:
             blob = self.bucket.blob(blob_name)

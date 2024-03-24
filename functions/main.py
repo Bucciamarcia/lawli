@@ -58,6 +58,14 @@ def interrogate_chatbot(req: https_fn.CallableRequest) -> str:
     assistant_name, assistant_id, message, thread_id = commons.get_data(req, keys)
     return Interrogate_Chatbot().process_interrogation(assistant_name, assistant_id, message, thread_id)
 
+@https_fn.on_call()
+def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
+    logger.info("create_general_summary called")
+    keys = ["partialSummarties", "praticaId", "accountName"]
+    partial_summaries, pratica_id, account_name = commons.get_data(req, keys)
+    General_Summary(partial_summaries, pratica_id, account_name).create_general_summary()
+    return {"status": "ok"}
+
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")
