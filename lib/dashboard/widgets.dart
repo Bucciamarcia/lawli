@@ -77,29 +77,10 @@ class _ExpandableOverviewState extends State<ExpandableOverview> {
                                 maxLines: 10,
                               ),
                             ),
-                            IconButton(
-                              onPressed: () {
-                                Clipboard.setData(
-                                  ClipboardData(text: snapshot.data!),
-                                );
-                                setState(() {
-                                  _showCheckmark = true;
-                                });
-                                Timer(const Duration(seconds: 2), () {
-                                  setState(() {
-                                    _showCheckmark = false;
-                                  });
-                                });
+                            CopyIcon(
+                              textToCopy: snapshot.data!,
+                              onCopy: () {
                               },
-                              icon: _showCheckmark == true
-                                  ? const FaIcon(FontAwesomeIcons.check)
-                                  : const FaIcon(FontAwesomeIcons.copy),
-                              style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                      const EdgeInsets.all(5)),
-                                  iconColor: MaterialStateProperty.all(
-                                      Colors.blueAccent[400])),
-                              tooltip: "Copia il testo",
                             ),
                           ],
                         );
@@ -112,6 +93,43 @@ class _ExpandableOverviewState extends State<ExpandableOverview> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class CopyIcon extends StatefulWidget {
+  final String textToCopy;
+  final Function onCopy;
+
+  const CopyIcon({super.key, required this.textToCopy, required this.onCopy});
+
+  @override
+  State<CopyIcon> createState() => _CopyIconState();
+}
+
+class _CopyIconState extends State<CopyIcon> {
+  bool _showCheckmark = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        Clipboard.setData(ClipboardData(text: widget.textToCopy));
+        setState(() {
+          _showCheckmark = true;
+        });
+        Timer(const Duration(seconds: 3), () {
+          setState(() {
+            _showCheckmark = false;
+          });
+        });
+        widget.onCopy();
+      },
+      icon: _showCheckmark == true
+          ? const FaIcon(FontAwesomeIcons.check)
+          : const FaIcon(FontAwesomeIcons.copy),
+      color: _showCheckmark == true ? Colors.greenAccent[400] : Colors.blueAccent[400],
+      tooltip: _showCheckmark == true ? "Testo copiato" : "Copia il testo",
     );
   }
 }
