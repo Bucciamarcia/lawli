@@ -5,12 +5,10 @@ import 'package:provider/provider.dart';
 import '../services/services.dart';
 
 class ChatView extends StatefulWidget {
-  final String lastMessage;
   final String? filePath;
   final String? threadId;
   const ChatView(
       {super.key,
-      required this.lastMessage,
       this.filePath,
       this.threadId,});
 
@@ -59,7 +57,6 @@ class _ChatViewState extends State<ChatView> {
 
   void _sendMessage(pratica) {
     if (_inputController.text.isNotEmpty) {
-      debugPrint("ASSISTANT NAME: $assistantName");
       textforBackend = _inputController.text;
       setState(() {
         _messages
@@ -107,7 +104,6 @@ class _ChatViewState extends State<ChatView> {
         },
       );
       String assistantId = response.data as String;
-      debugPrint("CREATE ASSISTANT - ASSISTANT ID: $assistantId");
       DocumentoDb().updateDocument(pratica.id, assistantName!, {
         "assistantId": assistantId,
       });
@@ -120,7 +116,6 @@ class _ChatViewState extends State<ChatView> {
     _removeLastMessage();
     _addBotMessage("Sto pensando...");
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-    debugPrint("SENDING MESSAGE TO ASSISTANT PARAMETERS: $assistantName, ${documento?.assistantId}, $message, $threadId");
     var responseInterrogateChatbot = await FirebaseFunctions.instance.httpsCallable("interrogate_chatbot").call(
       {
         "assistantName": assistantName,
@@ -195,7 +190,6 @@ class _ChatViewState extends State<ChatView> {
                     documentoSelected = snapshot.data!.firstWhere(
                       (object) => object.filename == newValue,
                     );
-                    debugPrint("NEW ASSISTANT ID: $assistantName");
                   });
                 },
               );

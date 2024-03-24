@@ -25,7 +25,6 @@ class MainWindow extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               const ExpandableOverview(
-                content: "Contenuto",
               ),
               const SizedBox(height: 20),
               Expanded(
@@ -54,9 +53,7 @@ class MainWindow extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: ChatView(
-                            lastMessage: "Ciao, chi sei?",
-                          ),
+                          child: const ChatView(),
                         ),
                       ),
                     ],

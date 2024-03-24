@@ -6,8 +6,7 @@ import 'package:provider/provider.dart';
 import '../services/cloud_storage.dart';
 
 class ExpandableOverview extends StatelessWidget {
-  final String content;
-  const ExpandableOverview({super.key, required this.content});
+  const ExpandableOverview({super.key});
 
   @override
   Widget build(BuildContext context) {
