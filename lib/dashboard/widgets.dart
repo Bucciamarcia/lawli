@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lawli/dashboard/dash_elements/document_table.dart';
 import 'package:lawli/services/services.dart';
 import 'package:expandable_text/expandable_text.dart';
+import 'package:provider/provider.dart';
+
+import '../services/cloud_storage.dart';
 
 class ExpandableOverview extends StatelessWidget {
   final String content;
@@ -59,6 +62,7 @@ class Documenti extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String accountName = Provider.of<DashboardProvider>(context, listen: false).accountName;
     return Container(
       width: MediaQuery.of(context).size.width * 0.5,
       decoration: BoxDecoration(
@@ -84,22 +88,24 @@ class Documenti extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 15),
-                  child: documentiButton(
-                      context,
-                      () =>
-                          Navigator.pushNamed(context, "/dashboard/uploadfile"),
-                      Colors.lightBlue[700],
-                      "Nuovo Documento",
-                      Colors.white),
+                  // Upload new document button
+                  child: DocumentiWidgetThreeButtons(context: context, onPressed: () =>
+                          Navigator.pushNamed(context, "/dashboard/uploadfile"), backgroundColor: Colors.lightBlue[700], text: "Nuovo Documento", textColor: Colors.white),
                 ),
-                documentiButton(context, () async {
+                // Recreate summary button
+                DocumentiWidgetThreeButtons(context: context, onPressed: () async {
                   final List<Documento> docsForSummary = await RetrieveObjectFromDb().getDocumenti(pratica.id);
-                }, Colors.grey, "Ricrea Riassunto",
-                    Colors.white),
+                  final List<Documento> orderedDocs = DocumentManipulation().orderDocumentByDate(docsForSummary);
+                  List<String> summaries = [];
+                  for (Documento doc in orderedDocs) {
+                    summaries.add(await DocumentStorage(accountName: accountName).getSummaryTextFromDocumento(doc.filename, pratica.id));
+                  }
+                  // TODO: Implement the logic to recreate the summary
+                }, backgroundColor: Colors.grey, text: "Ricrea Riassunto", textColor: Colors.white),
                 Padding(
                   padding: const EdgeInsets.only(left: 15),
-                  child: documentiButton(context, () {}, Colors.teal,
-                      "Ricrea timeline", Colors.white),
+                  // Recreate timeline button
+                  child: DocumentiWidgetThreeButtons(context: context, onPressed: () {}, backgroundColor: Colors.teal, text: "Ricrea timeline", textColor: Colors.white),
                 ),
               ],
             ),
@@ -115,9 +121,26 @@ class Documenti extends StatelessWidget {
       ),
     );
   }
+}
 
-  ElevatedButton documentiButton(
-      BuildContext context, onPressed, backgroundColor, text, textColor) {
+class DocumentiWidgetThreeButtons extends StatelessWidget {
+  const DocumentiWidgetThreeButtons({
+    super.key,
+    required this.context,
+    required this.onPressed,
+    required this.backgroundColor,
+    required this.text,
+    required this.textColor,
+  });
+
+  final BuildContext context;
+  final onPressed;
+  final backgroundColor;
+  final text;
+  final textColor;
+
+  @override
+  Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
       style: Theme.of(context).elevatedButtonTheme.style?.copyWith(

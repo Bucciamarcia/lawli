@@ -16,6 +16,10 @@ class StorageService {
 }
 
 class DocumentStorage extends StorageService {
+  String? accountName;
+
+  DocumentStorage({this.accountName});
+  
   Future<void> uploadNewDocumentOriginal(
       String idPratica, String fileName, Uint8List file) async {
     final String accountName = await AccountDb().getAccountName();
@@ -101,5 +105,22 @@ class DocumentStorage extends StorageService {
   String getOriginalDocumentUrl(String filename, double idPratica, String accountName) {
     final String url = "accounts/$accountName/pratiche/${idPratica.toString()}/documenti/originale_$filename";
     return url;
+  }
+
+  Future<String> getSummaryTextFromDocumento(String docFilename, double praticaId) async {
+    accountName ??= await AccountDb().getAccountName();
+    String filenameNoExtension = p.basenameWithoutExtension(docFilename);
+    final String path = "accounts/$accountName/pratiche/${praticaId.toString()}/riassunti/$filenameNoExtension.txt";
+    try {
+      final Uint8List? u8list = await storageRef.child(path).getData();
+      if (u8list != null) {
+        return utf8.decode(u8list);
+      } else {
+        return "Riassunto non presente";
+      }
+    } catch (e) {
+      debugPrint("Error getting file: $e");
+      rethrow;
+    }
   }
 }
