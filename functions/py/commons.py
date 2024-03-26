@@ -110,3 +110,12 @@ class Firestore_Util:
             doc_dict = doc.to_dict()
             if filename in doc_dict["filename"]:
                 return doc_dict["filename"]
+    
+    def get_all_document_ids(self, assistito:str, pratica:str) -> list[str]:
+        """
+        Get all the document IDs"""
+        docs = self.db.collection(f"accounts/{assistito}/pratiche/{pratica}/documenti").stream()
+        documents = []
+        for doc in docs:
+            documents.append(doc.id)
+        return documents

@@ -1,3 +1,5 @@
+import os
+
 # GENERIC
 
 SUCCESS_RESPONSE = {"status": 200, "response": "Success"}
@@ -5,6 +7,7 @@ SUCCESS_RESPONSE = {"status": 200, "response": "Success"}
 PROJECT_ID = "lawli-bab83"
 
 BEST_GPT_MODEL = "gpt-4-1106-preview"
+OPENAI_API_KEY = os.environ.get("OPENAI_APIKEY")
 
 # GET TEXT FROM PDF
 PUBSUB_TOPIC = "documentai_pdf_new_doc"
@@ -56,3 +59,38 @@ Riceverai in input una serie di riassunti in ordine temporale (dal più vecchio 
 3. Crea un riassunto generale che contenga tutte le informazioni più importanti della causa.
 
 Il tuo output è molto preciso e dettagliato. Assicurati di includere tutte le informazioni rilevanti e di non aggiungere informazioni non presenti nei documenti."""
+
+# GENERATE TIMELINE
+
+GENERATE_TIMELINE_ENGINE = BEST_GPT_MODEL
+
+GENERATE_TIMELINE_FIRST_PROMPT = """L'utente ti passerà un documento relativo a una causa legale. Il tuo compito è quello di scrivere una timeline degli eventi in ordine cronologico in formato JSON.\n
+Includi solo gli eventi relativi direttamente alla causa in oggetto, non tutti gli eventi menzionati.\n
+Includi solo eventi la cui data completa è presente.\n
+Formatta il JSON come segue:\n
+{\n
+    "timeline": [\n
+        {\n
+            "date": "2021-01-01",\n
+            "event": "Evento 1"\n
+        },\n
+        {\n
+            "date": "2021-01-02",\n
+            "event": "Evento 2"\n
+        }\n
+    ]\n
+}"""
+
+GENERATE_TIMELINE_CONTINUATION_PROMPT = """
+# CONTESTO\n
+Questo è la timeline parziale in formato JSON di una causa legale:\n\n
+
+{timeline}\n\n
+
+# ISTRUZIONI\n
+Aggiorna la timeline con gli eventi presenti nel documento che ti verrà passato.\n
+Includi solo gli eventi relativamente direttamente alla causa in oggetto, non tutti gli eventi menzionati.\n
+Includi solo eventi la cui data completa è presente.\n
+Il tuo output è un JSON include tutti gli eventi della timeline originale, più gli eventi del documento.\n
+Se nel documento del cliente non sono presenti eventi rilevanti, riscrivi il JSON originale."""
+TIMELINE_DOCUMENT_PATH = "accounts/{assistito}/pratiche/{pratica}/documenti/{documento}"
