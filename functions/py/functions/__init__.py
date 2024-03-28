@@ -6,7 +6,8 @@ from .does_assistant_exist import Does_Assistant_Exist
 from .create_assistant import Create_Assistant
 from .create_thread import Create_Thread
 from .interrogate_chatbot import Interrogate_Chatbot
-from.create_general_summary import General_Summary
+from .create_general_summary import General_Summary
+from .generate_timeline import TimelineGenerator
 
 __all__ = [
     "Pdf_Transformer",
@@ -17,5 +18,6 @@ __all__ = [
     "Create_Assistant",
     "Create_Thread",
     "Interrogate_Chatbot",
-    "General_Summary"
+    "General_Summary",
+    "TimelineGenerator"
 ]

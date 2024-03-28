@@ -63,6 +63,7 @@ Il tuo output è molto preciso e dettagliato. Assicurati di includere tutte le i
 # GENERATE TIMELINE
 
 GENERATE_TIMELINE_ENGINE = BEST_GPT_MODEL
+CLEAR_TIMELINE_ENGINE = BEST_GPT_MODEL
 
 GENERATE_TIMELINE_FIRST_PROMPT = """L'utente ti passerà un documento relativo a una causa legale. Il tuo compito è quello di scrivere una timeline degli eventi in ordine cronologico in formato JSON.\n
 Includi solo gli eventi relativi direttamente alla causa in oggetto, non tutti gli eventi menzionati.\n
@@ -81,16 +82,5 @@ Formatta il JSON come segue:\n
     ]\n
 }"""
 
-GENERATE_TIMELINE_CONTINUATION_PROMPT = """
-# CONTESTO\n
-Questo è la timeline parziale in formato JSON di una causa legale:\n\n
-
-{timeline}\n\n
-
-# ISTRUZIONI\n
-Aggiorna la timeline con gli eventi presenti nel documento che ti verrà passato.\n
-Includi solo gli eventi relativamente direttamente alla causa in oggetto, non tutti gli eventi menzionati.\n
-Includi solo eventi la cui data completa è presente.\n
-Il tuo output è un JSON include tutti gli eventi della timeline originale, più gli eventi del documento.\n
-Se nel documento del cliente non sono presenti eventi rilevanti, riscrivi il JSON originale."""
+GENERATE_TIMELINE_CLEAR_TIMELINE_SYSPROMPT = """L'utente di passerà un json contenente la timeline di un documento legale. Questa timeline potrebbe inlcudere elementi duplicati. Il tuo compito è quello di rimuovere gli elementi duplicati e restituire la timeline pulita."""
 TIMELINE_DOCUMENT_PATH = "accounts/{assistito}/pratiche/{pratica}/documenti/{documento}"

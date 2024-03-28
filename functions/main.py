@@ -66,6 +66,14 @@ def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
     General_Summary(partial_summaries, pratica_id, account_name).create_general_summary()
     return {"status": "ok"}
 
+@https_fn.on_call()
+def generate_timeline(req: https_fn.CallableRequest) -> dict[str, str]:
+    logger.info("generate_timeline called")
+    keys = ["assistitoName", "praticaId"]
+    assistito_name, pratica_id = commons.get_data(req, keys)
+    TimelineGenerator(assistito_name, pratica_id).generate_timeline()
+    return {"status": "ok"}
+
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")

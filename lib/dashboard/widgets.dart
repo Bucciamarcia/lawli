@@ -204,7 +204,18 @@ class Documenti extends StatelessWidget {
                   // Recreate timeline button
                   child: DocumentiWidgetThreeButtons(
                       context: context,
-                      onPressed: () {},
+                      onPressed: () async {
+                        try {
+                          await FirebaseFunctions.instance
+                              .httpsCallable("create_timeline")
+                              .call({
+                            "praticaId": pratica.id.toString(),
+                            "accountName": accountName,
+                          });
+                        } catch (e) {
+                          debugPrint("Errore nella creazione della timeline: $e");
+                        }
+                      },
                       backgroundColor: Colors.teal,
                       text: "Ricrea timeline",
                       textColor: Colors.white),
