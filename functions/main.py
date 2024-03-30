@@ -3,6 +3,7 @@
 # Deploy with `firebase deploy`
 
 from firebase_functions import https_fn
+from firebase_functions import storage_fn
 from cloudevents.http import CloudEvent
 import os
 from firebase_admin import initialize_app
@@ -10,7 +11,9 @@ from py.functions import *
 from py import commons
 import functions_framework
 import base64
-from py.logger_config import logger
+from py.logger_config import LoggerConfig
+
+logger = LoggerConfig().setup_logging()
 
 initialize_app()
 
@@ -69,9 +72,9 @@ def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
 @https_fn.on_call()
 def generate_timeline(req: https_fn.CallableRequest) -> dict[str, str]:
     logger.info("generate_timeline called")
-    keys = ["assistitoName", "praticaId"]
-    assistito_name, pratica_id = commons.get_data(req, keys)
-    TimelineGenerator(assistito_name, pratica_id).generate_timeline()
+    keys = ["accountName", "praticaId"]
+    account_name, pratica_id = commons.get_data(req, keys)
+    TimelineGenerator(account_name, pratica_id).generate_timeline()
     return {"status": "ok"}
 
 @functions_framework.cloud_event

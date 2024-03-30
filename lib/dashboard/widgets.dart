@@ -207,10 +207,10 @@ class Documenti extends StatelessWidget {
                       onPressed: () async {
                         try {
                           await FirebaseFunctions.instance
-                              .httpsCallable("create_timeline")
+                              .httpsCallable("generate_timeline")
                               .call({
-                            "praticaId": pratica.id.toString(),
-                            "accountName": accountName,
+                              "accountName": accountName,
+                              "praticaId": pratica.id.toString(),
                           });
                         } catch (e) {
                           debugPrint("Errore nella creazione della timeline: $e");

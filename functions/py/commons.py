@@ -5,6 +5,7 @@ Common operations shared by multiple functions.
 from firebase_functions import https_fn
 from py.constants import *
 from google.cloud import storage
+import firebase_admin
 from firebase_admin import firestore
 from py.logger_config import logger
 
@@ -54,8 +55,8 @@ class Cloud_Storege_Util:
                 return f.read()
         except Exception as e:
             logger.error(f"Error while reading text file: {e}")
-            raise f"Error while reading text file: {e}"
-    
+            raise Exception(e)
+
     def get_file_bytes(self, blob_name: str) -> bytes:
         """
         Read a file from the bucket.
@@ -91,8 +92,7 @@ class Firestore_Util:
             self.db = firestore.client()
         except Exception as e:
             logger.error(f"Error while initializing firestore client: {e}")
-            raise f"Error while initializing firestore client: {e}"
-    
+            raise Exception(e)
     def write_to_firestore(self, data: dict, merge: bool, path:str) -> None:
         """
         Write data to Firestore.

@@ -65,22 +65,38 @@ Il tuo output è molto preciso e dettagliato. Assicurati di includere tutte le i
 GENERATE_TIMELINE_ENGINE = BEST_GPT_MODEL
 CLEAR_TIMELINE_ENGINE = BEST_GPT_MODEL
 
-GENERATE_TIMELINE_FIRST_PROMPT = """L'utente ti passerà un documento relativo a una causa legale. Il tuo compito è quello di scrivere una timeline degli eventi in ordine cronologico in formato JSON.\n
-Includi solo gli eventi relativi direttamente alla causa in oggetto, non tutti gli eventi menzionati.\n
-Includi solo eventi la cui data completa è presente.\n
-Formatta il JSON come segue:\n
-{\n
-    "timeline": [\n
-        {\n
-            "date": "2021-01-01",\n
-            "event": "Evento 1"\n
-        },\n
-        {\n
-            "date": "2021-01-02",\n
-            "event": "Evento 2"\n
-        }\n
-    ]\n
+GENERATE_TIMELINE_FIRST_PROMPT = """L'utente ti passerà un documento relativo a una causa legale. Il tuo compito è quello di scrivere una timeline lunga e dettagliata degli eventi in ordine cronologico in formato JSON.
+Includi solo gli eventi relativi direttamente alla causa in oggetto, non tutti gli eventi menzionati.
+Includi solo eventi la cui data completa è presente.
+Formatta il JSON come segue:
+
+{
+    "timeline": [
+        {
+            "data": "2022-01-01",
+            "evento": "Evento 1"
+        },
+        {
+            "data": "2022-01-02",
+            "evento": "Evento 2"
+        }
+    ]
 }"""
 
-GENERATE_TIMELINE_CLEAR_TIMELINE_SYSPROMPT = """L'utente di passerà un json contenente la timeline di un documento legale. Questa timeline potrebbe inlcudere elementi duplicati. Il tuo compito è quello di rimuovere gli elementi duplicati e restituire la timeline pulita."""
+GENERATE_TIMELINE_CLEAR_TIMELINE_SYSPROMPT = """L'utente di passerà un json contenente la timeline di un documento legale. Questa timeline potrebbe inlcudere elementi duplicati. Il tuo compito è quello di rimuovere gli elementi duplicati e restituire la timeline pulita.
+
+Formatta il JSON come segue:
+
+{
+    "timeline": [
+        {
+            "data": "2022-01-01",
+            "evento": "Evento 1"
+        },
+        {
+            "data": "2022-01-02",
+            "evento": "Evento 2"
+        }
+    ]
+}"""
 TIMELINE_DOCUMENT_PATH = "accounts/{assistito}/pratiche/{pratica}/documenti/{documento}"
