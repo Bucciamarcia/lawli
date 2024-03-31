@@ -84,9 +84,11 @@ class TimelineGenerator:
         Entrypoint for the function. Generates a timeline for the client and returns it as a string.
         """
         documents = self.get_documents()
-        timeline = []
+        timeline = {"timeline": []}
         for n, doc in enumerate(documents):
             logger.info(f"Generating timeline for document {n+1}/{len(documents)}")
-            timeline.append(self.get_document_timeline(doc))
+            new_timeline = self.get_document_timeline(doc)
+            timeline["timeline"].extend(new_timeline["timeline"])
+
         logger.info(f"SUCCESS! Generated timeline: {timeline}")
         return self.summarize_timeline(timeline)
