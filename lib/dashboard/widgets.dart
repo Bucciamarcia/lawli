@@ -252,43 +252,55 @@ class TimelineWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text("Timeline", style: Theme.of(context).textTheme.headlineLarge),
-        const SizedBox(height: 20),
-        FutureBuilder(
-          future: DocumentStorage().getJson(
-            "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}",
-            "timeline.json",
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text("Errore nel caricamento della cronologia");
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else {
-              if (snapshot.data == null) {
-                return const Text("Nessuna cronologia presente");
-              } else {
-                List timeline = snapshot.data!['timeline'];
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: timeline.length,
-                  itemBuilder: (context, index) {
-                    final event = timeline[index];
-                    return TimelineEventWidget(
-                      date: event['data'],
-                      event: event['evento'],
-                      isLast: index == timeline.length - 1,
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 800),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Text(
+              "Timeline",
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 20),
+            FutureBuilder(
+              future: DocumentStorage().getJson(
+                "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}",
+                "timeline.json",
+              ),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text("Errore nel caricamento della cronologia");
+                } else if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else {
+                  if (snapshot.data == null) {
+                    return const Text("Nessuna cronologia presente");
+                  } else {
+                    List timeline = snapshot.data!['timeline'];
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: timeline.length,
+                      itemBuilder: (context, index) {
+                        final event = timeline[index];
+                        return TimelineEventWidget(
+                          date: event['data'],
+                          event: event['evento'],
+                          isLast: index == timeline.length - 1,
+                        );
+                      },
                     );
-                  },
-                );
-              }
-            }
-          },
+                  }
+                }
+              },
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -312,37 +324,64 @@ class TimelineEventWidget extends StatelessWidget {
         Column(
           children: [
             Container(
-              width: 20,
-              height: 20,
-              decoration: const BoxDecoration(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.blue,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.4),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
             ),
             if (!isLast)
               Container(
                 width: 2,
-                height: 50,
-                color: Colors.blue,
+                height: 60,
+                color: Colors.blue.withOpacity(0.6),
               ),
           ],
         ),
         const SizedBox(width: 20),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                date,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(event),
-              const SizedBox(height: 20),
-            ],
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  date,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.blue,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  event,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
