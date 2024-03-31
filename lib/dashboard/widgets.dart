@@ -218,9 +218,6 @@ class Documenti extends StatelessWidget {
                           debugPrint("Updating timeline");
                           await updateTimeline(newTimeline, accountName, pratica.id);
                           debugPrint("Timeline updated");
-                          Provider.of<DashboardProvider>(context, listen: false)
-                              .setTimeline(newTimeline);
-                          debugPrint("Timeline set");
                         } catch (e) {
                           debugPrint("Errore nella creazione della timeline: $e");
                         }
@@ -257,13 +254,12 @@ class TimelineWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("Timeline", style: Theme.of((context)).textTheme.headlineLarge),
+        Text("Timeline", style: Theme.of(context).textTheme.headlineLarge),
         const SizedBox(height: 20),
         FutureBuilder(
           future: DocumentStorage().getJson(
               "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}",
-              "timeline.json"
-          ),
+              "timeline.json"),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Text("Errore nel caricamento della cronologia");
@@ -273,14 +269,75 @@ class TimelineWidget extends StatelessWidget {
               if (snapshot.data == null) {
                 return const Text("Nessuna cronologia presente");
               } else {
-                return Text(snapshot.data.toString());
+                List timeline = snapshot.data!['timeline'];
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: timeline.length,
+                  itemBuilder: (context, index) {
+                    final event = timeline[index];
+                    return TimelineEventWidget(
+                      date: event['data'],
+                      description: event['evento'],
+                      isAlternate: index % 2 == 1,
+                    );
+                  },
+                );
               }
             }
           },
         ),
       ],
     );
-    
+  }
+}
+
+class TimelineEventWidget extends StatelessWidget {
+  final String date;
+  final String description;
+  final bool isAlternate;
+
+  const TimelineEventWidget({
+    Key? key,
+    required this.date,
+    required this.description,
+    this.isAlternate = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment:
+                isAlternate ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Text(
+                date,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(description),
+            ],
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          width: 16,
+          height: 16,
+          decoration: const BoxDecoration(
+            color: Colors.blue,
+            shape: BoxShape.circle,
+          ),
+        ),
+        if (!isAlternate)
+          const Expanded(
+            child: SizedBox(),
+          ),
+      ],
+    );
   }
 }
 
