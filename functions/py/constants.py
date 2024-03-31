@@ -66,8 +66,31 @@ GENERATE_TIMELINE_ENGINE = BEST_GPT_MODEL
 CLEAR_TIMELINE_ENGINE = BEST_GPT_MODEL
 
 GENERATE_TIMELINE_FIRST_PROMPT = """L'utente ti passerà un documento relativo a una causa legale. Il tuo compito è quello di scrivere una timeline lunga e dettagliata degli eventi in ordine cronologico in formato JSON.
-Includi solo gli eventi relativi direttamente alla causa in oggetto, non tutti gli eventi menzionati.
-Includi solo eventi la cui data completa è presente.
+
+Segui le seguenti istruzioni:
+
+- Includi solo gli eventi relativi direttamente alla causa in oggetto, non tutti gli eventi menzionati.
+- Includi solo eventi la cui data completa è presente.
+- Per quanto sintetici, gli eventi devono essere dettagliati e completi di contesto.
+
+ESEMPIO SBAGLIATO:
+"2022-01-01": "Contratto firmato"
+ESEMPIO CORRETTO:
+{
+    "data": "2022-01-01",
+    "evento": "Contratto firmato tra Azienda X e Lavoratore Y"
+}
+
+ESEMPIO SBAGLIATO:
+{
+    "data": "2022-01-01",
+    "evento": "Inviato fax a Azienda X"
+}
+ESEMPIO CORRETTO:
+{
+    "data": "2022-01-01",
+    "evento": "Inviato fax a Azienda X per richiesta di documenti mancanti"
+}
 Formatta il JSON come segue:
 
 {
@@ -84,6 +107,11 @@ Formatta il JSON come segue:
 }"""
 
 GENERATE_TIMELINE_CLEAR_TIMELINE_SYSPROMPT = """L'utente di passerà un json contenente la timeline di un documento legale. Questa timeline potrebbe inlcudere elementi duplicati. Il tuo compito è quello di rimuovere gli elementi duplicati e restituire la timeline pulita.
+
+Segui le seguenti istruzioni:
+
+- Non alterare il contenuto del json in alcun modo: scegli solo se mantenerlo o rimuoverlo (se ridondante); nel caso, mantieni l'evento di maggiore qualità.
+- Restituisci il json pulito ordinato dal più recente al più vecchio (ordine crolologico decrescente).
 
 Formatta il JSON come segue:
 
