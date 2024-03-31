@@ -258,8 +258,9 @@ class TimelineWidget extends StatelessWidget {
         const SizedBox(height: 20),
         FutureBuilder(
           future: DocumentStorage().getJson(
-              "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}",
-              "timeline.json"),
+            "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}",
+            "timeline.json",
+          ),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Text("Errore nel caricamento della cronologia");
@@ -278,8 +279,8 @@ class TimelineWidget extends StatelessWidget {
                     final event = timeline[index];
                     return TimelineEventWidget(
                       date: event['data'],
-                      description: event['evento'],
-                      isAlternate: index % 2 == 1,
+                      event: event['evento'],
+                      isLast: index == timeline.length - 1,
                     );
                   },
                 );
@@ -294,48 +295,56 @@ class TimelineWidget extends StatelessWidget {
 
 class TimelineEventWidget extends StatelessWidget {
   final String date;
-  final String description;
-  final bool isAlternate;
+  final String event;
+  final bool isLast;
 
   const TimelineEventWidget({
-    Key? key,
+    super.key,
     required this.date,
-    required this.description,
-    this.isAlternate = false,
-  }) : super(key: key);
+    required this.event,
+    this.isLast = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Column(
+          children: [
+            Container(
+              width: 20,
+              height: 20,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blue,
+              ),
+            ),
+            if (!isLast)
+              Container(
+                width: 2,
+                height: 50,
+                color: Colors.blue,
+              ),
+          ],
+        ),
+        const SizedBox(width: 20),
         Expanded(
           child: Column(
-            crossAxisAlignment:
-                isAlternate ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 date,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
-              const SizedBox(height: 4),
-              Text(description),
+              const SizedBox(height: 8),
+              Text(event),
+              const SizedBox(height: 20),
             ],
           ),
         ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          width: 16,
-          height: 16,
-          decoration: const BoxDecoration(
-            color: Colors.blue,
-            shape: BoxShape.circle,
-          ),
-        ),
-        if (!isAlternate)
-          const Expanded(
-            child: SizedBox(),
-          ),
       ],
     );
   }
