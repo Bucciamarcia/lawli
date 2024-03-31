@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
@@ -206,12 +206,18 @@ class Documenti extends StatelessWidget {
                       context: context,
                       onPressed: () async {
                         try {
-                          await FirebaseFunctions.instance
+                          var result = await FirebaseFunctions.instance
                               .httpsCallable("generate_timeline")
                               .call({
                               "accountName": accountName,
                               "praticaId": pratica.id.toString(),
                           });
+                          debugPrint("DATA: ${result.data}");
+                          debugPrint("Extracting new timeline");
+                          var newTimeline = jsonDecode(result.data);
+                          debugPrint("Updating timeline");
+                          await updateTimeline(newTimeline, accountName, pratica.id);
+                          debugPrint("Timeline updated");
                         } catch (e) {
                           debugPrint("Errore nella creazione della timeline: $e");
                         }
@@ -233,6 +239,11 @@ class Documenti extends StatelessWidget {
         ),
       ),
     );
+  }
+  Future<void> updateTimeline(newTimeline, String accountName, double praticaId) async {
+    final path = "accounts/$accountName/pratiche/$praticaId";
+    const fileName = "timeline.json";
+    DocumentStorage().uploadJson(path, fileName, newTimeline);
   }
 }
 

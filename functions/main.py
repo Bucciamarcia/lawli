@@ -74,8 +74,8 @@ def generate_timeline(req: https_fn.CallableRequest) -> dict[str, str]:
     logger.info("generate_timeline called")
     keys = ["accountName", "praticaId"]
     account_name, pratica_id = commons.get_data(req, keys)
-    TimelineGenerator(account_name, pratica_id).generate_timeline()
-    return {"status": "ok"}
+    result = TimelineGenerator(account_name, pratica_id).generate_timeline()
+    return result
 
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:

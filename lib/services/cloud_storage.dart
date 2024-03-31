@@ -57,6 +57,18 @@ class DocumentStorage extends StorageService {
     }
   }
 
+  Future<void> uploadJson(String path, String filenName, Map json) async {
+    try {
+      debugPrint("Uploading json");
+      var docRef = storageRef.child(path).child(filenName);
+      await docRef.putString(jsonEncode(json), metadata: SettableMetadata(contentType: "application/json"));
+      debugPrint("Json uploaded");
+    } catch (e) {
+      debugPrint("Error uploading file: $e");
+      rethrow;
+    }
+  }
+
   Future<void> deleteDocument(String path, String fileName) async {
     try {
       await storageRef.child(path).child(fileName).delete();

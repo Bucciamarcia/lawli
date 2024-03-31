@@ -1,4 +1,5 @@
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
 from openai import OpenAI, OpenAIError
 from py.commons import *
@@ -79,16 +80,23 @@ class TimelineGenerator:
 
         return json.loads(response.choices[0].message.content) 
 
-    def generate_timeline(self) -> dict[str, str]:
+    def generate_timeline(self) -> str:
         """
-        Entrypoint for the function. Generates a timeline for the client and returns it as a string.
+        Entrypoint for the function. Generates a timeline for the client and returns it as a string, processing documents in parallel.
         """
         documents = self.get_documents()
         timeline = {"timeline": []}
-        for n, doc in enumerate(documents):
-            logger.info(f"Generating timeline for document {n+1}/{len(documents)}")
-            new_timeline = self.get_document_timeline(doc)
-            timeline["timeline"].extend(new_timeline["timeline"])
+        
+        # Use ThreadPoolExecutor to process documents in parallel
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [executor.submit(self.get_document_timeline, doc) for doc in documents]
+            for future in as_completed(futures):
+                try:
+                    new_timeline = future.result()
+                    timeline["timeline"].extend(new_timeline["timeline"])
+                except Exception as exc:
+                    logger.error(f"Generated an exception: {exc}")
 
         logger.info(f"SUCCESS! Generated timeline: {timeline}")
-        return self.summarize_timeline(timeline)
+        summary = self.summarize_timeline(timeline)
+        return json.dumps(summary)
