@@ -260,10 +260,7 @@ class TimelineWidget extends StatelessWidget {
           children: [
             Text(
               "Timeline",
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 20),
             FutureBuilder(
