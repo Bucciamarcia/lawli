@@ -70,3 +70,5 @@ gcloud functions deploy get_txt_from_docai_json --trigger-topic=documentai_pdf_n
 
 gcloud functions deploy generate_document_summary --trigger-topic=generate_document_summary --env-vars-file .env.yaml --gen2 --runtime=python311 --entry-point=generate_document_summary --region=europe-west3
 ```
+
+Change the timeout of the functions to 120 seconds (must do it manually b/c firebase doesn't have that on cli).
