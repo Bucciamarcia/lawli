@@ -60,6 +60,9 @@ class MainWindow extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 30),
+              const TimelineWidget(),
+              const SizedBox(height: 50)
             ],
           ),
         ),

@@ -218,6 +218,9 @@ class Documenti extends StatelessWidget {
                           debugPrint("Updating timeline");
                           await updateTimeline(newTimeline, accountName, pratica.id);
                           debugPrint("Timeline updated");
+                          Provider.of<DashboardProvider>(context, listen: false)
+                              .setTimeline(newTimeline);
+                          debugPrint("Timeline set");
                         } catch (e) {
                           debugPrint("Errore nella creazione della timeline: $e");
                         }
@@ -244,6 +247,24 @@ class Documenti extends StatelessWidget {
     final path = "accounts/$accountName/pratiche/$praticaId";
     const fileName = "timeline.json";
     DocumentStorage().uploadJson(path, fileName, newTimeline);
+  }
+}
+
+class TimelineWidget extends StatefulWidget {
+  const TimelineWidget({super.key});
+
+  @override
+  State<TimelineWidget> createState() => _TimelineWidgetState();
+}
+
+class _TimelineWidgetState extends State<TimelineWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text("Cronologia eventi", style: Theme.of(context).textTheme.headlineLarge),
+      ]
+    );
   }
 }
 

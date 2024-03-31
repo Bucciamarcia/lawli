@@ -18,6 +18,8 @@ class DashboardProvider extends ChangeNotifier {
 
   String accountName = kDebugMode ? "lawli" : "";
 
+  Map? timeline;
+
   void setIdPratica(double id) {
     idPratica = id;
     notifyListeners();
@@ -40,6 +42,11 @@ class DashboardProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint("Error notifying listeners on setAccountName: $e");
     }
+  }
+
+  void setTimeline(Map t) {
+    timeline = t;
+    notifyListeners();
   }
 
 }
