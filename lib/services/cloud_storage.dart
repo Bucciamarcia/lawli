@@ -69,6 +69,20 @@ class DocumentStorage extends StorageService {
     }
   }
 
+  Future<Map?> getJson(String path, String fileName) async {
+    try {
+      final Uint8List? jsonString = await storageRef.child(path).child(fileName).getData();
+      if (jsonString == null) {
+        return null;
+      } else {
+        return jsonDecode(utf8.decode(jsonString));
+      }
+    } catch (e) {
+      debugPrint("Error getting json: $e");
+      rethrow;
+    }
+  }
+
   Future<void> deleteDocument(String path, String fileName) async {
     try {
       await storageRef.child(path).child(fileName).delete();

@@ -250,21 +250,37 @@ class Documenti extends StatelessWidget {
   }
 }
 
-class TimelineWidget extends StatefulWidget {
+class TimelineWidget extends StatelessWidget {
   const TimelineWidget({super.key});
 
-  @override
-  State<TimelineWidget> createState() => _TimelineWidgetState();
-}
-
-class _TimelineWidgetState extends State<TimelineWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("Cronologia eventi", style: Theme.of(context).textTheme.headlineLarge),
-      ]
+        Text("Timeline", style: Theme.of((context)).textTheme.headlineLarge),
+        const SizedBox(height: 20),
+        FutureBuilder(
+          future: DocumentStorage().getJson(
+              "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}",
+              "timeline.json"
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text("Errore nel caricamento della cronologia");
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else {
+              if (snapshot.data == null) {
+                return const Text("Nessuna cronologia presente");
+              } else {
+                return Text(snapshot.data.toString());
+              }
+            }
+          },
+        ),
+      ],
     );
+    
   }
 }
 
