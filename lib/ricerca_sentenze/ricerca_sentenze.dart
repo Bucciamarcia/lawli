@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import "../../shared/shared.dart";
 import "../../services/services.dart";
+import "motore_ricerca_sentenze.dart";
 
 String infoBox = """La funzionalità ricerca sentenze è un motore di ricerca per sentenze di tribulale.
 Puoi cercare sentenze di tribunale, appello o cassazione.
@@ -21,7 +22,7 @@ class RicercaSentenzeScreen extends StatelessWidget {
       body: Container(
         alignment: Alignment.topCenter,
         padding: ResponsiveLayout.mainWindowPadding(context),
-        child: Column(
+        child: ListView(
           children: [
             Text(
               "Ricerca sentenze",
@@ -30,7 +31,9 @@ class RicercaSentenzeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             InfoBox(
             text: infoBox,
-            )
+            ),
+            const SizedBox(height: 20),
+            const MotoreRicercaSentenze()
           ],
         ),
       ),
