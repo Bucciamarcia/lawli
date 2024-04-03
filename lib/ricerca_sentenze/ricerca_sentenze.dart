@@ -19,22 +19,25 @@ class RicercaSentenzeScreen extends StatelessWidget {
 
   Scaffold body(BuildContext context) {
     return Scaffold(
-      body: Container(
-        alignment: Alignment.topCenter,
-        padding: ResponsiveLayout.mainWindowPadding(context),
-        child: ListView(
-          children: [
-            Text(
-              "Ricerca sentenze",
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
-            const SizedBox(height: 20),
-            InfoBox(
-            text: infoBox,
-            ),
-            const SizedBox(height: 20),
-            const MotoreRicercaSentenze()
-          ],
+      body: Center(
+        child: Container(
+          width: 1200,
+          alignment: Alignment.topCenter,
+          padding: ResponsiveLayout.mainWindowPadding(context),
+          child: ListView(
+            children: [
+              Text(
+                "Ricerca sentenze",
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
+              const SizedBox(height: 20),
+              InfoBox(
+              text: infoBox,
+              ),
+              const SizedBox(height: 20),
+              const MotoreRicercaSentenze()
+            ],
+          ),
         ),
       ),
     );
@@ -68,7 +71,6 @@ class InfoBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 900,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).primaryColorLight, width: 3),
