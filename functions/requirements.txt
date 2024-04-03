@@ -1,0 +1,9 @@
+firebase_functions~=0.2.0
+firebase-admin
+google-cloud-logging
+google-cloud-documentai-toolbox
+google-cloud-documentai
+google-cloud-firestore
+google-cloud-storage
+google-cloud-pubsub
+git+https://github.com/Bucciamarcia/libreria-ai-per-tutti.git
