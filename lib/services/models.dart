@@ -1,3 +1,4 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:json_annotation/json_annotation.dart";
 part "models.g.dart";
 
@@ -55,4 +56,25 @@ class Pratica {
   });
 
   factory Pratica.fromJson(Map<String, dynamic> json) => _$PraticaFromJson(json);
+}
+
+@JsonSerializable()
+class Documento {
+  final String filename;
+  @JsonKey(fromJson: _fromJsonTimestamp, toJson: _toJsonTimestamp)
+  final DateTime data;
+  final String brief_description;
+  String? assistantId;
+
+  Documento({
+    this.filename = '',
+    required this.data,
+    this.brief_description = '',
+    this.assistantId,
+  });  
+
+  factory Documento.fromJson(Map<String, dynamic> json) => _$DocumentoFromJson(json);
+
+  static DateTime _fromJsonTimestamp(Timestamp timestamp) => timestamp.toDate();
+  static Timestamp _toJsonTimestamp(DateTime dateTime) => Timestamp.fromDate(dateTime);
 }

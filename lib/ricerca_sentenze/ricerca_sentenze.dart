@@ -1,32 +1,22 @@
 import 'package:flutter/material.dart';
-import "package:provider/provider.dart";
 import "../../shared/shared.dart";
 import "../../services/services.dart";
-import "widgets.dart";
 
-class UploadFileScreen extends StatelessWidget {
-  const UploadFileScreen({super.key});
+class RicercaSentenzeScreen extends StatelessWidget {
+  const RicercaSentenzeScreen({super.key});
 
   Scaffold body(BuildContext context) {
-    final double idPratica = context.watch<DashboardProvider>().idPratica;
     return Scaffold(
       body: Container(
         alignment: Alignment.topCenter,
         padding: ResponsiveLayout.mainWindowPadding(context),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Column(
-            children: [
-              Text(
-                "Aggiungi documento alla pratica",
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
-              const SizedBox(height: 30),
-              Expanded(
-                child: FormData(idPratica: idPratica),
-              ),
-            ],
-          ),
+        child: Column(
+          children: [
+            Text(
+              "Assistiti",
+              style: Theme.of(context).textTheme.displayLarge,
+            ),
+          ],
         ),
       ),
     );
@@ -34,11 +24,10 @@ class UploadFileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //Get idPratica from Provider
     AppBar appBar(BuildContext context) {
       return AppBar(
         centerTitle: true,
-        title: const Text("Aggiungi documento"),
+        title: const Text("Assistiti"),
       );
     }
 

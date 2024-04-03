@@ -56,11 +56,11 @@ class BuildTable extends StatelessWidget {
                         DataCell(Text(nomeCompletoSnapshot
                             .data!)),
                         DataCell(ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             Provider.of<DashboardProvider>(context, listen: false)
                                 .setIdPratica(pratica.id);
                             debugPrint(pratica.id.toString());
-                            Navigator.pushNamed(context, "/dashboard");
+                            Navigator.pushNamedAndRemoveUntil(context, "/dashboard", (route) => false);
                           },
                           child: const Text("Apri"),
                         )),

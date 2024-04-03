@@ -4,6 +4,7 @@ import "dart:async";
 import "../services/auth.dart";
 import "../services/models.dart";
 import "dart:developer";
+import "cloud_storage.dart";
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -61,6 +62,26 @@ class AccountDb extends FirestoreService {
       log('Error getting account name: $e');
       return "Error";
     }
+  }
+}
+
+class PraticheDb extends FirestoreService {
+  Future<void> addNewDocument(String filename, DateTime date, double idPratica) async {
+    final String accountName = await AccountDb().getAccountName();
+
+    final data = <String, dynamic>{
+      "filename": filename,
+      "data": date,
+    };
+
+    try {
+      final DocumentReference docs = _db.collection("accounts").doc(accountName).collection("pratiche").doc(idPratica.toString()).collection("documenti").doc(filename);
+      await docs.set(data);
+    } catch (e) {
+      debugPrint("Error adding new document: $e");
+      rethrow;
+    }
+
   }
 }
 
@@ -183,6 +204,67 @@ class AssistitoDb extends FirestoreService {
   }
 }
 
+class DocumentoDb extends FirestoreService {
+  Future<void> deleteDocumentFromPraticaid(double praticaId, String filename, [bool deleteStorage = true]) async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      await accountRef
+          .collection("pratiche")
+          .doc(praticaId.toString())
+          .collection("documenti")
+          .doc(filename)
+          .delete();
+    } catch (e) {
+      debugPrint("Error deleting document: $e");
+      rethrow;
+    }
+
+    if (deleteStorage) {
+      int idx = filename.lastIndexOf(".");
+      String filenameNoExtension = idx != -1 ? filename.substring(0, idx) : filename;
+      try {
+        await DocumentStorage().deleteDocument(
+            "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/documenti",
+            "$filenameNoExtension.txt");
+      } catch (e) {
+        debugPrint("Error deleting file: $e");
+      }
+      // Delete originale
+      try {
+        await DocumentStorage().deleteDocument(
+            "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/documenti",
+            "originale_$filename");
+      } catch (e) {
+        debugPrint("Error deleting file originale: $e");
+      }
+      // Delete in riassunti folder
+      try {
+        await DocumentStorage().deleteDocument(
+            "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/riassunti",
+            filename);
+      } catch (e) {
+        debugPrint("Nessun riassunto, nessun rimorso: $e");
+      }
+    }
+  }
+
+  Future<void> updateDocument(double praticaId, String filename, Map<String, dynamic> addition) async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      await accountRef
+          .collection("pratiche")
+          .doc(praticaId.toString())
+          .collection("documenti")
+          .doc(filename)
+          .set(addition, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint("Error updating document: $e");
+      rethrow;
+    }
+  }
+
+}
+
 class RetrieveObjectFromDb extends FirestoreService {
   Future<List<Assistito>> getAssistiti() async {
     String accountName = await AccountDb().getAccountName();
@@ -226,5 +308,32 @@ class RetrieveObjectFromDb extends FirestoreService {
         .doc(praticaId.toString());
     var snapshot = await ref.get();
     return Pratica.fromJson(snapshot.data() ?? {});
+  }
+
+  Future<List<Documento>> getDocumenti(double praticaId) async {
+    String accountName = await AccountDb().getAccountName();
+    var ref = _db
+        .collection("accounts")
+        .doc(accountName)
+        .collection("pratiche")
+        .doc(praticaId.toString())
+        .collection("documenti");
+    var snapshot = await ref.get();
+    var data = snapshot.docs.map((s) => s.data());
+    var topics = data.map((d) => Documento.fromJson(d));
+    return topics.toList();
+  }
+
+  Future<Documento> getDocumento(double praticaId, String filename) async {
+    String accountName = await AccountDb().getAccountName();
+    var ref = _db
+        .collection("accounts")
+        .doc(accountName)
+        .collection("pratiche")
+        .doc(praticaId.toString())
+        .collection("documenti")
+        .doc(filename);
+    var snapshot = await ref.get();
+    return Documento.fromJson(snapshot.data() ?? {});
   }
 }

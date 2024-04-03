@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dashboard/document/view/view_document.dart';
 import 'home/home.dart';
 import 'dashboard/dashboard.dart';
 import 'dashboard/uploadfile/uploadfile.dart';
@@ -9,6 +10,7 @@ import "home/recent/recent.dart";
 import 'pratiche/nuovo/nuovo.dart';
 import "pratiche/pratiche.dart";
 import "assistiti/nuovo/nuovo.dart";
+import "ricerca_sentenze/ricerca_sentenze.dart";
 
 final Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => const HomeScreen(),
@@ -21,4 +23,6 @@ final Map<String, WidgetBuilder> routes = {
   '/pratiche': (BuildContext context) => const PraticheScreen(),
   '/assistiti/nuovo': (BuildContext context) => const NuovoAssistitoScreen(),
   '/pratiche/nuovo': (BuildContext context) => const NuovaPraticaScreen(),
+  '/dashboard/document/update': (BuildContext context) => const ViewDocumentScreen(),
+  '/ricerca_sentenze': (BuildContext context) => const RicercaSentenzeScreen(),
 };

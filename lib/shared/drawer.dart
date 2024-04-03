@@ -64,6 +64,12 @@ class MenuElements {
         onTap: () {
           Navigator.pushNamed(context, '/pratiche');
         },
+      ),
+      ListTile(
+        title: const Text("Ricerca sentenze"),
+        onTap: () {
+          Navigator.pushNamed(context, '/ricerca_sentenze');
+        },
       )
     ];
     return listElements;
