@@ -10,6 +10,7 @@ import "home/recent/recent.dart";
 import 'pratiche/nuovo/nuovo.dart';
 import "pratiche/pratiche.dart";
 import "assistiti/nuovo/nuovo.dart";
+import "ricerca_sentenze/ricerca_sentenze.dart";
 
 final Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => const HomeScreen(),
@@ -23,4 +24,5 @@ final Map<String, WidgetBuilder> routes = {
   '/assistiti/nuovo': (BuildContext context) => const NuovoAssistitoScreen(),
   '/pratiche/nuovo': (BuildContext context) => const NuovaPraticaScreen(),
   '/dashboard/document/update': (BuildContext context) => const ViewDocumentScreen(),
+  '/ricerca_sentenze': (BuildContext context) => const RicercaSentenzeScreen(),
 };
