@@ -95,6 +95,13 @@ def generate_timeline(req: https_fn.CallableRequest) -> dict[str, str]:
     return result
 
 
+@https_fn.on_call()
+def get_similar_sentences(
+    req: https_fn.CallableRequest
+) -> list[dict[str, str]]:
+    pass
+
+
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")
