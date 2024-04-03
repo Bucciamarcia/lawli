@@ -114,7 +114,7 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TribunaleSelector(),
+        const TribunaleSelector(),
         const SizedBox(height: 20),
         Row(
           children: [
