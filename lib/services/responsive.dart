@@ -16,6 +16,6 @@ class ResponsiveLayout {
 
   static EdgeInsets mainWindowPadding(BuildContext context) {
     bool desktop = isDesktop(context);
-    return EdgeInsets.all(desktop ? 30 : 10);
+    return EdgeInsets.all(desktop ? 0 : 10);
   }
 }

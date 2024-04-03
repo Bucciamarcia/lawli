@@ -21,15 +21,11 @@ class RicercaSentenzeScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Container(
-          width: 1200,
           alignment: Alignment.topCenter,
           padding: ResponsiveLayout.mainWindowPadding(context),
           child: ListView(
+            padding: const EdgeInsets.only(left: 50, right: 150),
             children: [
-              Text(
-                "Ricerca sentenze",
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
               const SizedBox(height: 20),
               InfoBox(
               text: infoBox,
