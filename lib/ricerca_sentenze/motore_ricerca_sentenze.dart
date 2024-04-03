@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lawli/services/provider.dart';
+import 'package:provider/provider.dart';
 
 class MotoreRicercaSentenze extends StatefulWidget {
   const MotoreRicercaSentenze({super.key});
@@ -20,28 +22,31 @@ class _MotoreRicercaSentenzeState extends State<MotoreRicercaSentenze>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: "Parole chiave"),
-            Tab(text: "Documento"),
-            Tab(text: "Pratica"),
-          ],
-        ),
-        SizedBox(
-          height: 1200,
-          child: TabBarView(
+    return ChangeNotifierProvider(
+      create: (context) => RicercaSentenzeProvider(),
+      child: Column(
+        children: [
+          TabBar(
             controller: _tabController,
-            children: const [
-              RicercaParoleChiave(),
-              RicercaDocumento(),
-              Text("tab 3 content"),
+            tabs: const [
+              Tab(text: "Parole chiave"),
+              Tab(text: "Documento"),
+              Tab(text: "Pratica"),
             ],
           ),
-        ),
-      ],
+          SizedBox(
+            height: 1200,
+            child: TabBarView(
+              controller: _tabController,
+              children: const [
+                RicercaParoleChiave(),
+                RicercaDocumento(),
+                Text("tab 3 content"),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -67,6 +72,35 @@ class RicercaParoleChiave extends StatefulWidget {
   State<RicercaParoleChiave> createState() => _RicercaParoleChiaveState();
 }
 
+class TribunaleSelector extends StatelessWidget {
+  const TribunaleSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Seleziona la corte:"),
+        const SizedBox(width: 10),
+        DropdownButton(
+            focusColor: Colors.white,
+            icon: const Icon(Icons.arrow_drop_down),
+            value: Provider.of<RicercaSentenzeProvider>(context).corte,
+            items: const [
+              DropdownMenuItem(value: "tutte", child: Text("tutte")),
+              DropdownMenuItem(value: "tribunale", child: Text("tribunale")),
+              DropdownMenuItem(value: "appello", child: Text("appello")),
+              DropdownMenuItem(value: "cassazione", child: Text("cassazione")),
+            ],
+            onChanged: (value) {
+              Provider.of<RicercaSentenzeProvider>(context, listen: false)
+                  .setCorte(value.toString());
+            }),
+      ],
+    );
+  }
+}
+
 // Example placeholder async method
 Future<String> textSendButtonPressed(String text) async {
   // Replace this with your actual async logic
@@ -81,6 +115,8 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        TribunaleSelector(),
+        const SizedBox(height: 20),
         Row(
           children: [
             Expanded(

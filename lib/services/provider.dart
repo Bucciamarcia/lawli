@@ -2,6 +2,15 @@ import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:lawli/services/models.dart';
 
+class RicercaSentenzeProvider extends ChangeNotifier {
+  String corte = "tutte";
+
+  void setCorte(String c) {
+    corte = c;
+    notifyListeners();
+  }
+}
+
 class DashboardProvider extends ChangeNotifier {
   double idPratica = kDebugMode ? 1 : 0;
 
