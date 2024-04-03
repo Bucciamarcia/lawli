@@ -36,7 +36,7 @@ class _MotoreRicercaSentenzeState extends State<MotoreRicercaSentenze>
             controller: _tabController,
             children: const [
               RicercaParoleChiave(),
-              Text("tab 2 content"),
+              RicercaDocumento(),
               Text("tab 3 content"),
             ],
           ),
@@ -46,6 +46,19 @@ class _MotoreRicercaSentenzeState extends State<MotoreRicercaSentenze>
   }
 }
 
+class RicercaDocumento extends StatefulWidget {
+  const RicercaDocumento({super.key});
+
+  @override
+  State<RicercaDocumento> createState() => _RicercaDocumentoState();
+}
+
+class _RicercaDocumentoState extends State<RicercaDocumento> {
+  @override
+  Widget build(BuildContext context) {
+    return const Text("tab 2 content here");
+  }
+}
 
 class RicercaParoleChiave extends StatefulWidget {
   const RicercaParoleChiave({super.key});
@@ -54,15 +67,15 @@ class RicercaParoleChiave extends StatefulWidget {
   State<RicercaParoleChiave> createState() => _RicercaParoleChiaveState();
 }
 
+// Example placeholder async method
+Future<String> textSendButtonPressed(String text) async {
+  // Replace this with your actual async logic
+  return "Long result string based on input: $text";
+}
+
 class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
   final _textController = TextEditingController();
   String _resultText = ''; // Store the result string
-
-  // Example placeholder async method
-  Future<String> textSendButtonPressed(String text) async {
-    // Replace this with your actual async logic
-    return "Long result string based on input: $text"; 
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,18 +86,20 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
             Expanded(
               child: TextField(
                 controller: _textController,
-                maxLines: 10,
+                maxLines: 3,
                 keyboardType: TextInputType.multiline,
                 decoration: const InputDecoration(
                   hintText: 'Inserisci il testo da cercare...',
                 ),
                 onChanged: (value) {
                   // Update the button state based on input
-                  setState(() {}); 
+                  setState(() {});
                 },
               ),
             ),
-            submitIconButton(_textController.text, clearController: true), // clearController true specific for this case
+            submitIconButton(_textController.text,
+                clearController:
+                    true), // clearController true specific for this case
           ],
         ),
         if (_resultText.isNotEmpty) // Only show result area if there's text
@@ -93,26 +108,27 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
     );
   }
 
-  IconButton submitIconButton(String textToCompare, {bool clearController=false}) {
+  IconButton submitIconButton(String textToCompare,
+      {bool clearController = false}) {
     return IconButton(
-            icon: const Icon(Icons.send),
-            style: ButtonStyle(iconSize: MaterialStateProperty.all(50)),
-            tooltip: textToCompare.isNotEmpty
-                ? 'Invia il testo'
-                : 'Inserisci del testo per inviare',
-            onPressed: textToCompare.isNotEmpty
-                ? () async {
-                    // Only send if the input isn't empty
-                    final result = await textSendButtonPressed(textToCompare);
-                    if (clearController == true) {
-                    setState(() {
-                      _resultText = result;
-                      _textController.clear(); // Clear input after sending
-                    });
-                    }
-                  }
-                : null, // Disable the button if text is empty
-          );
+      icon: const Icon(Icons.send),
+      style: ButtonStyle(iconSize: MaterialStateProperty.all(50)),
+      tooltip: textToCompare.isNotEmpty
+          ? 'Invia il testo'
+          : 'Inserisci del testo per inviare',
+      onPressed: textToCompare.isNotEmpty
+          ? () async {
+              // Only send if the input isn't empty
+              final result = await textSendButtonPressed(textToCompare);
+              if (clearController == true) {
+                setState(() {
+                  _resultText = result;
+                  _textController.clear(); // Clear input after sending
+                });
+              }
+            }
+          : null, // Disable the button if text is empty
+    );
   }
 
   @override
