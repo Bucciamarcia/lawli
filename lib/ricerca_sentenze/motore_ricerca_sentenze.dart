@@ -101,8 +101,7 @@ class TribunaleSelector extends StatelessWidget {
   }
 }
 
-// Example placeholder async method
-Future<String> textSendButtonPressed(String text) async {
+Future<String> textSendButtonPressed(String text, String corte) async {
   // Replace this with your actual async logic
   return "Long result string based on input: $text";
 }
@@ -128,17 +127,16 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
                   hintText: 'Inserisci il testo da cercare...',
                 ),
                 onChanged: (value) {
-                  // Update the button state based on input
                   setState(() {});
                 },
               ),
             ),
             submitIconButton(_textController.text,
                 clearController:
-                    true), // clearController true specific for this case
+                    true),
           ],
         ),
-        if (_resultText.isNotEmpty) // Only show result area if there's text
+        if (_resultText.isNotEmpty)
           ResultBox(resultText: _resultText),
       ],
     );
@@ -155,7 +153,7 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
       onPressed: textToCompare.isNotEmpty
           ? () async {
               // Only send if the input isn't empty
-              final result = await textSendButtonPressed(textToCompare);
+              final result = await textSendButtonPressed(textToCompare, Provider.of<RicercaSentenzeProvider>(context, listen: false).corte);
               if (clearController == true) {
                 setState(() {
                   _resultText = result;
