@@ -73,7 +73,7 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
             Expanded(
               child: TextField(
                 controller: _textController,
-                maxLines: null, // Allow multiple lines
+                maxLines: 10,
                 keyboardType: TextInputType.multiline,
                 decoration: const InputDecoration(
                   hintText: 'Inserisci il testo da cercare...',
@@ -84,51 +84,71 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
                 },
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.send),
-              style: ButtonStyle(iconSize: MaterialStateProperty.all(50)),
-              tooltip: _textController.text.isNotEmpty
-                  ? 'Invia il testo'
-                  : 'Inserisci del testo per inviare',
-              onPressed: _textController.text.isNotEmpty
-                  ? () async {
-                      // Only send if the input isn't empty
-                      final result = await textSendButtonPressed(_textController.text);
-                      setState(() {
-                        _resultText = result;
-                        _textController.clear(); // Clear input after sending
-                      });
-                    }
-                  : null, // Disable the button if text is empty
-            ),
+            submitIconButton(_textController.text, clearController: true), // clearController true specific for this case
           ],
         ),
         if (_resultText.isNotEmpty) // Only show result area if there's text
-          Container(
-            margin: const EdgeInsets.only(top: 10),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(),
-            ),
-            child: Row(
-              children: [
-                Expanded(child: SelectableText(_resultText)), // Make text selectable
-                IconButton(
-                  icon: const Icon(Icons.copy),
-                  onPressed: () {
-                    Clipboard.setData(ClipboardData(text: _resultText));
-                  },
-                ),
-              ],
-            ),
-          ),
+          ResultBox(resultText: _resultText),
       ],
     );
+  }
+
+  IconButton submitIconButton(String textToCompare, {bool clearController=false}) {
+    return IconButton(
+            icon: const Icon(Icons.send),
+            style: ButtonStyle(iconSize: MaterialStateProperty.all(50)),
+            tooltip: textToCompare.isNotEmpty
+                ? 'Invia il testo'
+                : 'Inserisci del testo per inviare',
+            onPressed: textToCompare.isNotEmpty
+                ? () async {
+                    // Only send if the input isn't empty
+                    final result = await textSendButtonPressed(textToCompare);
+                    if (clearController == true) {
+                    setState(() {
+                      _resultText = result;
+                      _textController.clear(); // Clear input after sending
+                    });
+                    }
+                  }
+                : null, // Disable the button if text is empty
+          );
   }
 
   @override
   void dispose() {
     _textController.dispose();
     super.dispose();
+  }
+}
+
+class ResultBox extends StatelessWidget {
+  const ResultBox({
+    super.key,
+    required String resultText,
+  }) : _resultText = resultText;
+
+  final String _resultText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        border: Border.all(),
+      ),
+      child: Row(
+        children: [
+          Expanded(child: SelectableText(_resultText)), // Make text selectable
+          IconButton(
+            icon: const Icon(Icons.copy),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: _resultText));
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
