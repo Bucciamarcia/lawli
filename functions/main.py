@@ -98,12 +98,11 @@ def generate_timeline(req: https_fn.CallableRequest) -> str:
 @https_fn.on_call()
 def get_similar_sentences(
     req: https_fn.CallableRequest
-) -> list[dict[str, str]]:
-    return [
-        {"value 1": "sentence 1", "value 2": "sentence 2"},
-        {"value 1": "sentence 3", "value 2": "sentence 4"}
-    ]
-
+) -> str:
+    logger.info("get_similar_sentences called")
+    keys = ["text", "corte"]
+    text, corte = commons.get_data(req, keys)
+    return f"TEXT: {text}, CORTE: {corte}"
 
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
