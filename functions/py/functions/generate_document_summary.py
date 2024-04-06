@@ -1,6 +1,5 @@
-import logging
-from py.logger_config import logger
 import json
+from py.logger_config import LoggerConfig
 import os
 from .. import commons
 import libreria_ai_per_tutti as ai

@@ -6,19 +6,18 @@ from firebase_functions import https_fn
 from py.constants import BUCKET_NAME
 from google.cloud import storage
 from firebase_admin import firestore
-from py.logger_config import logger
-
+import logging
 
 def get_data(req: https_fn.CallableRequest, keys: list) -> tuple:
     """
     Extract the data from the request and return it as a tuple.
     """
-    logger.info(f"REQ DATA: {req.data}")
-    logger.info(f"KEYS: {keys}")
+    logging.info(f"REQ DATA: {req.data}")
+    logging.info(f"KEYS: {keys}")
     try:
         data = req.data
     except Exception as e:
-        logger.error(f"Error while extracting data from request: {e}")
+        logging.error(f"Error while extracting data from request: {e}")
         raise Exception(f"Error while extracting data from request: {e}")
 
     return tuple(data[key] for key in keys)
@@ -41,7 +40,7 @@ class Cloud_Storege_Util:
             self.storage_client = storage.Client()
             self.bucket = self.storage_client.bucket(BUCKET_NAME)
         except Exception as e:
-            logger.error(f"Error while initializing storage client: {e}")
+            logging.error(f"Error while initializing storage client: {e}")
             raise Exception(f"Error while initializing storage client: {e}")
 
     def read_text_file(self, blob_name: str) -> str:
@@ -54,7 +53,7 @@ class Cloud_Storege_Util:
             with blob.open("r") as f:
                 return str(f.read())
         except Exception as e:
-            logger.error(f"Error while reading text file: {e}")
+            logging.error(f"Error while reading text file: {e}")
             raise Exception(e)
 
     def get_file_bytes(self, blob_name: str) -> bytes:
@@ -64,10 +63,10 @@ class Cloud_Storege_Util:
         """
         try:
             blob = self.bucket.blob(blob_name)
-            logger.info(f"BLOB READ CORRECTLY: {blob}")
+            logging.info(f"BLOB READ CORRECTLY: {blob}")
             return blob.download_as_bytes()
         except Exception as e:
-            logger.error(f"Error while reading file: {e}")
+            logging.error(f"Error while reading file: {e}")
             raise Exception(f"Error while reading file: {e}")
 
     def write_text_file(self, blob_name: str, content: str) -> None:
@@ -81,7 +80,7 @@ class Cloud_Storege_Util:
             blob.upload_from_string(content, content_type="text/plain; \
             charset=utf-8")
         except Exception as e:
-            logger.error(f"Error while writing text file: {e}")
+            logging.error(f"Error while writing text file: {e}")
             raise Exception(f"Error while writing text file: {e}")
 
 
@@ -93,7 +92,7 @@ class Firestore_Util:
         try:
             self.db = firestore.client()
         except Exception as e:
-            logger.error(f"Error while initializing firestore client: {e}")
+            logging.error(f"Error while initializing firestore client: {e}")
             raise Exception(e)
 
     def write_to_firestore(self, data: dict, merge: bool, path: str) -> None:
@@ -104,7 +103,7 @@ class Firestore_Util:
             ref = self.db.document(path)
             ref.set(data, merge=merge)
         except Exception as e:
-            logger.error(f"Error while writing to Firestore: {e}")
+            logging.error(f"Error while writing to Firestore: {e}")
             raise Exception(f"Error while writing to Firestore: {e}")
 
     def search_document(self, path: str, filename: str) -> str | None:
