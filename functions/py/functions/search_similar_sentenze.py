@@ -21,7 +21,7 @@ class SentenzeSearcher:
         )
         self.db = self.w_client.collections.get("Sentenze")
         self.limit = 10
-    
+
     def search_generic(self):
         self.logger.info("search_generic called")
         response = self.db.query.near_text(
@@ -58,4 +58,3 @@ class SentenzeSearcher:
                 "distance": o.metadata.distance
             })
         return results
-
