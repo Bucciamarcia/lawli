@@ -1,3 +1,5 @@
+import 'package:cloud_functions/cloud_functions.dart';
+import "sentenza_object.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lawli/services/provider.dart';
@@ -101,9 +103,15 @@ class TribunaleSelector extends StatelessWidget {
   }
 }
 
-Future<String> textSendButtonPressed(String text, String corte) async {
-  // Replace this with your actual async logic
-  return "Long result string based on input: $text";
+Future<String?> textSendButtonPressed(String text, String corte) async {
+  var result = await FirebaseFunctions.instance.httpsCallable("get_similar_sentences").call(
+    {
+      "text": text,
+      "corte": corte,
+    },
+  );
+  List<Map<String, String>> resultData = result.data;
+  return resultData[0]['value 1'];
 }
 
 class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
@@ -156,7 +164,7 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
               final result = await textSendButtonPressed(textToCompare, Provider.of<RicercaSentenzeProvider>(context, listen: false).corte);
               if (clearController == true) {
                 setState(() {
-                  _resultText = result;
+                  _resultText = result!;
                   _textController.clear(); // Clear input after sending
                 });
               }

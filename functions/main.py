@@ -99,7 +99,10 @@ def generate_timeline(req: https_fn.CallableRequest) -> dict[str, str]:
 def get_similar_sentences(
     req: https_fn.CallableRequest
 ) -> list[dict[str, str]]:
-    pass
+    return [
+        {"value 1": "sentence 1", "value 2": "sentence 2"},
+        {"value 1": "sentence 3", "value 2": "sentence 4"}
+    ]
 
 
 @functions_framework.cloud_event
