@@ -61,7 +61,7 @@ def create_thread(req: https_fn.CallableRequest) -> str:
 
 
 @https_fn.on_call()
-def interrogate_chatbot(req: https_fn.CallableRequest) -> str:
+def interrogate_chatbot(req: https_fn.CallableRequest) -> list[str]:
     logger.info("interrogate_chatbot called")
     logger.info(f"REQUEST: {req}")
     keys = ['assistantName', 'assistantId', 'message', 'threadId']
@@ -85,7 +85,7 @@ def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
 
 
 @https_fn.on_call()
-def generate_timeline(req: https_fn.CallableRequest) -> dict[str, str]:
+def generate_timeline(req: https_fn.CallableRequest) -> str:
     logger.info("generate_timeline called")
     keys = ["accountName", "praticaId"]
     account_name, pratica_id = commons.get_data(req, keys)

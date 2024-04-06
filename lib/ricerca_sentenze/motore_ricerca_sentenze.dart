@@ -110,8 +110,8 @@ Future<String?> textSendButtonPressed(String text, String corte) async {
       "corte": corte,
     },
   );
-  List<Map<String, String>> resultData = result.data;
-  return resultData[0]['value 1'];
+  String resultData = result.data;
+  return resultData;
 }
 
 class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {

@@ -81,7 +81,7 @@ class Interrogate_Chatbot:
 
         return messages_text
     
-    def process_interrogation(self, assistant_name:str, assistant_id:str, message:str, thread_id:str) -> None:
+    def process_interrogation(self, assistant_name:str, assistant_id:str, message:str, thread_id:str) -> list[str]:
         """Entrypoint. Process the interrogation."""
         self.add_message_to_thread(message, thread_id)
         run_id = self.run_assistant(assistant_id, thread_id)
