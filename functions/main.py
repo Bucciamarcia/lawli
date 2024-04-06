@@ -7,6 +7,7 @@ from cloudevents.http import CloudEvent
 import os
 from firebase_admin import initialize_app
 from py import functions
+import json
 from py import commons
 import functions_framework
 import base64
@@ -120,7 +121,8 @@ def get_similar_sentences(
     logger.info("get_similar_sentences called")
     keys = ["text", "corte"]
     text, corte = commons.get_data(req, keys)
-    return f"TEXT: {text}, CORTE: {corte}"
+    result = functions.SentenzeSearcher(text, corte).get_similar_sentenze()
+    return json.dumps(result, ensure_ascii=False)
 
 
 @functions_framework.cloud_event
