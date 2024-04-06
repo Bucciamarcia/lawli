@@ -11,6 +11,16 @@ from py import commons
 import functions_framework
 import base64
 from py.logger_config import LoggerConfig
+import yaml
+
+
+def initialize_env():
+    with open(".env.yaml") as f:
+        data = yaml.safe_load(f)
+
+    for key, value in data.items():
+        os.environ[key] = value
+
 
 logger = LoggerConfig().setup_logging()
 
@@ -19,6 +29,7 @@ initialize_app()
 
 @https_fn.on_call()
 def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
+    initialize_env()
 
     logger.info("get_text_from_pdf called")
 
@@ -37,6 +48,7 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 
 @https_fn.on_call()
 def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
+    initialize_env()
     logger.info("does_assistant_exist called")
     keys = ["assistantName"]
     assistant_name, = commons.get_data(req, keys)
@@ -46,6 +58,7 @@ def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
 
 @https_fn.on_call()
 def create_assistant(req: https_fn.CallableRequest) -> bool:
+    initialize_env()
     logger.info("create_assistant called")
     keys = ["assistantName"]
     assistant_name, = commons.get_data(req, keys)
@@ -56,12 +69,14 @@ def create_assistant(req: https_fn.CallableRequest) -> bool:
 
 @https_fn.on_call()
 def create_thread(req: https_fn.CallableRequest) -> str:
+    initialize_env()
     logger.info("create_thread called")
     return functions.Create_Thread().create_thread()
 
 
 @https_fn.on_call()
 def interrogate_chatbot(req: https_fn.CallableRequest) -> list[str]:
+    initialize_env()
     logger.info("interrogate_chatbot called")
     logger.info(f"REQUEST: {req}")
     keys = ['assistantName', 'assistantId', 'message', 'threadId']
@@ -75,6 +90,7 @@ def interrogate_chatbot(req: https_fn.CallableRequest) -> list[str]:
 
 @https_fn.on_call()
 def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
+    initialize_env()
     logger.info("create_general_summary called")
     keys = ["partialSummarties", "praticaId", "accountName"]
     partial_summaries, pratica_id, account_name = commons.get_data(req, keys)
@@ -86,6 +102,7 @@ def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
 
 @https_fn.on_call()
 def generate_timeline(req: https_fn.CallableRequest) -> str:
+    initialize_env()
     logger.info("generate_timeline called")
     keys = ["accountName", "praticaId"]
     account_name, pratica_id = commons.get_data(req, keys)
@@ -99,10 +116,12 @@ def generate_timeline(req: https_fn.CallableRequest) -> str:
 def get_similar_sentences(
     req: https_fn.CallableRequest
 ) -> str:
+    initialize_env()
     logger.info("get_similar_sentences called")
     keys = ["text", "corte"]
     text, corte = commons.get_data(req, keys)
     return f"TEXT: {text}, CORTE: {corte}"
+
 
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:

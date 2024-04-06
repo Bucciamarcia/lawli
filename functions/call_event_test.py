@@ -1,4 +1,4 @@
-from py.functions import generate_timeline
+from py.functions import SentenzeSearcher
 import firebase_admin
 from py.logger_config import LoggerConfig
 
@@ -7,6 +7,5 @@ logger = LoggerConfig(target="local").setup_logging()
 firebase_admin.initialize_app()
 
 logger.info("STARTING")
-tester = generate_timeline.TimelineGenerator("lawli", "1")
-
-tester.generate_timeline()
+tester = SentenzeSearcher("condominio", "tutti")
+print(tester.get_similar_sentenze())

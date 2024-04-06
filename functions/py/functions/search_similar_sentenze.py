@@ -8,3 +8,7 @@ class SentenzeSearcher:
         self.client = OpenAI(api_key=os.environ.get("OPENAI_APIKEY"))
         self.text = text
         self.corte = corte
+
+    def get_similar_sentenze(self) -> list[dict[str, str]]:
+        
+        return "OK"
