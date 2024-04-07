@@ -8,6 +8,7 @@ from google.cloud import storage
 from firebase_admin import firestore
 import logging
 
+
 def get_data(req: https_fn.CallableRequest, keys: list) -> tuple:
     """
     Extract the data from the request and return it as a tuple.

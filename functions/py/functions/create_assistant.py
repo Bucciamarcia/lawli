@@ -3,6 +3,7 @@ import os
 from py.constants import CREATE_ASSISTANT_ENGINE, CREATE_ASSISTANT_INSTRUCTIONS
 from py.commons import Cloud_Storege_Util
 from py.logger_config import LoggerConfig
+from io import BytesIO
 
 
 class Create_Assistant:
@@ -15,12 +16,14 @@ class Create_Assistant:
     def upload_document(self, blob_name: str) -> str:
         try:
             filebytes = Cloud_Storege_Util().get_file_bytes(blob_name)
+            file_like_object = BytesIO(filebytes)
+            file_like_object.name = "nometest.pdf"
         except Exception as e:
             self.logger.error(f"Error while reading file: {e}")
             raise Exception(f"Error while reading file: {e}")
         try:
             response = self.client.files.create(
-                file=filebytes,
+                file=file_like_object,
                 purpose="assistants"
             )
             self.logger.info("Document uploaded successfully")
