@@ -131,7 +131,6 @@ Future<List<Sentenza>> textSendButtonPressed(String text, String corte) async {
 
 class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
   final _textController = TextEditingController();
-  List<Sentenza> similarSentenze = [];
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +156,24 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
             submitIconButton(_textController.text, clearController: true),
           ],
         ),
-        if (similarSentenze.isNotEmpty) ResultBox(sentenze: similarSentenze),
+        if (Provider.of<RicercaSentenzeProvider>(context, listen: true)
+                .similarSentenze
+                .isNotEmpty &&
+            Provider.of<RicercaSentenzeProvider>(context, listen: true)
+                    .isSearchingSentenze ==
+                false)
+          ResultBox(
+              sentenze:
+                  Provider.of<RicercaSentenzeProvider>(context, listen: true)
+                      .similarSentenze),
+        if (Provider.of<RicercaSentenzeProvider>(context, listen: true)
+            .isSearchingSentenze)
+          const Column(
+            children: [
+              SizedBox(height: 10),
+              CircularProgressIndicator(),
+            ],
+          ),
       ],
     );
   }
@@ -172,19 +188,19 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
           : 'Inserisci del testo per inviare',
       onPressed: textToCompare.isNotEmpty
           ? () async {
-              // Only send if the input isn't empty
-              List<Sentenza> result = await textSendButtonPressed(
-                  textToCompare,
-                  Provider.of<RicercaSentenzeProvider>(context, listen: false)
-                      .corte);
+              Provider.of<RicercaSentenzeProvider>(context, listen: false)
+                  .searchSentenze(
+                      textToCompare,
+                      Provider.of<RicercaSentenzeProvider>(context,
+                              listen: false)
+                          .corte);
               if (clearController == true) {
                 setState(() {
-                  similarSentenze = result;
-                  _textController.clear(); // Clear input after sending
+                  _textController.clear();
                 });
               }
             }
-          : null, // Disable the button if text is empty
+          : null,
     );
   }
 
@@ -259,20 +275,23 @@ class ResultBox extends StatelessWidget {
                                 onPressed: () {
                                   Clipboard.setData(
                                       ClipboardData(text: sentenza.contenuto));
-                                  showDialog(context: context, builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text("Testo copiato"),
-                                      content: const Text("Il testo è stato copiato negli appunti."),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Chiudi"),
-                                        ),
-                                      ],
-                                    );
-                                  });
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text("Testo copiato"),
+                                          content: const Text(
+                                              "Il testo è stato copiato negli appunti."),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Chiudi"),
+                                            ),
+                                          ],
+                                        );
+                                      });
                                 },
                                 child: const Text("Copia"),
                               ),
