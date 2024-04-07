@@ -55,20 +55,6 @@ class _MotoreRicercaSentenzeState extends State<MotoreRicercaSentenze>
   }
 }
 
-class RicercaDocumento extends StatefulWidget {
-  const RicercaDocumento({super.key});
-
-  @override
-  State<RicercaDocumento> createState() => _RicercaDocumentoState();
-}
-
-class _RicercaDocumentoState extends State<RicercaDocumento> {
-  @override
-  Widget build(BuildContext context) {
-    return const Text("tab 2 content here");
-  }
-}
-
 class RicercaParoleChiave extends StatefulWidget {
   const RicercaParoleChiave({super.key});
 
@@ -180,5 +166,19 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
   void dispose() {
     _textController.dispose();
     super.dispose();
+  }
+}
+
+class RicercaDocumento extends StatefulWidget {
+  const RicercaDocumento({super.key});
+
+  @override
+  State<RicercaDocumento> createState() => _RicercaDocumentoState();
+}
+
+class _RicercaDocumentoState extends State<RicercaDocumento> {
+  @override
+  Widget build(BuildContext context) {
+    return const Text("tab 2 content here");
   }
 }
