@@ -1,4 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:lawli/ricerca_sentenze/tribunale_selector.dart';
 import "result_box.dart";
 import "dart:convert";
 import "sentenza_object.dart";
@@ -73,35 +74,6 @@ class RicercaParoleChiave extends StatefulWidget {
 
   @override
   State<RicercaParoleChiave> createState() => _RicercaParoleChiaveState();
-}
-
-class TribunaleSelector extends StatelessWidget {
-  const TribunaleSelector({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Seleziona la corte:"),
-        const SizedBox(width: 10),
-        DropdownButton(
-            focusColor: Colors.white,
-            icon: const Icon(Icons.arrow_drop_down),
-            value: Provider.of<RicercaSentenzeProvider>(context).corte,
-            items: const [
-              DropdownMenuItem(value: "tutte", child: Text("tutte")),
-              DropdownMenuItem(value: "tribunale", child: Text("tribunale")),
-              DropdownMenuItem(value: "appello", child: Text("appello")),
-              DropdownMenuItem(value: "cassazione", child: Text("cassazione")),
-            ],
-            onChanged: (value) {
-              Provider.of<RicercaSentenzeProvider>(context, listen: false)
-                  .setCorte(value.toString());
-            }),
-      ],
-    );
-  }
 }
 
 Future<List<Sentenza>> textSendButtonPressed(String text, String corte) async {
@@ -210,4 +182,3 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
     super.dispose();
   }
 }
-
