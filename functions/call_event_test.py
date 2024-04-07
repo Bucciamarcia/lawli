@@ -1,12 +1,7 @@
-from py.functions import SentenzeSearcher
+from py.functions import Create_Assistant
 import firebase_admin
-import json
 
 firebase_admin.initialize_app()
 
-tester = SentenzeSearcher("condominio", "tutte")
-print(tester.get_similar_sentenze())
-with open("test.json", "w", encoding="utf-8") as f:
-    f.write(json.dumps(
-        tester.get_similar_sentenze(), indent=4, ensure_ascii=False
-    ))
+tester = Create_Assistant()
+print(tester.process_assistant("1 sentenza 190-2020 notificata il 4-3-20.pdf"))
