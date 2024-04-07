@@ -1,5 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:lawli/ricerca_sentenze/tribunale_selector.dart';
+import 'package:lawli/services/firestore.dart';
+import '../services/models.dart';
 import "result_box.dart";
 import "dart:convert";
 import "sentenza_object.dart";
@@ -179,6 +181,57 @@ class RicercaDocumento extends StatefulWidget {
 class _RicercaDocumentoState extends State<RicercaDocumento> {
   @override
   Widget build(BuildContext context) {
-    return const Text("tab 2 content here");
+    return const Column(
+      children: [
+        TribunaleSelector(),
+        Row(
+          children: [
+            PraticaSelector(),
+          ],
+        )
+      ],
+    );
+  }
+}
+
+class PraticaSelector extends StatelessWidget {
+  const PraticaSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: RetrieveObjectFromDb().getPratiche(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return const Text("Errore nel caricamento delle pratiche");
+        } else {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Seleziona la pratica:"),
+              const SizedBox(width: 10),
+              DropdownButton(
+                focusColor: Colors.white,
+                hint: const Text("Seleziona la pratica"),
+                value: Provider.of<RicercaSentenzeProvider>(context, listen: true)
+                    .selectedPratica,
+                items: [
+                  for (Pratica pratica in snapshot.data!)
+                    DropdownMenuItem(
+                      value: pratica,
+                      child: Text(pratica.titolo),
+                    )
+                ],
+                onChanged: (value) =>
+                    Provider.of<RicercaSentenzeProvider>(context, listen: false)
+                        .setSelectedPratica(value!),
+              )
+            ],
+          );
+        }
+      },
+    );
   }
 }
