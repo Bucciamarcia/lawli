@@ -218,7 +218,14 @@ class PraticaSelector extends StatelessWidget {
               onChangedAction: (value) {
                 Provider.of<RicercaSentenzeProvider>(context, listen: false)
                     .setSelectedPratica(value as Pratica);
-              });
+              },
+              dropDownItems: [
+                for (Pratica pratica in snapshot.data!)
+                  DropdownMenuItem(
+                    value: pratica,
+                    child: Text(pratica.titolo),
+                  )
+              ]);
         }
       },
     );
@@ -230,7 +237,9 @@ class DocumentoSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<RicercaSentenzeProvider>(context, listen: true).selectedPratica == null) {
+    if (Provider.of<RicercaSentenzeProvider>(context, listen: true)
+            .selectedPratica ==
+        null) {
       return const Text("Seleziona una pratica per visualizzare i documenti");
     } else {
       return const Text("CHAO");
@@ -243,14 +252,17 @@ class DropdownSelector extends StatelessWidget {
   final AsyncSnapshot<List<Pratica>> snapshot;
   final dynamic dropDownValue;
   final Function onChangedAction;
+  final List<DropdownMenuItem<Pratica>> dropDownItems;
   const DropdownSelector({
     super.key,
     required this.preText,
     required this.snapshot,
-    this.dropDownValue, required this.onChangedAction,
+    this.dropDownValue,
+    required this.onChangedAction,
+    required this.dropDownItems,
   });
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -261,15 +273,8 @@ class DropdownSelector extends StatelessWidget {
           focusColor: Colors.white,
           hint: Text(preText),
           value: dropDownValue,
-          items: [
-            for (Pratica pratica in snapshot.data!)
-              DropdownMenuItem(
-                value: pratica,
-                child: Text(pratica.titolo),
-              )
-          ],
-          onChanged: (value) =>
-              onChangedAction(value),
+          items: dropDownItems,
+          onChanged: (value) => onChangedAction(value),
         )
       ],
     );
