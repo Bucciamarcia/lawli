@@ -207,7 +207,16 @@ class PraticaSelector extends StatelessWidget {
         } else if (snapshot.hasError) {
           return const Text("Errore nel caricamento delle pratiche");
         } else {
-          return DropdownSelector(preText: "Seleziona la pratica", snapshot: snapshot, dropDownValue: Provider.of<RicercaSentenzeProvider>(context, listen: true).selectedPratica);
+          return DropdownSelector(
+              preText: "Seleziona la pratica",
+              snapshot: snapshot,
+              dropDownValue:
+                  Provider.of<RicercaSentenzeProvider>(context, listen: true)
+                      .selectedPratica,
+              onChangedAction: (value) {
+                Provider.of<RicercaSentenzeProvider>(context, listen: false)
+                    .setSelectedPratica(value as Pratica);
+              });
         }
       },
     );
@@ -218,8 +227,12 @@ class DropdownSelector extends StatelessWidget {
   final String preText;
   final AsyncSnapshot<List<Pratica>> snapshot;
   final dynamic dropDownValue;
+  final Function onChangedAction;
   const DropdownSelector({
-    super.key, required this.preText, required this.snapshot, this.dropDownValue,
+    super.key,
+    required this.preText,
+    required this.snapshot,
+    this.dropDownValue, required this.onChangedAction,
   });
 
   @override
@@ -241,8 +254,7 @@ class DropdownSelector extends StatelessWidget {
               )
           ],
           onChanged: (value) =>
-              Provider.of<RicercaSentenzeProvider>(context, listen: false)
-                  .setSelectedPratica(value as Pratica),
+              onChangedAction(value),
         )
       ],
     );
