@@ -242,17 +242,49 @@ class DocumentoSelector extends StatelessWidget {
         null) {
       return const Text("Seleziona una pratica per visualizzare i documenti");
     } else {
-      return const Text("CHAO");
+      return FutureBuilder(
+          future: RetrieveObjectFromDb().getDocumenti(
+              Provider.of<RicercaSentenzeProvider>(context, listen: false)
+                  .selectedPratica!
+                  .id),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text(
+                "Errore nel caricamento dei documenti: ${snapshot.error}",
+                style: const TextStyle(color: Colors.red),
+              );
+            } else {
+              return DropdownSelector(
+                  preText: "Seleziona il documento",
+                  snapshot: snapshot,
+                  dropDownValue: Provider.of<RicercaSentenzeProvider>(context,
+                          listen: true)
+                      .selectedDocumento,
+                  onChangedAction: (value) {
+                    Provider.of<RicercaSentenzeProvider>(context, listen: false)
+                        .setSelectedDocumento(value as Documento);
+                  },
+                  dropDownItems: [
+                    for (Documento documento in snapshot.data!)
+                      DropdownMenuItem(
+                        value: documento,
+                        child: Text(documento.filename),
+                      )
+                  ]);
+            }
+          });
     }
   }
 }
 
 class DropdownSelector extends StatelessWidget {
   final String preText;
-  final AsyncSnapshot<List<Pratica>> snapshot;
+  final AsyncSnapshot<List<Object>> snapshot;
   final dynamic dropDownValue;
   final Function onChangedAction;
-  final List<DropdownMenuItem<Pratica>> dropDownItems;
+  final List<DropdownMenuItem<Object>> dropDownItems;
   const DropdownSelector({
     super.key,
     required this.preText,
