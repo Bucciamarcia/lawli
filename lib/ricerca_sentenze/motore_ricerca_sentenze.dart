@@ -185,8 +185,10 @@ class _RicercaDocumentoState extends State<RicercaDocumento> {
       children: [
         TribunaleSelector(),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             PraticaSelector(),
+            DocumentoSelector(),
           ],
         )
       ],
@@ -223,6 +225,19 @@ class PraticaSelector extends StatelessWidget {
   }
 }
 
+class DocumentoSelector extends StatelessWidget {
+  const DocumentoSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    if (Provider.of<RicercaSentenzeProvider>(context, listen: true).selectedPratica == null) {
+      return const Text("Seleziona una pratica per visualizzare i documenti");
+    } else {
+      return const Text("CHAO");
+    }
+  }
+}
+
 class DropdownSelector extends StatelessWidget {
   final String preText;
   final AsyncSnapshot<List<Pratica>> snapshot;
@@ -235,7 +250,7 @@ class DropdownSelector extends StatelessWidget {
     this.dropDownValue, required this.onChangedAction,
   });
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

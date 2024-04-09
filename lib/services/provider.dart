@@ -10,6 +10,7 @@ class RicercaSentenzeProvider extends ChangeNotifier {
   bool isSearchingSentenze = false;
   List<Sentenza> similarSentenze = [];
   Pratica? selectedPratica;
+  Documento? selectedDocumento;
 
   void setCorte(String c) {
     corte = c;
@@ -58,6 +59,12 @@ class RicercaSentenzeProvider extends ChangeNotifier {
   void setSelectedPratica(Pratica p) {
     selectedPratica = p;
     debugPrint("Selected pratica: ${selectedPratica!.titolo}");
+    notifyListeners();
+  }
+
+  void setSelectedDocumento(Documento d) {
+    selectedDocumento = d;
+    debugPrint("Selected documento: ${selectedDocumento!.filename}");
     notifyListeners();
   }
 
