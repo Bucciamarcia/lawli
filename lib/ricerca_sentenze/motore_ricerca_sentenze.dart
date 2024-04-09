@@ -207,31 +207,44 @@ class PraticaSelector extends StatelessWidget {
         } else if (snapshot.hasError) {
           return const Text("Errore nel caricamento delle pratiche");
         } else {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Seleziona la pratica:"),
-              const SizedBox(width: 10),
-              DropdownButton(
-                focusColor: Colors.white,
-                hint: const Text("Seleziona la pratica"),
-                value: Provider.of<RicercaSentenzeProvider>(context, listen: true)
-                    .selectedPratica,
-                items: [
-                  for (Pratica pratica in snapshot.data!)
-                    DropdownMenuItem(
-                      value: pratica,
-                      child: Text(pratica.titolo),
-                    )
-                ],
-                onChanged: (value) =>
-                    Provider.of<RicercaSentenzeProvider>(context, listen: false)
-                        .setSelectedPratica(value!),
-              )
-            ],
-          );
+          return DropdownSelector(preText: "Seleziona la pratica", snapshot: snapshot, dropDownValue: Provider.of<RicercaSentenzeProvider>(context, listen: true).selectedPratica);
         }
       },
+    );
+  }
+}
+
+class DropdownSelector extends StatelessWidget {
+  final String preText;
+  final AsyncSnapshot<List<Pratica>> snapshot;
+  final dynamic dropDownValue;
+  const DropdownSelector({
+    super.key, required this.preText, required this.snapshot, this.dropDownValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(preText),
+        const SizedBox(width: 10),
+        DropdownButton(
+          focusColor: Colors.white,
+          hint: Text(preText),
+          value: dropDownValue,
+          items: [
+            for (Pratica pratica in snapshot.data!)
+              DropdownMenuItem(
+                value: pratica,
+                child: Text(pratica.titolo),
+              )
+          ],
+          onChanged: (value) =>
+              Provider.of<RicercaSentenzeProvider>(context, listen: false)
+                  .setSelectedPratica(value as Pratica),
+        )
+      ],
     );
   }
 }

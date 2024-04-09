@@ -9,7 +9,7 @@ class Interrogate_Chatbot:
     def __init__(self):
         self.client = OpenAI(api_key=os.environ.get("OPENAI_APIKEY"))
         self.logger = LoggerConfig().setup_logging()
-    
+
     def add_message_to_thread(self, message:str, thread_id:str) -> None:
         self.logger.info("Running add_message_to_thread")
         try:
