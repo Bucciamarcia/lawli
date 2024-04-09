@@ -67,7 +67,6 @@ class RicercaSentenzeProvider extends ChangeNotifier {
     debugPrint("Selected documento: ${selectedDocumento!.filename}");
     notifyListeners();
   }
-
 }
 
 class DashboardProvider extends ChangeNotifier {
