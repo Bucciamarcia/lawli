@@ -11,7 +11,7 @@ class Create_Assistant:
         self.logger = LoggerConfig().setup_logging()
         self.client = OpenAI(api_key=os.environ.get("OPENAI_APIKEY"))
         self.engine = CREATE_ASSISTANT_ENGINE
-        self.doc_id_path = "accounts/lawli/pratiche/1/documenti/originale_{assistant_name}"
+        self.doc_id_path = "accounts/lawli/pratiche/1/documenti/{assistant_name}.txt"
 
     def upload_document(self, blob_name: str) -> str:
         try:
@@ -34,13 +34,17 @@ class Create_Assistant:
         except Exception as e:
             self.logger.error(f"Error while uploading document: {e}")
             raise Exception(f"Error while uploading document: {e}")
+    
+    def strip_extension(self, filename: str):
+        return os.path.splitext(filename)[0]
 
     def process_assistant(self, assistant_name: str) -> str:
         """
         Entrypoint. Creates the assistant with the given name.
         """
+        assistant_name_no_ext = self.strip_extension(assistant_name)
         document_id = self.upload_document(
-            self.doc_id_path.format(assistant_name=assistant_name)
+            self.doc_id_path.format(assistant_name=assistant_name_no_ext)
         )
         try:
             my_assistant = self.client.beta.assistants.create(
