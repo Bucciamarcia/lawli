@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:intl/intl.dart';
 import 'package:lawli/services/models.dart';
 import "dart:convert";
 import 'package:cloud_functions/cloud_functions.dart';
@@ -99,11 +100,13 @@ class DashboardProvider extends ChangeNotifier {
 
   void setPratica(Pratica p) {
     pratica = p;
+    debugPrint("Set pratica: ${pratica.titolo}");
     notifyListeners();
   }
 
   void setDocumento(Documento d) {
     documento = d;
+    debugPrint("Set documento: ${documento.filename}");
     notifyListeners();
   }
 
@@ -111,6 +114,7 @@ class DashboardProvider extends ChangeNotifier {
     accountName = name;
     try {
       notifyListeners();
+      debugPrint("Set account name to $name");
     } catch (e) {
       debugPrint("Error notifying listeners on setAccountName: $e");
     }
