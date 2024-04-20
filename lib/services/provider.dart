@@ -56,6 +56,11 @@ class RicercaSentenzeProvider extends ChangeNotifier {
     }
   }
 
+  void setIsSearchingSentenze(bool b) {
+    isSearchingSentenze = b;
+    notifyListeners();
+  }
+
   void setSelectedPratica(Pratica p) {
     selectedPratica = p;
     debugPrint("Selected pratica: ${selectedPratica!.titolo}");

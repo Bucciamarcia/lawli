@@ -1,5 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:lawli/ricerca_sentenze/tribunale_selector.dart';
+import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/services/firestore.dart';
 import '../services/models.dart';
 import "result_box.dart";
@@ -37,7 +38,6 @@ class _MotoreRicercaSentenzeState extends State<MotoreRicercaSentenze>
             tabs: const [
               Tab(text: "Testo"),
               Tab(text: "Documento"),
-              Tab(text: "Pratica"),
             ],
           ),
           SizedBox(
@@ -181,19 +181,61 @@ class RicercaDocumento extends StatefulWidget {
 class _RicercaDocumentoState extends State<RicercaDocumento> {
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    var ricercaSentenzeProvider = Provider.of<RicercaSentenzeProvider>(context, listen: true);
+
+    return Column(
       children: [
-        TribunaleSelector(),
-        Row(
+        const TribunaleSelector(),
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             PraticaSelector(),
             DocumentoSelector(),
           ],
-        )
+        ),
+        const SizedBox(height: 20),
+        ricercaDocumentoSendButton(),
+        if (ricercaSentenzeProvider.isSearchingSentenze)
+          const Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: CircularProgressIndicator(),
+          ),
+        if (!ricercaSentenzeProvider.isSearchingSentenze && ricercaSentenzeProvider.similarSentenze.isNotEmpty)
+          ResultBox(sentenze: ricercaSentenzeProvider.similarSentenze),
       ],
     );
   }
+
+  SizedBox ricercaDocumentoSendButton() {
+  return SizedBox(
+    width: 200,
+    child: ElevatedButton(
+      child: const Row(
+        children: [
+          Text("Cerca sentenze", style: TextStyle(color: Colors.white)),
+          SizedBox(width: 10),
+          Icon(Icons.send, color: Colors.white),
+        ],
+      ),
+      onPressed: () async {
+        var provider = Provider.of<RicercaSentenzeProvider>(context, listen: false);
+        Documento documentoSelected = provider.selectedDocumento!;
+        Pratica praticaSelected = provider.selectedPratica!;
+        String summary = await DocumentStorage().getSummaryTextFromDocumento(
+            documentoSelected.filename, praticaSelected.id);
+
+        // Ensure UI updates are managed correctly
+        provider.isSearchingSentenze = true;
+
+        try {
+          await provider.searchSentenze(summary, provider.corte);
+        } finally {
+          provider.isSearchingSentenze = false;
+        }
+      },
+    ),
+  );
+}
 }
 
 class PraticaSelector extends StatelessWidget {
