@@ -6,7 +6,7 @@ SUCCESS_RESPONSE = {"status": 200, "response": "Success"}
 
 PROJECT_ID = "lawli-bab83"
 
-BEST_GPT_MODEL = "gpt-4-1106-preview"
+BEST_GPT_MODEL = "gpt-4-turbo"
 OPENAI_API_KEY = os.environ.get("OPENAI_APIKEY")
 
 # GET TEXT FROM PDF

@@ -8,6 +8,7 @@ from .create_thread import Create_Thread
 from .interrogate_chatbot import Interrogate_Chatbot
 from .create_general_summary import General_Summary
 from .generate_timeline import TimelineGenerator
+from .search_similar_sentenze import SentenzeSearcher
 
 __all__ = [
     "Pdf_Transformer",
@@ -19,5 +20,6 @@ __all__ = [
     "Create_Thread",
     "Interrogate_Chatbot",
     "General_Summary",
-    "TimelineGenerator"
+    "TimelineGenerator",
+    "SentenzeSearcher"
 ]
