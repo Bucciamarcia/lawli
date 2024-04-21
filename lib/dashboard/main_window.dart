@@ -27,37 +27,35 @@ class MainWindow extends StatelessWidget {
               const ExpandableOverview(
               ),
               const SizedBox(height: 20),
-              Expanded(
-                child: SizedBox(
-                  height: 600,
-                  child: Row(
-                    children: [
-                      Documenti(pratica: pratica),
-                      const SizedBox(
-                        height: 20,
-                        width: 20,
-                      ),
-                      Flexible(
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: const ChatView(),
+              SizedBox(
+                height: 600,
+                child: Row(
+                  children: [
+                    Documenti(pratica: pratica),
+                    const SizedBox(
+                      height: 20,
+                      width: 20,
+                    ),
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
+                        child: const ChatView(),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 30),

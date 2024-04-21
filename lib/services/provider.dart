@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:lawli/services/models.dart';
 import "dart:convert";
 import 'package:cloud_functions/cloud_functions.dart';
