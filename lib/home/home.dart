@@ -25,7 +25,6 @@ class HomeScreen extends StatelessWidget {
                 } else if (accountNameSnapshot.hasError) {
                   return const Text('Error getting name');
                 } else {
-                  Provider.of<DashboardProvider>(context, listen: false).setAccountName(accountNameSnapshot.data!);
                   return const RecentScreen(); 
                 }
               },

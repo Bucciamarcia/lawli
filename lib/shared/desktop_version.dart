@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lawli/services/firestore.dart';
+import 'package:lawli/services/provider.dart';
 import 'package:lawli/shared/shared.dart';
+import 'package:provider/provider.dart';
 
 class DesktopVersion extends StatelessWidget {
   final Widget body;
@@ -8,6 +11,8 @@ class DesktopVersion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => setAccountId(context));
+
     return Scaffold(
         appBar: appBar,
         body: Row(
@@ -23,5 +28,13 @@ class DesktopVersion extends StatelessWidget {
             ),
           ],
         ));
+  }
+
+  void setAccountId(context) async {
+    if (Provider.of<DashboardProvider>(context, listen: false).accountName ==
+        "") {
+      Provider.of<DashboardProvider>(context, listen: false)
+          .setAccountName(await AccountDb().getAccountName());
+    }
   }
 }

@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart' show kDebugMode;
-import 'package:intl/intl.dart';
 import 'package:lawli/services/models.dart';
 import "dart:convert";
 import 'package:cloud_functions/cloud_functions.dart';
@@ -76,20 +75,13 @@ class RicercaSentenzeProvider extends ChangeNotifier {
 }
 
 class DashboardProvider extends ChangeNotifier {
-  double idPratica = kDebugMode ? 1 : 0;
+  double idPratica = 0;
 
-  Pratica pratica = kDebugMode
-      ? Pratica(id: 1, assistitoId: 2, titolo: "Pratica Mario Rossi")
-      : Pratica();
+  Pratica pratica = Pratica();
 
-  Documento documento = kDebugMode
-      ? Documento(
-          filename: "1 sentenza 190-2020 notificata il 4-3-20.pdf",
-          brief_description: "Conferma ordine Analogue Seduction",
-          data: DateTime.now())
-      : Documento(data: DateTime.now());
+  Documento documento = Documento(data: DateTime.now());
 
-  String accountName = kDebugMode ? "lawli" : "";
+  String accountName = "";
 
   Map? timeline;
 
