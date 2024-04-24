@@ -58,7 +58,7 @@ def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
 
 
 @https_fn.on_call()
-def create_assistant(req: https_fn.CallableRequest) -> bool:
+def create_assistant(req: https_fn.CallableRequest) -> str:
     initialize_env()
     logger.info("create_assistant called")
     keys = ["assistantName"]
