@@ -44,8 +44,9 @@ class Interrogate_Chatbot:
                 run = self.client.beta.threads.runs.retrieve(
                     thread_id=thread_id, run_id=run_id
                 )
-            except:
-                raise Exception("Error retrieving run")
+            except Exception as e:
+                self.logger.error(f"Error retrieving run: {e}")
+                raise e
             if run.status == "completed":
                 self.logger.info("Run completed! Existing wait loop.")
                 break
