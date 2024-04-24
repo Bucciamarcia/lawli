@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import 'package:lawli/services/models.dart';
 import "dart:convert";
@@ -74,9 +75,11 @@ class RicercaSentenzeProvider extends ChangeNotifier {
 }
 
 class DashboardProvider extends ChangeNotifier {
-  double idPratica = 0;
+  double idPratica = kDebugMode ? 1 : 0;
 
-  Pratica pratica = Pratica();
+  Pratica pratica = kDebugMode
+      ? Pratica(id: 1, assistitoId: 2, titolo: "Pratica Mario Rossi")
+      : Pratica();
 
   Documento documento = Documento(data: DateTime.now());
 
