@@ -7,10 +7,11 @@ import '../services/services.dart';
 class ChatView extends StatefulWidget {
   final String? filePath;
   final String? threadId;
-  const ChatView(
-      {super.key,
-      this.filePath,
-      this.threadId,});
+  const ChatView({
+    super.key,
+    this.filePath,
+    this.threadId,
+  });
 
   @override
   State<ChatView> createState() => _ChatViewState();
@@ -63,8 +64,6 @@ class _ChatViewState extends State<ChatView> {
             .add(ChatMessage(text: _inputController.text, isUserMessage: true));
         _inputController.clear();
 
-        // Placeholder for sending to backend:
-
         // Create a thread if needed
         if (_currentThreadId == null) {
           _createThread().then((threadId) {
@@ -82,20 +81,24 @@ class _ChatViewState extends State<ChatView> {
   }
 
   Future<String> _createThread() async {
-    var createThreadResponse = await FirebaseFunctions.instance.httpsCallable("create_thread").call();
+    var createThreadResponse =
+        await FirebaseFunctions.instance.httpsCallable("create_thread").call();
     return createThreadResponse.data as String;
   }
 
-  // Placeholder - Replace with your backend call
-  void _sendBackendMessage(String message, String threadId, Pratica pratica, ) async {
+  void _sendBackendMessage(
+    String message,
+    String threadId,
+    Pratica pratica,
+  ) async {
     _addBotMessage("Cercando l'assistente...");
-     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     Documento? documento = documentoSelected;
 
     if (documento?.assistantId == null) {
       _removeLastMessage();
       _addBotMessage("Assistente non trovato. Creazione assistente...");
-       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
       var response = await FirebaseFunctions.instance
           .httpsCallable("create_assistant")
           .call(
@@ -116,7 +119,9 @@ class _ChatViewState extends State<ChatView> {
     _removeLastMessage();
     _addBotMessage("Sto pensando...");
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-    var responseInterrogateChatbot = await FirebaseFunctions.instance.httpsCallable("interrogate_chatbot").call(
+    var responseInterrogateChatbot = await FirebaseFunctions.instance
+        .httpsCallable("interrogate_chatbot")
+        .call(
       {
         "assistantName": assistantName,
         "assistantId": documento?.assistantId,
@@ -128,7 +133,7 @@ class _ChatViewState extends State<ChatView> {
     _removeLastMessage();
     for (String response in chatbotResponses) {
       _addBotMessage(response);
-       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     }
   }
 
@@ -163,40 +168,40 @@ class _ChatViewState extends State<ChatView> {
 
   FutureBuilder<List<Documento>> dropDownDocumentSelector(Pratica pratica) {
     return FutureBuilder(
-          future: RetrieveObjectFromDb().getDocumenti(pratica.id),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text("Errore nel caricamento dei documenti");
-            } else if (snapshot.data == null) {
-              return const Text("Nessun documento trovato");
-            } else if (snapshot.hasData && snapshot.data != null) {
-              List<String> docNames = [];
-              for (Documento doc in snapshot.data!) {
-                docNames.add(doc.filename);
-              }
-              return DropdownButton<String>(
-                hint: const Text("Seleziona un documento"),
-                value: assistantName,
-                isExpanded: true,
-                items: docNames.map((String name) {
-                  return DropdownMenuItem<String>(
-                    value: name,
-                    child: Text(name),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    assistantName = newValue;
-                    documentoSelected = snapshot.data!.firstWhere(
-                      (object) => object.filename == newValue,
-                    );
-                  });
-                },
-              );
-            } else {
-              return const CircularProgressIndicator();
+        future: RetrieveObjectFromDb().getDocumenti(pratica.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text("Errore nel caricamento dei documenti");
+          } else if (snapshot.data == null) {
+            return const Text("Nessun documento trovato");
+          } else if (snapshot.hasData && snapshot.data != null) {
+            List<String> docNames = [];
+            for (Documento doc in snapshot.data!) {
+              docNames.add(doc.filename);
             }
-          });
+            return DropdownButton<String>(
+              hint: const Text("Seleziona un documento"),
+              value: assistantName,
+              isExpanded: true,
+              items: docNames.map((String name) {
+                return DropdownMenuItem<String>(
+                  value: name,
+                  child: Text(name),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  assistantName = newValue;
+                  documentoSelected = snapshot.data!.firstWhere(
+                    (object) => object.filename == newValue,
+                  );
+                });
+              },
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        });
   }
 
   Container messageInputField(pratica) {
