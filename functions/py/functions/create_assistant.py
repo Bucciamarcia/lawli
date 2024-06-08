@@ -17,14 +17,13 @@ class Create_Assistant:
         try:
             filebytes = Cloud_Storege_Util().get_file_bytes(blob_name)
             file_like_object = BytesIO(filebytes)
-            file_like_object.name = "nometest.pdf"
+            file_like_object.name = blob_name
         except Exception as e:
             self.logger.error(f"Error while reading file: {e}")
             raise Exception(f"Error while reading file: {e}")
         try:
             response = self.client.files.create(
-                file=file_like_object,
-                purpose="assistants"
+                file=file_like_object, purpose="assistants"
             )
             self.logger.info("Document uploaded successfully")
             return response.id
@@ -34,7 +33,7 @@ class Create_Assistant:
         except Exception as e:
             self.logger.error(f"Error while uploading document: {e}")
             raise Exception(f"Error while uploading document: {e}")
-    
+
     def strip_extension(self, filename: str):
         return os.path.splitext(filename)[0]
 
@@ -42,6 +41,7 @@ class Create_Assistant:
         """
         Entrypoint. Creates the assistant with the given name.
         """
+        self.logger.info(f"Creating assistant with name: {assistant_name}")
         assistant_name_no_ext = self.strip_extension(assistant_name)
         document_id = self.upload_document(
             self.doc_id_path.format(assistant_name=assistant_name_no_ext)
@@ -52,7 +52,7 @@ class Create_Assistant:
                 name=assistant_name,
                 file_ids=[document_id],
                 tools=[{"type": "retrieval"}],
-                instructions=CREATE_ASSISTANT_INSTRUCTIONS
+                instructions=CREATE_ASSISTANT_INSTRUCTIONS,
             )
             self.logger.info(f"MY_ASSISTANT: {my_assistant}")
             return my_assistant.id
