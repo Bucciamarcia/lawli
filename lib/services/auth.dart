@@ -8,18 +8,6 @@ class AuthService {
   final userStream = FirebaseAuth.instance.authStateChanges();
   final user = FirebaseAuth.instance.currentUser;
 
-  Future<void> anonLogin() async {
-    try {
-      await FirebaseAuth.instance.signInAnonymously();
-
-      final anonUser = FirebaseAuth.instance.currentUser;
-      debugPrint("Signed in anonymously. UserID: ${anonUser!.uid}");
-      await FirestoreService().addUserToDb(anonUser.uid, true);
-    } on FirebaseAuthException catch (e) {
-      debugPrint("Error signing in anonymously: $e");
-    }
-  }
-
   Future<void> googleLogin() async {
     try {
       final googleUser = await GoogleSignIn().signIn();

@@ -3,22 +3,34 @@
 # Deploy with `firebase deploy`
 
 from firebase_functions import https_fn
-from firebase_functions import storage_fn
 from cloudevents.http import CloudEvent
 import os
 from firebase_admin import initialize_app
-from py.functions import *
+from py import functions
+import json
 from py import commons
 import functions_framework
 import base64
 from py.logger_config import LoggerConfig
+import yaml
+
+
+def initialize_env():
+    with open(".env.yaml") as f:
+        data = yaml.safe_load(f)
+
+    for key, value in data.items():
+        os.environ[key] = value
+
 
 logger = LoggerConfig().setup_logging()
 
 initialize_app()
 
+
 @https_fn.on_call()
 def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
+    initialize_env()
 
     logger.info("get_text_from_pdf called")
 
@@ -26,56 +38,84 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 
     id_pratica, file_name, file_bytes, account_name = commons.get_data(req, keys)
 
-    result = Pdf_Transformer(id_pratica, file_name, file_bytes, account_name).process_pdf()
-    pass
+    functions.Pdf_Transformer(
+        id_pratica, file_name, file_bytes, account_name
+    ).process_pdf()
 
     return {"status": "ok"}
+
 
 @https_fn.on_call()
 def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
+    initialize_env()
     logger.info("does_assistant_exist called")
     keys = ["assistantName"]
-    assistant_name, = commons.get_data(req, keys)
-    result = Does_Assistant_Exist().process_assistant(assistant_name)
+    (assistant_name,) = commons.get_data(req, keys)
+    result = functions.Does_Assistant_Exist().process_assistant(assistant_name)
     return result
 
+
 @https_fn.on_call()
-def create_assistant(req: https_fn.CallableRequest) -> bool:
+def create_assistant(req: https_fn.CallableRequest) -> str:
+    initialize_env()
     logger.info("create_assistant called")
     keys = ["assistantName"]
-    assistant_name, = commons.get_data(req, keys)
+    (assistant_name,) = commons.get_data(req, keys)
     logger.info(f"ASSISTANT_ID: {assistant_name}")
-    result = Create_Assistant().process_assistant(assistant_name)
+    result = functions.Create_Assistant().process_assistant(assistant_name)
     return result
+
 
 @https_fn.on_call()
 def create_thread(req: https_fn.CallableRequest) -> str:
+    initialize_env()
     logger.info("create_thread called")
-    return Create_Thread().create_thread()
+    return functions.Create_Thread().create_thread()
+
 
 @https_fn.on_call()
-def interrogate_chatbot(req: https_fn.CallableRequest) -> str:
+def interrogate_chatbot(req: https_fn.CallableRequest) -> list[str]:
+    initialize_env()
     logger.info("interrogate_chatbot called")
     logger.info(f"REQUEST: {req}")
-    keys = ['assistantName', 'assistantId', 'message', 'threadId']
+    keys = ["assistantName", "assistantId", "message", "threadId"]
     assistant_name, assistant_id, message, thread_id = commons.get_data(req, keys)
-    return Interrogate_Chatbot().process_interrogation(assistant_name, assistant_id, message, thread_id)
+    return functions.Interrogate_Chatbot().process_interrogation(
+        assistant_name, assistant_id, message, thread_id
+    )
+
 
 @https_fn.on_call()
 def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
+    initialize_env()
     logger.info("create_general_summary called")
     keys = ["partialSummarties", "praticaId", "accountName"]
     partial_summaries, pratica_id, account_name = commons.get_data(req, keys)
-    General_Summary(partial_summaries, pratica_id, account_name).create_general_summary()
+    functions.General_Summary(
+        partial_summaries, pratica_id, account_name
+    ).create_general_summary()
     return {"status": "ok"}
 
+
 @https_fn.on_call()
-def generate_timeline(req: https_fn.CallableRequest) -> dict[str, str]:
+def generate_timeline(req: https_fn.CallableRequest) -> str:
+    initialize_env()
     logger.info("generate_timeline called")
     keys = ["accountName", "praticaId"]
     account_name, pratica_id = commons.get_data(req, keys)
-    result = TimelineGenerator(account_name, pratica_id).generate_timeline()
+    result = functions.TimelineGenerator(account_name, pratica_id).generate_timeline()
     return result
+
+
+@https_fn.on_call()
+def get_similar_sentences(req: https_fn.CallableRequest) -> str:
+    initialize_env()
+    logger.info("get_similar_sentences called")
+    keys = ["text", "corte"]
+    text, corte = commons.get_data(req, keys)
+    result = functions.SentenzeSearcher(text, corte).get_similar_sentenze()
+    return json.dumps(result, ensure_ascii=False)
+
 
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
@@ -83,10 +123,11 @@ def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info(event)
     object_id = event.data["message"]["attributes"]["objectId"]
     decoded = base64.b64decode(event.data["message"]["data"]).decode()
-    
-    result = Json_Transformer(decoded, object_id).process_json()
+
+    functions.Json_Transformer(decoded, object_id).process_json()
 
     return {"status": "ok"}
+
 
 @functions_framework.cloud_event
 def generate_document_summary(event: CloudEvent) -> dict[str, str]:
@@ -98,7 +139,7 @@ def generate_document_summary(event: CloudEvent) -> dict[str, str]:
     is_txt = commons.check_ext(filename)
 
     if is_txt:
-        result_1 = Generated_Document(decoded, object_id).process_document()
-        result_2 = Brief_Description(decoded, object_id).process_brief_description()
+        functions.Generated_Document(decoded, object_id).process_document()
+        functions.Brief_Description(decoded, object_id).process_brief_description()
 
     return {"status": "ok"}

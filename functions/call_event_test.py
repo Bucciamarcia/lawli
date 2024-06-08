@@ -1,12 +1,7 @@
-from py.functions import generate_timeline
+from py.functions import Create_Assistant
 import firebase_admin
-from py.logger_config import LoggerConfig
-
-logger = LoggerConfig(target="local").setup_logging()
 
 firebase_admin.initialize_app()
 
-logger.info("STARTING")
-tester = generate_timeline.TimelineGenerator("lawli", "1")
-
-tester.generate_timeline()
+tester = Create_Assistant()
+print(tester.process_assistant("1 sentenza 190-2020 notificata il 4-3-20.pdf"))

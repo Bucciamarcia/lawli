@@ -1,5 +1,6 @@
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from py.logger_config import LoggerConfig
 import os
 from openai import OpenAI, OpenAIError
 from py.commons import *
@@ -11,6 +12,7 @@ class TimelineGenerator:
     """
     def __init__(self, account_name:str, pratica_id: str):
         self.account_name = account_name
+        self.logger = LoggerConfig().setup_logging()
         self.pratica_id = pratica_id
         self.client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -20,9 +22,9 @@ class TimelineGenerator:
         """
         doc_id_no_ext = os.path.splitext(doc_id)[0]
         try:
-            logger.info("Getting document content")
+            self.logger.info("Getting document content")
             path = f"accounts/{self.account_name}/pratiche/{self.pratica_id}/documenti/{doc_id_no_ext}.txt"
-            logger.info(f"Path: {path}")
+            self.logger.info(f"Path: {path}")
             return Cloud_Storege_Util().read_text_file(path)
         except Exception as e:
             raise Exception(e)
@@ -31,11 +33,11 @@ class TimelineGenerator:
         """
         Get all the files for the client. Returns a list of all the documents.
         """
-        logger.info("Getting all documents")
+        self.logger.info("Getting all documents")
         doc_ids = Firestore_Util().get_all_document_ids(assistito=self.account_name, pratica=self.pratica_id)
         documents = []
         for doc_id in doc_ids:
-            logger.info(f"Getting document: {doc_id}")
+            self.logger.info(f"Getting document: {doc_id}")
             documents.append(self.get_document_content(doc_id))
         return documents
     
@@ -54,7 +56,7 @@ class TimelineGenerator:
                 temperature=0
             )
         except OpenAIError as e:
-            logger.error(f"Error while generating timeline for document: {doc}")
+            self.logger.error(f"Error while generating timeline for document: {doc}")
             raise Exception(e)
 
         return(json.loads(response.choices[0].message.content))
@@ -73,9 +75,9 @@ class TimelineGenerator:
                 ],
                 temperature=0
             )
-            logger.debug(f"Summarized timeline: {response.choices[0].message.content}")
+            self.logger.debug(f"Summarized timeline: {response.choices[0].message.content}")
         except OpenAIError as e:
-            logger.error(f"Error while summarizing timeline: {timeline}")
+            self.logger.error(f"Error while summarizing timeline: {timeline}")
             raise Exception(e)
 
         return json.loads(response.choices[0].message.content) 
@@ -95,8 +97,8 @@ class TimelineGenerator:
                     new_timeline = future.result()
                     timeline["timeline"].extend(new_timeline["timeline"])
                 except Exception as exc:
-                    logger.error(f"Generated an exception: {exc}")
+                    self.logger.error(f"Generated an exception: {exc}")
 
-        logger.info(f"SUCCESS! Generated timeline: {timeline}")
+        self.logger.info(f"SUCCESS! Generated timeline: {timeline}")
         summary = self.summarize_timeline(timeline)
         return json.dumps(summary)

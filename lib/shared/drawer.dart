@@ -70,7 +70,12 @@ class MenuElements {
         onTap: () {
           Navigator.pushNamed(context, '/ricerca_sentenze');
         },
-      )
+      ),
+      ListTile(title: const Text("Logout"),
+          onTap: () async {
+            await AuthService().signOut();
+            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+          }),
     ];
     return listElements;
   }

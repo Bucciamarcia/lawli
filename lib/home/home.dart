@@ -3,6 +3,10 @@ import 'package:lawli/home/login/login.dart';
 import 'package:lawli/home/recent/recent.dart';
 import 'package:provider/provider.dart';
 import '../services/services.dart';
+import 'package:lawli/home/login/login.dart';
+import 'package:lawli/home/recent/recent.dart';
+import 'package:provider/provider.dart';
+import '../services/services.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -25,7 +29,6 @@ class HomeScreen extends StatelessWidget {
                 } else if (accountNameSnapshot.hasError) {
                   return const Text('Error getting name');
                 } else {
-                  Provider.of<DashboardProvider>(context, listen: false).setAccountName(accountNameSnapshot.data!);
                   return const RecentScreen(); 
                 }
               },

@@ -1,8 +1,8 @@
-from py.logger_config import logger
 from openai import OpenAI, OpenAIError
 import os
 from py.constants import *
 from py.commons import Cloud_Storege_Util
+from py.logger_config import LoggerConfig
 
 class General_Summary:
     """
@@ -12,6 +12,7 @@ class General_Summary:
     def __init__(self, partial_summaries: list[str], pratica_id:str, account_name:str):
         self.partial_summaries = partial_summaries
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.logger = LoggerConfig().setup_logging()
         self.pratica_id = pratica_id
         self.account_name = account_name
     
@@ -42,14 +43,14 @@ class General_Summary:
             )
             general_summary = response.choices[0].message.content
         except OpenAIError as e:
-            logger.error(f"Errore nella creazione del riassunto generale: {e}")
+            self.logger.error(f"Errore nella creazione del riassunto generale: {e}")
             raise f"Errore nella creazione del riassunto generale: {e}"
         except Exception as e:
-            logger.error(f"Errore sconosciuto nella creazione del riassunto generale: {e}")
+            self.logger.error(f"Errore sconosciuto nella creazione del riassunto generale: {e}")
             raise f"Errore sconosciuto nella creazione del riassunto generale: {e}"
         
         try:
             Cloud_Storege_Util().write_text_file(f"accounts/{self.account_name}/pratiche/{self.pratica_id}/riassunto generale.txt", general_summary)
         except Exception as e:
-            logger.error(f"Errore nella scrittura del riassunto generale: {e}")
+            self.logger.error(f"Errore nella scrittura del riassunto generale: {e}")
             raise f"Errore nella scrittura del riassunto generale: {e}"

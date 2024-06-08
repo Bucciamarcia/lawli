@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:lawli/trascrizione_audio/trascrizione_audio.dart';
 import 'dashboard/document/view/view_document.dart';
 import 'home/home.dart';
 import 'dashboard/dashboard.dart';
 import 'dashboard/uploadfile/uploadfile.dart';
 import 'dashboard/document/document.dart';
 import 'assistiti/assistiti.dart';
+import 'assistiti/assistiti.dart';
 import "home/login/login.dart";
 import "home/recent/recent.dart";
+import 'pratiche/nuovo/nuovo.dart';
+import "pratiche/pratiche.dart";
+import "assistiti/nuovo/nuovo.dart";
+import "ricerca_sentenze/ricerca_sentenze.dart";
 import 'pratiche/nuovo/nuovo.dart';
 import "pratiche/pratiche.dart";
 import "assistiti/nuovo/nuovo.dart";
@@ -25,4 +31,6 @@ final Map<String, WidgetBuilder> routes = {
   '/pratiche/nuovo': (BuildContext context) => const NuovaPraticaScreen(),
   '/dashboard/document/update': (BuildContext context) => const ViewDocumentScreen(),
   '/ricerca_sentenze': (BuildContext context) => const RicercaSentenzeScreen(),
+  '/trascrizione_audio': (BuildContext context) => const TrascrizioneAudioScreen(),
 };
+

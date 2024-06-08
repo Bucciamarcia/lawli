@@ -2,7 +2,7 @@ from google.cloud import documentai_v1 as documentai
 import os
 from .. import constants
 from google.api_core.client_options import ClientOptions
-from py.logger_config import logger
+from py.logger_config import LoggerConfig
 
 class Pdf_Transformer:
     """
@@ -11,6 +11,7 @@ class Pdf_Transformer:
     def __init__(self, id_pratica:int, file_name:str, file_bytes:bytes, account_name:str):
         self.id_pratica = id_pratica
         self.file_name = file_name
+        self.logger = LoggerConfig().setup_logging()
         self.file_name_no_ext = os.path.splitext(file_name)[0]
         self.file_bytes = file_bytes
         self.account_name = account_name
@@ -43,4 +44,4 @@ class Pdf_Transformer:
         request = documentai.BatchProcessRequest(name=name, input_documents=input_config, document_output_config=output_config)
 
         operation = client.batch_process_documents(request=request)
-        logger.info(f"Operation started")
+        self.logger.info("Operation started")

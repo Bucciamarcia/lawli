@@ -56,6 +56,17 @@ class Pratica {
   });
 
   factory Pratica.fromJson(Map<String, dynamic> json) => _$PraticaFromJson(json);
+
+  @override
+  bool operator == (Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Pratica &&
+      other.id == id &&
+      other.assistitoId == assistitoId &&
+      other.titolo == titolo &&
+      other.descrizione == descrizione;
+}
 }
 
 @JsonSerializable()
@@ -77,4 +88,18 @@ class Documento {
 
   static DateTime _fromJsonTimestamp(Timestamp timestamp) => timestamp.toDate();
   static Timestamp _toJsonTimestamp(DateTime dateTime) => Timestamp.fromDate(dateTime);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+  
+    return other is Documento &&
+      other.filename == filename &&
+      other.data == data &&
+      other.brief_description == brief_description &&
+      other.assistantId == assistantId;
+  }
+
+  @override
+  int get hashCode => Object.hash(filename, data, brief_description, assistantId);
 }
