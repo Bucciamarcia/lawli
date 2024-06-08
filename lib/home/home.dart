@@ -3,6 +3,10 @@ import 'package:lawli/home/login/login.dart';
 import 'package:lawli/home/recent/recent.dart';
 import 'package:provider/provider.dart';
 import '../services/services.dart';
+import 'package:lawli/home/login/login.dart';
+import 'package:lawli/home/recent/recent.dart';
+import 'package:provider/provider.dart';
+import '../services/services.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
