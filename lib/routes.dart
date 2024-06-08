@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lawli/trascrizione_audio/trascrizione_audio.dart';
 import 'dashboard/document/view/view_document.dart';
 import 'home/home.dart';
 import 'dashboard/dashboard.dart';
@@ -25,4 +26,5 @@ final Map<String, WidgetBuilder> routes = {
   '/pratiche/nuovo': (BuildContext context) => const NuovaPraticaScreen(),
   '/dashboard/document/update': (BuildContext context) => const ViewDocumentScreen(),
   '/ricerca_sentenze': (BuildContext context) => const RicercaSentenzeScreen(),
+  '/trascrizione_audio': (BuildContext context) => const TrascrizioneAudioScreen(),
 };
