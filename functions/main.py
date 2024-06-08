@@ -36,13 +36,11 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
 
     keys = ["idPratica", "fileName", "fileBytes", "accountName"]
 
-    id_pratica, file_name, file_bytes, account_name = commons.get_data(
-        req, keys
-    )
+    id_pratica, file_name, file_bytes, account_name = commons.get_data(req, keys)
 
     functions.Pdf_Transformer(
         id_pratica, file_name, file_bytes, account_name
-        ).process_pdf()
+    ).process_pdf()
 
     return {"status": "ok"}
 
@@ -52,7 +50,7 @@ def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
     initialize_env()
     logger.info("does_assistant_exist called")
     keys = ["assistantName"]
-    assistant_name, = commons.get_data(req, keys)
+    (assistant_name,) = commons.get_data(req, keys)
     result = functions.Does_Assistant_Exist().process_assistant(assistant_name)
     return result
 
@@ -62,7 +60,7 @@ def create_assistant(req: https_fn.CallableRequest) -> str:
     initialize_env()
     logger.info("create_assistant called")
     keys = ["assistantName"]
-    assistant_name, = commons.get_data(req, keys)
+    (assistant_name,) = commons.get_data(req, keys)
     logger.info(f"ASSISTANT_ID: {assistant_name}")
     result = functions.Create_Assistant().process_assistant(assistant_name)
     return result
@@ -80,10 +78,8 @@ def interrogate_chatbot(req: https_fn.CallableRequest) -> list[str]:
     initialize_env()
     logger.info("interrogate_chatbot called")
     logger.info(f"REQUEST: {req}")
-    keys = ['assistantName', 'assistantId', 'message', 'threadId']
-    assistant_name, assistant_id, message, thread_id = commons.get_data(
-        req, keys
-    )
+    keys = ["assistantName", "assistantId", "message", "threadId"]
+    assistant_name, assistant_id, message, thread_id = commons.get_data(req, keys)
     return functions.Interrogate_Chatbot().process_interrogation(
         assistant_name, assistant_id, message, thread_id
     )
@@ -107,16 +103,12 @@ def generate_timeline(req: https_fn.CallableRequest) -> str:
     logger.info("generate_timeline called")
     keys = ["accountName", "praticaId"]
     account_name, pratica_id = commons.get_data(req, keys)
-    result = functions.TimelineGenerator(
-        account_name, pratica_id
-    ).generate_timeline()
+    result = functions.TimelineGenerator(account_name, pratica_id).generate_timeline()
     return result
 
 
 @https_fn.on_call()
-def get_similar_sentences(
-    req: https_fn.CallableRequest
-) -> str:
+def get_similar_sentences(req: https_fn.CallableRequest) -> str:
     initialize_env()
     logger.info("get_similar_sentences called")
     keys = ["text", "corte"]
@@ -148,8 +140,6 @@ def generate_document_summary(event: CloudEvent) -> dict[str, str]:
 
     if is_txt:
         functions.Generated_Document(decoded, object_id).process_document()
-        functions.Brief_Description(
-            decoded, object_id
-        ).process_brief_description()
+        functions.Brief_Description(decoded, object_id).process_brief_description()
 
     return {"status": "ok"}
