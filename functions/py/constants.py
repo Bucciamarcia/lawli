@@ -6,7 +6,7 @@ SUCCESS_RESPONSE = {"status": 200, "response": "Success"}
 
 PROJECT_ID = "lawli-bab83"
 
-BEST_GPT_MODEL = "gpt-4-turbo"
+BEST_GPT_MODEL = "gpt-4o"
 TIKTOKEN_MODEL = "cl100k_base"
 OPENAI_API_KEY = os.environ.get("OPENAI_APIKEY")
 
