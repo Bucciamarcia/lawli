@@ -56,27 +56,43 @@ class _ChatViewState extends State<ChatView> {
     });
   }
 
-  void _sendMessage(pratica) {
+  void _sendMessage(pratica) async {
     if (_inputController.text.isNotEmpty) {
-      textforBackend = _inputController.text;
+      // String documentoFilenameNoExt = documentoSelected!.filename.split(".")[0];
+      // String accountName = Provider.of<DashboardProvider>(context, listen: false).accountName;
       setState(() {
         _messages
             .add(ChatMessage(text: _inputController.text, isUserMessage: true));
         _inputController.clear();
-
-        // Create a thread if needed
-        if (_currentThreadId == null) {
-          _createThread().then((threadId) {
-            _currentThreadId = threadId;
-            // Now proceed to send the message with the threadId
-            _sendBackendMessage(textforBackend!, threadId, pratica);
-          });
-        } else {
-          _sendBackendMessage(textforBackend!, _currentThreadId!, pratica);
-        }
-
-        FocusScope.of(context).requestFocus(_inputFocusNode);
       });
+      int tokens = 1000; //await DocumentManipulation().countDocumentoTokens(
+      // "accounts/$accountName/pratiche/${pratica.id.toString()}/documenti/$documentoFilenameNoExt.txt");
+      textforBackend = _inputController.text;
+      if (tokens > 1) {
+        // Structure ready to bypass thread and assistants.
+        setState(
+          () {
+            // Create a thread if needed
+            if (_currentThreadId == null) {
+              _createThread().then((threadId) {
+                _currentThreadId = threadId;
+                // Now proceed to send the message with the threadId
+                _sendBackendMessage(textforBackend!, threadId, pratica);
+              });
+            } else {
+              _sendBackendMessage(textforBackend!, _currentThreadId!, pratica);
+            }
+
+            FocusScope.of(context).requestFocus(_inputFocusNode);
+          },
+        );
+      } else {
+        setState(
+          () {
+            // Placeholder if want to bypass threads and assistants.
+          },
+        );
+      }
     }
   }
 

@@ -9,6 +9,7 @@ from .interrogate_chatbot import Interrogate_Chatbot
 from .create_general_summary import General_Summary
 from .generate_timeline import TimelineGenerator
 from .search_similar_sentenze import SentenzeSearcher
+from .count_tokens import Tokenizer
 
 __all__ = [
     "Pdf_Transformer",
@@ -21,5 +22,6 @@ __all__ = [
     "Interrogate_Chatbot",
     "General_Summary",
     "TimelineGenerator",
-    "SentenzeSearcher"
+    "SentenzeSearcher",
+    "Tokenizer",
 ]

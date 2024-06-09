@@ -9,3 +9,4 @@ google-cloud-pubsub
 git+https://github.com/Bucciamarcia/libreria-ai-per-tutti.git
 weaviate-client
 pyyaml
+tiktoken

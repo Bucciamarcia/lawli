@@ -7,6 +7,7 @@ SUCCESS_RESPONSE = {"status": 200, "response": "Success"}
 PROJECT_ID = "lawli-bab83"
 
 BEST_GPT_MODEL = "gpt-4-turbo"
+TIKTOKEN_MODEL = "cl100k_base"
 OPENAI_API_KEY = os.environ.get("OPENAI_APIKEY")
 
 # GET TEXT FROM PDF
@@ -18,7 +19,7 @@ BUCKET_NAME = "lawli-bab83.appspot.com"
 
 DOCUMENT_SUMMARY_GPT_MESSAGE = """Crea un riassunto preciso e dettagliato \
 del documento legale che ti passa l'utente."""
-SUMMARY_ENGINE = "gpt-4-1106-preview"
+SUMMARY_ENGINE = "gpt-4-turbo"
 
 # GENERATE BRIEF DESCRIPTION
 
