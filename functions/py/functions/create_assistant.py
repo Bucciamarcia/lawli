@@ -33,7 +33,7 @@ class Create_Assistant:
         except Exception as e:
             self.logger.error(f"Error while uploading document: {e}")
             raise Exception(f"Error while uploading document: {e}")
-
+    
     def strip_extension(self, filename: str):
         return os.path.splitext(filename)[0]
 
@@ -52,7 +52,7 @@ class Create_Assistant:
                 name=assistant_name,
                 file_ids=[document_id],
                 tools=[{"type": "retrieval"}],
-                instructions=CREATE_ASSISTANT_INSTRUCTIONS,
+                instructions=CREATE_ASSISTANT_INSTRUCTIONS
             )
             self.logger.info(f"MY_ASSISTANT: {my_assistant}")
             return my_assistant.id

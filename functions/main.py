@@ -117,6 +117,15 @@ def get_similar_sentences(req: https_fn.CallableRequest) -> str:
     return json.dumps(result, ensure_ascii=False)
 
 
+@https_fn.on_call()
+def count_tokens(req: https_fn.CallableRequest) -> int:
+    initialize_env()
+    logger.info("count_tokens called")
+    keys = ["text"]
+    (text,) = commons.get_data(req, keys)
+    result = functions.Tokenizer.count_tokens(text)
+    return result
+
 @functions_framework.cloud_event
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")
