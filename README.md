@@ -62,6 +62,7 @@ The reason for this code is that there is a different menu on desktop.
 # Deploy
 
 ```bash
+flutter build web &&
 firebase deploy &&
 cd functions &&
 (gcloud functions deploy get_txt_from_docai_json --trigger-topic=documentai_pdf_new_doc --env-vars-file .env.yaml --gen2 --runtime=python311 --entry-point=get_txt_from_docai_json --region=europe-west3 & 
