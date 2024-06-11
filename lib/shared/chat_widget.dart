@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -60,6 +62,7 @@ class _ChatViewState extends State<ChatView> {
     if (_inputController.text.isNotEmpty) {
       // String documentoFilenameNoExt = documentoSelected!.filename.split(".")[0];
       // String accountName = Provider.of<DashboardProvider>(context, listen: false).accountName;
+      textforBackend = _inputController.text;
       setState(() {
         _messages
             .add(ChatMessage(text: _inputController.text, isUserMessage: true));
@@ -67,7 +70,6 @@ class _ChatViewState extends State<ChatView> {
       });
       int tokens = 1000; //await DocumentManipulation().countDocumentoTokens(
       // "accounts/$accountName/pratiche/${pratica.id.toString()}/documenti/$documentoFilenameNoExt.txt");
-      textforBackend = _inputController.text;
       if (tokens > 1) {
         // Structure ready to bypass thread and assistants.
         setState(
@@ -191,10 +193,13 @@ class _ChatViewState extends State<ChatView> {
           } else if (snapshot.data == null) {
             return const Text("Nessun documento trovato");
           } else if (snapshot.hasData && snapshot.data != null) {
+            debugPrint("DEBUG: Pratica: ${pratica.titolo}");
+            debugPrint("DEBUG: Documento: ${snapshot.data!.first.filename}");
             List<String> docNames = [];
             for (Documento doc in snapshot.data!) {
               docNames.add(doc.filename);
             }
+            debugPrint("DEBUG: Documenti: $docNames");
             return DropdownButton<String>(
               hint: const Text("Seleziona un documento"),
               value: assistantName,

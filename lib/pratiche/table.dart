@@ -59,6 +59,8 @@ class BuildTable extends StatelessWidget {
                           onPressed: () async {
                             Provider.of<DashboardProvider>(context, listen: false)
                                 .setIdPratica(pratica.id);
+                            Provider.of<DashboardProvider>(context, listen: false)
+                                .setPratica(pratica);
                             debugPrint(pratica.id.toString());
                             Navigator.pushNamedAndRemoveUntil(context, "/dashboard", (route) => false);
                           },
