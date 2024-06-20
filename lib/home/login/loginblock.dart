@@ -28,17 +28,153 @@ class _LoginBlockState extends State<LoginBlock> {
                     const FaIcon(FontAwesomeIcons.google, color: Colors.red),
                     Colors.green[300] ?? Colors.green,
                     Colors.white,
-                    () => AuthService().googleLogin(),
-                    "Log in with Google",
-                  )
+                    _handleGoogleLogin,
+                    "Login con Google",
+                  ),
+                  const SizedBox(height: 10),
+                  loginButton(
+                      context,
+                      const Icon(Icons.email, color: Colors.blue),
+                      Colors.blue[200] ?? Colors.blue,
+                      Colors.white,
+                      _handleEmailLogin,
+                      "Login con Email"),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: _handleEmailRegistration,
+                    child: const Text(
+                      'Registra un account con email e password',
+                      style: TextStyle(
+                          color: Colors.black,
+                          decoration: TextDecoration.underline),
+                    ),
+                  ),
                 ],
               ),
       ],
     );
   }
 
+  Future<void> _handleEmailRegistration() async {
+    String emailAddress = '';
+    String password = '';
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Registrazione con Email'),
+          content: Column(
+            children: [
+              const Text('Inserisci email e password per registrarti.'),
+              const SizedBox(height: 10),
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    emailAddress = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    password = value;
+                  });
+                },
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                // Perform registration logic here
+                await AuthService().emailRegistration(emailAddress, password);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Registrati'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancella'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _handleEmailLogin() async {
+    String emailAddress = '';
+    String password = '';
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Login con Email'),
+          content: Column(
+            children: [
+              const Text('Inserisci email e password per fare login.'),
+              const SizedBox(height: 10),
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    emailAddress = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    password = value;
+                  });
+                },
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                // Perform login logic here
+                await AuthService().emailLogin(emailAddress, password);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Login'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancella'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   ElevatedButton loginButton(BuildContext context, Widget icon, Color bgColor,
-      Color fgColor, Function authServiceCallback, String text) {
+      Color fgColor, Future<void> Function() onPressed, String text) {
     return ElevatedButton.icon(
       icon: icon,
       style: ElevatedButton.styleFrom(
@@ -53,24 +189,28 @@ class _LoginBlockState extends State<LoginBlock> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
       onPressed: () async {
-  setState(() {
-    _isLoggingIn = true; 
-  });
+        setState(() {
+          _isLoggingIn = true;
+        });
 
-  try {
-    await authServiceCallback();
-    debugPrint("LOGGED IN SUCCESSFULLY!");
-  } catch (e) {
-    debugPrint("Error logging in: $e");
-  } finally {
-    if (mounted) {
-      setState(() {
-        _isLoggingIn = false;
-      });
-    }
-  }
-},
+        try {
+          await onPressed();
+          debugPrint("LOGGED IN SUCCESSFULLY!");
+        } catch (e) {
+          debugPrint("Error logging in: $e");
+        } finally {
+          if (mounted) {
+            setState(() {
+              _isLoggingIn = false;
+            });
+          }
+        }
+      },
       label: Text(text),
     );
+  }
+
+  Future<void> _handleGoogleLogin() async {
+    await AuthService().googleLogin();
   }
 }
