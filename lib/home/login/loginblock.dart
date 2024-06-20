@@ -39,23 +39,33 @@ class _LoginBlockState extends State<LoginBlock> {
                       Colors.white,
                       _handleEmailLogin,
                       "Login con Email"),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: _handleEmailRegistration,
+                    child: const Text(
+                      'Registra un account con email e password',
+                      style: TextStyle(
+                          color: Colors.black,
+                          decoration: TextDecoration.underline),
+                    ),
+                  ),
                 ],
               ),
       ],
     );
   }
 
-  Future<void> _handleEmailLogin() async {
+  Future<void> _handleEmailRegistration() async {
     String emailAddress = '';
     String password = '';
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Login con Email'),
+          title: const Text('Registrazione con Email'),
           content: Column(
             children: [
-              const Text('Inserisci email e password. Se l\'account non esiste, verrà creato.'),
+              const Text('Inserisci email e password per registrarti.'),
               const SizedBox(height: 10),
               TextField(
                 onChanged: (value) {
@@ -72,9 +82,69 @@ class _LoginBlockState extends State<LoginBlock> {
               TextField(
                 onChanged: (value) {
                   setState(() {
-                  password = value;
+                    password = value;
                   });
                 },
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                // Perform registration logic here
+                await AuthService().emailRegistration(emailAddress, password);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Registrati'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancella'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _handleEmailLogin() async {
+    String emailAddress = '';
+    String password = '';
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Login con Email'),
+          content: Column(
+            children: [
+              const Text('Inserisci email e password per fare login.'),
+              const SizedBox(height: 10),
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    emailAddress = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    password = value;
+                  });
+                },
+                obscureText: true,
                 decoration: const InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(),

@@ -32,7 +32,7 @@ class AuthService {
     }
   }
 
-  Future<void> emailLogin(String emailAddress, String password) async {
+  Future<void> emailRegistration(String emailAddress, String password) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailAddress,
@@ -46,6 +46,19 @@ class AuthService {
       }
     } catch (e) {
       debugPrint(e.toString());
+    }
+  }
+
+  Future<void> emailLogin(String emailAddress, String password) async {
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: emailAddress, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        debugPrint('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        debugPrint('Wrong password provided for that user.');
+      }
     }
   }
 
