@@ -42,7 +42,7 @@ class _FormDataState extends State<FormData> {
             children: [
               TextField(
                 decoration: InputDecoration(
-                  labelText: "Data",
+                  labelText: "Data di creazione del documento",
                   border: OutlineInputBorder(
                     borderSide: const BorderSide(
                       color: Colors.black,
@@ -57,7 +57,7 @@ class _FormDataState extends State<FormData> {
               ),
               const SizedBox(height: 5),
               Text(
-                  "La data è importante per il corretto funzionamento dell'AI.",
+                  "Inserisci la data in cui il documento è stato creato.",
                   style: Theme.of(context).textTheme.labelSmall)
             ],
           ),
