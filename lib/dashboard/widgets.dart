@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lawli/dashboard/dash_elements/document_table.dart';
 import 'package:lawli/services/services.dart';
+import 'package:lawli/shared/shared.dart';
 import 'package:provider/provider.dart';
 import '../services/cloud_storage.dart';
 
@@ -71,8 +72,7 @@ class ExpandableOverview extends StatelessWidget {
                             ),
                             CopyIcon(
                               textToCopy: snapshot.data!,
-                              onCopy: () {
-                              },
+                              onCopy: () {},
                             ),
                           ],
                         );
@@ -120,7 +120,9 @@ class _CopyIconState extends State<CopyIcon> {
       icon: _showCheckmark == true
           ? const FaIcon(FontAwesomeIcons.check)
           : const FaIcon(FontAwesomeIcons.copy),
-      color: _showCheckmark == true ? Colors.greenAccent[400] : Colors.blueAccent[400],
+      color: _showCheckmark == true
+          ? Colors.greenAccent[400]
+          : Colors.blueAccent[400],
       tooltip: _showCheckmark == true ? "Testo copiato" : "Copia il testo",
     );
   }
@@ -172,6 +174,11 @@ class Documenti extends StatelessWidget {
                 DocumentiWidgetThreeButtons(
                     context: context,
                     onPressed: () async {
+                      displayAlertPopup(
+                          context,
+                          "Creazione riassunto",
+                          "Lawli sta creando il riassunto della causa. Potrebbe prendere da 1 a 15 minuti a seconda della complessità della causa. Puoi continuare a usare l'applicazione nel frattempo.",
+                          "OK");
                       final List<Documento> docsForSummary =
                           await RetrieveObjectFromDb().getDocumenti(pratica.id);
                       final List<Documento> orderedDocs = DocumentManipulation()
@@ -205,21 +212,28 @@ class Documenti extends StatelessWidget {
                   child: DocumentiWidgetThreeButtons(
                       context: context,
                       onPressed: () async {
+                        displayAlertPopup(
+                            context,
+                            "Creazione cronologia",
+                            "Lawli sta creando la cronologia della  causa. Portrebbe prendere da 1 a 15 minuti a seconda della complessità della causa. Puoi continuare a usare l'applicazione nel frattempo.",
+                            "OK");
                         try {
                           var result = await FirebaseFunctions.instance
                               .httpsCallable("generate_timeline")
                               .call({
-                              "accountName": accountName,
-                              "praticaId": pratica.id.toString(),
+                            "accountName": accountName,
+                            "praticaId": pratica.id.toString(),
                           });
                           debugPrint("DATA: ${result.data}");
                           debugPrint("Extracting new timeline");
                           var newTimeline = jsonDecode(result.data);
                           debugPrint("Updating timeline");
-                          await updateTimeline(newTimeline, accountName, pratica.id);
+                          await updateTimeline(
+                              newTimeline, accountName, pratica.id);
                           debugPrint("Timeline updated");
                         } catch (e) {
-                          debugPrint("Errore nella creazione della timeline: $e");
+                          debugPrint(
+                              "Errore nella creazione della timeline: $e");
                         }
                       },
                       backgroundColor: Colors.teal,
@@ -240,7 +254,9 @@ class Documenti extends StatelessWidget {
       ),
     );
   }
-  Future<void> updateTimeline(newTimeline, String accountName, double praticaId) async {
+
+  Future<void> updateTimeline(
+      newTimeline, String accountName, double praticaId) async {
     final path = "accounts/$accountName/pratiche/$praticaId";
     const fileName = "timeline.json";
     DocumentStorage().uploadJson(path, fileName, newTimeline);
@@ -271,7 +287,8 @@ class TimelineWidget extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Text("Errore nel caricamento della cronologia");
-                } else if (snapshot.connectionState == ConnectionState.waiting) {
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return const CircularProgressIndicator();
                 } else {
                   if (snapshot.data == null) {
