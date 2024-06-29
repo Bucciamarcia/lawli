@@ -17,7 +17,7 @@ class DocumentStorage extends StorageService {
   String? accountName;
 
   DocumentStorage({this.accountName});
-  
+
   Future<void> uploadNewDocumentOriginal(
       String idPratica, String fileName, Uint8List file) async {
     final String accountName = await AccountDb().getAccountName();
