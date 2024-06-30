@@ -163,3 +163,16 @@ Formatta il JSON come segue:
 }"""
 TIMELINE_DOCUMENT_PATH = "accounts/{assistito}/pratiche/\
 {pratica}/documenti/{documento}"
+
+# Extract date
+
+EXTRACT_DATE_ENGINE = BEST_GPT_MODEL
+EXTRACT_DATE_PROMPT = (
+    "L'utente ti passerà un documento legale. Il tuo compito è estrarre "
+    "la data nella quale il documento è stato redatto. "
+    "Restituisci la data nel formato: `YYYY-MM-DD`'.\n"
+    "ESEMPIO: '2022-01-01'\n"
+    "Il tuo unico output deve essere la data. "
+    "Se non riesci a trovare la data, restituisci 'Data non trovata'.\n"
+    "SUGGERIMENTO: La data è spesso presente all'inizio o alla fine del documento."
+)

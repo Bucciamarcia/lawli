@@ -41,6 +41,7 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
     functions.Pdf_Transformer(
         id_pratica, file_name, file_bytes, account_name
     ).process_pdf()
+    logger.info("OK!")
 
     return {"status": "ok"}
 
@@ -126,7 +127,20 @@ def count_tokens(req: https_fn.CallableRequest) -> int:
     result = functions.Tokenizer.count_tokens(text)
     return result
 
-@functions_framework.cloud_event
+
+@https_fn.on_call()
+def extract_date(req: https_fn.CallableRequest) -> str:
+    initialize_env()
+    logger.info("extract_date called")
+    keys = ["accountName", "praticaId", "documentName"]
+    account_name, pratica_id, document_name = commons.get_data(req, keys)
+    result = functions.ExtractDate(
+        account_name, pratica_id, document_name
+    ).extract_date()
+    return result
+
+
+@functions_framework.cloud_event  # type: ignore
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")
     logger.info(event)
@@ -138,7 +152,7 @@ def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     return {"status": "ok"}
 
 
-@functions_framework.cloud_event
+@functions_framework.cloud_event  # type: ignore
 def generate_document_summary(event: CloudEvent) -> dict[str, str]:
     logger.info("generate_document_summary called")
     logger.info(event)

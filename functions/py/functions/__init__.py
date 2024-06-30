@@ -10,6 +10,7 @@ from .create_general_summary import General_Summary
 from .generate_timeline import TimelineGenerator
 from .search_similar_sentenze import SentenzeSearcher
 from .count_tokens import Tokenizer
+from .extract_date import ExtractDate
 
 __all__ = [
     "Pdf_Transformer",
@@ -24,4 +25,5 @@ __all__ = [
     "TimelineGenerator",
     "SentenzeSearcher",
     "Tokenizer",
+    "ExtractDate"
 ]

@@ -1,16 +1,10 @@
 import 'dart:convert';
-import 'dart:js';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:file_picker/file_picker.dart";
 import 'package:lawli/dashboard/uploadfile/upload_logic.dart';
 import 'package:lawli/js/js_interop.dart';
-import 'package:lawli/services/cloud_storage.dart';
-import 'package:lawli/services/firestore.dart';
-import "package:path/path.dart" as p;
-import 'package:docx_to_text/docx_to_text.dart';
 import 'dart:js_util';
 
 class FormData extends StatefulWidget {
@@ -24,7 +18,7 @@ class FormData extends StatefulWidget {
 class _FormDataState extends State<FormData> {
   final NuovoDocumentoFormState formState = NuovoDocumentoFormState();
   List<PlatformFile> _uploadedFile = [];
-  late DateTime data;
+  DateTime? data;
 
   // Struttura della pagina
   @override

@@ -21,7 +21,7 @@ class DocumentUploader {
   });
 
   /// Uploads a .docx file to the cloud storage
-  Future<void> uploadDocx(BuildContext context) async {
+  Future<void> transformDocx(BuildContext context) async {
     var filenameWithoutExtension = p.withoutExtension(fileName);
     final String docxText = docxToText(file);
     await DocumentStorage().uploadNewDocumentText(
@@ -36,7 +36,7 @@ class DocumentUploader {
   }
 
   /// Uploads a .pdf file to the cloud storage
-  Future<void> uploadPdf(BuildContext context) async {
+  Future<void> transformPdf(BuildContext context) async {
     await FirebaseFunctions.instance
         .httpsCallable("get_text_from_pdf")
         .call(<String, dynamic>{
@@ -56,7 +56,7 @@ class DocumentUploader {
   }
 
   /// Uploads a .txt file to the cloud storage
-  Future<void> uploadTxt(BuildContext context) async {
+  Future<void> transformTxt(BuildContext context) async {
     await DocumentStorage().uploadNewDocumentText(
         idPratica.toString(), fileName, String.fromCharCodes(file));
 
@@ -71,28 +71,56 @@ class DocumentUploader {
   /// Upload a generic file to the cloud storage.
   /// Decides on the file type and calls the appropriate method.
   Future<void> uploadDocument(BuildContext context) async {
-    // TODO: #11 Create function to extract date from document.
-    data ??= DateTime.now();
     if (fileName.endsWith(".txt") ||
         fileName.endsWith(".pdf") ||
         fileName.endsWith(".docx")) {
+      await DocumentStorage()
+          .uploadNewDocumentOriginal(idPratica.toString(), fileName, file);
       try {
         showCircularProgressIndicator(context);
-        await PraticheDb().addNewDocument(fileName, data!, idPratica);
         final String fileExtension = p.extension(fileName);
         if (fileExtension == ".docx") {
-          await uploadDocx(context);
+          await transformDocx(context);
         } else if (fileExtension == ".pdf") {
-          await uploadPdf(context);
+          await transformPdf(context);
         } else if (fileExtension == ".txt") {
-          await uploadTxt(context);
+          await transformTxt(context);
         } else {
           if (!context.mounted) return;
           Navigator.of(context).pop();
           showWrongFormatDialog(context);
         }
-        await DocumentStorage()
-            .uploadNewDocumentOriginal(idPratica.toString(), fileName, file);
+
+        // If .pdf, date will be extracted by the python function.
+        if (fileExtension == ".docx" || fileExtension == ".txt") {
+          try {
+            var result = await FirebaseFunctions.instance
+                .httpsCallable("extract_date")
+                .call(<String, dynamic>{
+              "accountName": await AccountDb().getAccountName(),
+              "praticaId": idPratica,
+              "documentName": fileName,
+            });
+            String result_text = result.data;
+            if (result_text == "Data non trovata") {
+              debugPrint("Data non trovata. Usata data attuale.");
+              data = DateTime.now();
+            } else {
+              try {
+                data = DateTime.parse(result_text);
+              } catch (e) {
+                debugPrint(
+                    "ERROR: Formato della data non valido: ${e.toString()}");
+                data = DateTime.now();
+              }
+            }
+          } catch (e) {
+            debugPrint("ERROR: ${e.toString()}");
+            showErrorDialog(context,
+                "Errore durante l'estrazione della data dal documento: ${e.toString()}");
+          }
+        }
+        await PraticheDb().addNewDocument(fileName, data!, idPratica);
       } catch (e) {
         if (!context.mounted) {
           debugPrint("Context not mounted");
@@ -100,7 +128,8 @@ class DocumentUploader {
         }
         Navigator.of(context).pop();
         debugPrint("ERROR: ${e.toString()}");
-        showErrorDialog(context);
+        showErrorDialog(context,
+            "Errore durante il caricamento del documento: ${e.toString()}");
       }
     } else {
       showWrongFormatDialog(context);
@@ -160,13 +189,14 @@ Future<dynamic> showConfirmationDialog(BuildContext context, String message) {
   );
 }
 
-Future<dynamic> showErrorDialog(BuildContext context) {
+Future<dynamic> showErrorDialog(BuildContext context, [String? message]) {
   return showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
         title: const Text("Errore"),
-        content: const Text("Errore durante il caricamento del documento."),
+        content: Text(
+            "Errore durante il caricamento del documento: ${message ?? 'Errore generico'}"),
         actions: [
           TextButton(
             onPressed: () {
