@@ -57,7 +57,6 @@ class _FormDataState extends State<FormData> {
                     String base64Content = getProperty(jsFile, 'content');
                     Uint8List content =
                         base64Decode(base64Content.split(',').last);
-                    
                   }
                 }));
               },
@@ -189,7 +188,11 @@ class _FormDataState extends State<FormData> {
             (formState.filenameController.text.endsWith(".txt") ||
                 formState.filenameController.text.endsWith(".docx") ||
                 formState.filenameController.text.endsWith(".pdf"))) {
-          DocumentUploader uploader = DocumentUploader(idPratica: widget.idPratica, fileName: formState.filenameController.text, file: _uploadedFile.first.bytes!, data: data);
+          DocumentUploader uploader = DocumentUploader(
+              idPratica: widget.idPratica,
+              fileName: formState.filenameController.text,
+              file: _uploadedFile.first.bytes!,
+              data: data);
           uploader.uploadDocument(context);
         } else if (_uploadedFile.isEmpty ||
             formState.filenameController.text.isEmpty ||
