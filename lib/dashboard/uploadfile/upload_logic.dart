@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:docx_to_text/docx_to_text.dart';
 import 'package:lawli/services/cloud_storage.dart';
-import 'package:lawli/services/models.dart';
 import "package:path/path.dart" as p;
 
 import 'package:flutter/material.dart';
@@ -13,12 +12,14 @@ class DocumentUploader {
   String fileName;
   Uint8List file;
   DateTime? data;
+  bool showPopup = true;
 
   DocumentUploader({
     required this.idPratica,
     required this.fileName,
     required this.file,
     this.data,
+    this.showPopup = true,
   });
 
   /// Uploads a .docx file to the cloud storage
@@ -32,7 +33,9 @@ class DocumentUploader {
       debugPrint("Context not mounted");
       return;
     }
-    Navigator.of(context).pop();
+    if (showPopup == true) {
+      Navigator.of(context).pop();
+    }
     showConfirmationDialog(context, "Documento caricato con successo.");
   }
 
@@ -51,7 +54,9 @@ class DocumentUploader {
       debugPrint("Context not mounted");
       return;
     }
-    Navigator.of(context).pop();
+    if (showPopup == true) {
+      Navigator.of(context).pop();
+    }
     showConfirmationDialog(context,
         "Documento caricato con successo.\n\nNOTA: Elaborare un file PDF potrebbe richiedere da 1 a 10 minuti a seconda di lunghezza e complessità.");
   }
@@ -65,7 +70,10 @@ class DocumentUploader {
       debugPrint("Context not mounted");
       return;
     }
+    if (showPopup == true) {
+      
     Navigator.of(context).pop();
+    }
     showConfirmationDialog(context, "Documento caricato con successo.");
   }
 
@@ -88,7 +96,9 @@ class DocumentUploader {
           await transformTxt(context);
         } else {
           if (!context.mounted) return;
-          Navigator.of(context).pop();
+          if (showPopup == true) {
+            Navigator.of(context).pop();
+          }
           showWrongFormatDialog(context);
         }
 
@@ -141,77 +151,86 @@ class DocumentUploader {
       showWrongFormatDialog(context);
     }
   }
-}
 
-Future<dynamic> showWrongFormatDialog(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Errore"),
-        content: const Text(
-            "Formato file non valido. Carica un file .pdf, .docx o .txt. \n Nota che i file .doc non sono supportati."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("OK"),
-          ),
-        ],
+  Future<dynamic>? showCircularProgressIndicator(BuildContext context) {
+    if (showPopup == true) {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       );
-    },
-  );
-}
+    } else {
+      return null;
+    }
+  }
 
-Future<dynamic> showCircularProgressIndicator(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return const Center(
-        child: CircularProgressIndicator(),
+  Future<dynamic>? showConfirmationDialog(
+      BuildContext context, String message) {
+    if (showPopup == true) {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Successo"),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
       );
-    },
-  );
-}
+    } else {
+      return null;
+    }
+  }
 
-Future<dynamic> showConfirmationDialog(BuildContext context, String message) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Successo"),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      );
-    },
-  );
-}
+  Future<dynamic> showWrongFormatDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Errore"),
+          content: const Text(
+              "Formato file non valido. Carica un file .pdf, .docx o .txt. \n Nota che i file .doc non sono supportati."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-Future<dynamic> showErrorDialog(BuildContext context, [String? message]) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Errore"),
-        content: Text(
-            "Errore durante il caricamento del documento: ${message ?? 'Errore generico'}"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      );
-    },
-  );
+  Future<dynamic> showErrorDialog(BuildContext context, [String? message]) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Errore"),
+          content: Text(
+              "Errore durante il caricamento del documento: ${message ?? 'Errore generico'}"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

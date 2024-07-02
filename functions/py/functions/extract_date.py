@@ -27,9 +27,13 @@ class ExtractDate:
         doc = db.get_document(path)
         if doc:
             self.logger.debug(f"Doc found: {doc}")
-            if doc["data"]:
-                self.logger.debug(f"Date found: {doc['data']}")
-                return True
+            try:
+                if doc["data"]:
+                    self.logger.debug(f"Date found: {doc['data']}")
+                    return True
+            except KeyError:
+                self.logger.debug("Date not found.")
+                return False
             else:
                 self.logger.debug("Date not found.")
                 return False
