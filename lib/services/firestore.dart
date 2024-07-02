@@ -330,6 +330,7 @@ class RetrieveObjectFromDb extends FirestoreService {
   }
 
   Future<List<Documento>> getDocumenti(double praticaId) async {
+    try {
     String accountName = await AccountDb().getAccountName();
     var ref = _db
         .collection("accounts")
@@ -341,6 +342,27 @@ class RetrieveObjectFromDb extends FirestoreService {
     var data = snapshot.docs.map((s) => s.data());
     var topics = data.map((d) => Documento.fromJson(d));
     return topics.toList();
+    } catch (e) {
+      debugPrint("Error getting documenti: $e");
+      return [];
+    }
+  }
+
+  Future<bool> doDocumentsExist(double praticaId) async {
+    try {
+      String accountName = await AccountDb().getAccountName();
+      var ref = _db
+          .collection("accounts")
+          .doc(accountName)
+          .collection("pratiche")
+          .doc(praticaId.toString())
+          .collection("documenti");
+      var snapshot = await ref.get();
+      return snapshot.docs.isNotEmpty;
+    } catch (e) {
+      debugPrint("Error checking if documents exist: $e");
+      return false;
+    }
   }
 
   Future<Documento> getDocumento(double praticaId, String filename) async {
