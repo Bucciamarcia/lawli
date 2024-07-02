@@ -91,7 +91,7 @@ class Json_Transformer:
             blob_name = self.get_blobname()
             self.upload_blob(constants.BUCKET_NAME, text, blob_name)
             self.delete_json_blob()
-            DateExtractor(self.object_id).extract_date()
+            DateExtractor(blob_name).extract_date()
 
         else:
             self.logger.info("Document is not from Document AI - exiting.")
@@ -132,6 +132,6 @@ class DateExtractor:
             self.logger.error(f"Error extracting path: {e}")
             raise e
         extractor = ExtractDate(
-            account_name=account, pratica_id=pratica, document_name=documento
+            account_name=account, pratica_id=pratica, document_name=documento, extension="pdf"
         )
         extractor.extract_date(newpath)

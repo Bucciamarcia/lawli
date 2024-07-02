@@ -66,22 +66,35 @@ class AccountDb extends FirestoreService {
 }
 
 class PraticheDb extends FirestoreService {
-  Future<void> addNewDocument(String filename, DateTime date, double idPratica) async {
+  Future<void> addNewDocument(
+      String filename, DateTime? date, double idPratica) async {
     final String accountName = await AccountDb().getAccountName();
 
-    final data = <String, dynamic>{
-      "filename": filename,
-      "data": date,
-    };
+    Map<String, dynamic> data;
+    if (date != null) {
+      data = <String, dynamic>{
+        "filename": filename,
+        "data": date,
+      };
+    } else {
+      data = <String, dynamic>{
+        "filename": filename,
+      };
+    }
 
     try {
-      final DocumentReference docs = _db.collection("accounts").doc(accountName).collection("pratiche").doc(idPratica.toString()).collection("documenti").doc(filename);
-      await docs.set(data);
+      final DocumentReference docs = _db
+          .collection("accounts")
+          .doc(accountName)
+          .collection("pratiche")
+          .doc(idPratica.toString())
+          .collection("documenti")
+          .doc(filename);
+      await docs.set(data, SetOptions(merge: true));
     } catch (e) {
       debugPrint("Error adding new document: $e");
       rethrow;
     }
-
   }
 }
 
@@ -107,8 +120,7 @@ class AssistitoDb extends FirestoreService {
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        var result = querySnapshot
-            .docs.first.id;
+        var result = querySnapshot.docs.first.id;
         return double.parse(result);
       } else {
         throw "No matching document found";
@@ -205,7 +217,8 @@ class AssistitoDb extends FirestoreService {
 }
 
 class DocumentoDb extends FirestoreService {
-  Future<void> deleteDocumentFromPraticaid(double praticaId, String filename, [bool deleteStorage = true]) async {
+  Future<void> deleteDocumentFromPraticaid(double praticaId, String filename,
+      [bool deleteStorage = true]) async {
     try {
       final accountRef = await retrieveAccountObject();
       await accountRef
@@ -221,7 +234,8 @@ class DocumentoDb extends FirestoreService {
 
     if (deleteStorage) {
       int idx = filename.lastIndexOf(".");
-      String filenameNoExtension = idx != -1 ? filename.substring(0, idx) : filename;
+      String filenameNoExtension =
+          idx != -1 ? filename.substring(0, idx) : filename;
       try {
         await DocumentStorage().deleteDocument(
             "accounts/${await AccountDb().getAccountName()}/pratiche/$praticaId/documenti",
@@ -248,7 +262,8 @@ class DocumentoDb extends FirestoreService {
     }
   }
 
-  Future<void> updateDocument(double praticaId, String filename, Map<String, dynamic> addition) async {
+  Future<void> updateDocument(
+      double praticaId, String filename, Map<String, dynamic> addition) async {
     try {
       final accountRef = await retrieveAccountObject();
       await accountRef
@@ -262,7 +277,6 @@ class DocumentoDb extends FirestoreService {
       rethrow;
     }
   }
-
 }
 
 class RetrieveObjectFromDb extends FirestoreService {
@@ -280,12 +294,15 @@ class RetrieveObjectFromDb extends FirestoreService {
   Future<Assistito> getAssistito(String assistitoId) async {
     String accountName = await AccountDb().getAccountName();
     debugPrint("STARTING GET ASSISTITO");
-    var ref = _db.collection("accounts").doc(accountName).collection("assistiti").doc(assistitoId);
+    var ref = _db
+        .collection("accounts")
+        .doc(accountName)
+        .collection("assistiti")
+        .doc(assistitoId);
     debugPrint("REF: $ref");
     var snapshot = await ref.get();
     debugPrint("SNAPSHOT: $snapshot");
     return Assistito.fromJson(snapshot.data() ?? {});
-
   }
 
   Future<List<Pratica>> getPratiche() async {

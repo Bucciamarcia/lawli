@@ -105,6 +105,8 @@ class DocumentUploader {
             if (result_text == "Data non trovata") {
               debugPrint("Data non trovata. Usata data attuale.");
               data = DateTime.now();
+            } else if (result_text == "Data già presente in Firestore.") {
+              debugPrint("Data già presente in Firestore.");
             } else {
               try {
                 data = DateTime.parse(result_text);
@@ -120,7 +122,7 @@ class DocumentUploader {
                 "Errore durante l'estrazione della data dal documento: ${e.toString()}");
           }
         }
-        await PraticheDb().addNewDocument(fileName, data!, idPratica);
+        await PraticheDb().addNewDocument(fileName, data, idPratica);
       } catch (e) {
         if (!context.mounted) {
           debugPrint("Context not mounted");

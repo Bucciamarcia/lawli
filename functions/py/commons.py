@@ -158,6 +158,11 @@ class Firestore_Util:
             doc_dict = doc.to_dict()
             if filename in doc_dict["filename"]:
                 return doc_dict["filename"]
+    
+    def get_document(self, path: str) -> dict | None:
+        ref = self.db.document(path)
+        doc = ref.get()
+        return doc.to_dict()
 
     def get_all_document_ids(self, assistito: str, pratica: str) -> list[str]:
         """
