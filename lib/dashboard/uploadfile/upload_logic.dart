@@ -12,16 +12,18 @@ class DocumentUploader {
   String fileName;
   Uint8List file;
   DateTime? data;
+  bool showPopup = true;
 
   DocumentUploader({
     required this.idPratica,
     required this.fileName,
     required this.file,
     this.data,
+    this.showPopup = true,
   });
 
   /// Uploads a .docx file to the cloud storage
-  Future<void> uploadDocx(BuildContext context) async {
+  Future<void> transformDocx(BuildContext context) async {
     var filenameWithoutExtension = p.withoutExtension(fileName);
     final String docxText = docxToText(file);
     await DocumentStorage().uploadNewDocumentText(
@@ -31,12 +33,14 @@ class DocumentUploader {
       debugPrint("Context not mounted");
       return;
     }
-    Navigator.of(context).pop();
+    if (showPopup == true) {
+      Navigator.of(context).pop();
+    }
     showConfirmationDialog(context, "Documento caricato con successo.");
   }
 
   /// Uploads a .pdf file to the cloud storage
-  Future<void> uploadPdf(BuildContext context) async {
+  Future<void> transformPdf(BuildContext context) async {
     await FirebaseFunctions.instance
         .httpsCallable("get_text_from_pdf")
         .call(<String, dynamic>{
@@ -50,13 +54,15 @@ class DocumentUploader {
       debugPrint("Context not mounted");
       return;
     }
-    Navigator.of(context).pop();
+    if (showPopup == true) {
+      Navigator.of(context).pop();
+    }
     showConfirmationDialog(context,
         "Documento caricato con successo.\n\nNOTA: Elaborare un file PDF potrebbe richiedere da 1 a 10 minuti a seconda di lunghezza e complessità.");
   }
 
   /// Uploads a .txt file to the cloud storage
-  Future<void> uploadTxt(BuildContext context) async {
+  Future<void> transformTxt(BuildContext context) async {
     await DocumentStorage().uploadNewDocumentText(
         idPratica.toString(), fileName, String.fromCharCodes(file));
 
@@ -64,35 +70,73 @@ class DocumentUploader {
       debugPrint("Context not mounted");
       return;
     }
+    if (showPopup == true) {
+      
     Navigator.of(context).pop();
+    }
     showConfirmationDialog(context, "Documento caricato con successo.");
   }
 
   /// Upload a generic file to the cloud storage.
   /// Decides on the file type and calls the appropriate method.
   Future<void> uploadDocument(BuildContext context) async {
-    // TODO: #11 Create function to extract date from document.
-    data ??= DateTime.now();
     if (fileName.endsWith(".txt") ||
         fileName.endsWith(".pdf") ||
         fileName.endsWith(".docx")) {
+      await DocumentStorage()
+          .uploadNewDocumentOriginal(idPratica.toString(), fileName, file);
       try {
         showCircularProgressIndicator(context);
-        await PraticheDb().addNewDocument(fileName, data!, idPratica);
         final String fileExtension = p.extension(fileName);
         if (fileExtension == ".docx") {
-          await uploadDocx(context);
+          await transformDocx(context);
         } else if (fileExtension == ".pdf") {
-          await uploadPdf(context);
+          await transformPdf(context);
         } else if (fileExtension == ".txt") {
-          await uploadTxt(context);
+          await transformTxt(context);
         } else {
           if (!context.mounted) return;
-          Navigator.of(context).pop();
+          if (showPopup == true) {
+            Navigator.of(context).pop();
+          }
           showWrongFormatDialog(context);
         }
-        await DocumentStorage()
-            .uploadNewDocumentOriginal(idPratica.toString(), fileName, file);
+
+        // If .pdf, date will be extracted by the python function.
+        if (fileExtension == ".docx" || fileExtension == ".txt") {
+          try {
+            var result = await FirebaseFunctions.instance
+                .httpsCallable("extract_date")
+                .call(<String, dynamic>{
+              "accountName": await AccountDb().getAccountName(),
+              "praticaId": idPratica,
+              "documentName": fileName,
+              "extension": fileExtension.substring(1),
+            });
+            String result_text = result.data;
+            if (data != null) {
+              debugPrint("Data già presente nel documento.");
+            } else if (result_text == "Data non trovata") {
+              debugPrint("Data non trovata. Usata data attuale.");
+              data = DateTime.now();
+            } else if (result_text == "Data già presente in Firestore.") {
+              debugPrint("Data già presente in Firestore.");
+            } else {
+              try {
+                data = DateTime.parse(result_text);
+              } catch (e) {
+                debugPrint(
+                    "ERROR: Formato della data non valido: ${e.toString()}");
+                data = DateTime.now();
+              }
+            }
+          } catch (e) {
+            debugPrint("ERROR: ${e.toString()}");
+            showErrorDialog(context,
+                "Errore durante l'estrazione della data dal documento: ${e.toString()}");
+          }
+        }
+        await PraticheDb().addNewDocument(fileName, data, idPratica);
       } catch (e) {
         if (!context.mounted) {
           debugPrint("Context not mounted");
@@ -100,82 +144,93 @@ class DocumentUploader {
         }
         Navigator.of(context).pop();
         debugPrint("ERROR: ${e.toString()}");
-        showErrorDialog(context);
+        showErrorDialog(context,
+            "Errore durante il caricamento del documento: ${e.toString()}");
       }
     } else {
       showWrongFormatDialog(context);
     }
   }
-}
 
-Future<dynamic> showWrongFormatDialog(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Errore"),
-        content: const Text(
-            "Formato file non valido. Carica un file .pdf, .docx o .txt. \n Nota che i file .doc non sono supportati."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("OK"),
-          ),
-        ],
+  Future<dynamic>? showCircularProgressIndicator(BuildContext context) {
+    if (showPopup == true) {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       );
-    },
-  );
-}
+    } else {
+      return null;
+    }
+  }
 
-Future<dynamic> showCircularProgressIndicator(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return const Center(
-        child: CircularProgressIndicator(),
+  Future<dynamic>? showConfirmationDialog(
+      BuildContext context, String message) {
+    if (showPopup == true) {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Successo"),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
       );
-    },
-  );
-}
+    } else {
+      return null;
+    }
+  }
 
-Future<dynamic> showConfirmationDialog(BuildContext context, String message) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Successo"),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      );
-    },
-  );
-}
+  Future<dynamic> showWrongFormatDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Errore"),
+          content: const Text(
+              "Formato file non valido. Carica un file .pdf, .docx o .txt. \n Nota che i file .doc non sono supportati."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-Future<dynamic> showErrorDialog(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Errore"),
-        content: const Text("Errore durante il caricamento del documento."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      );
-    },
-  );
+  Future<dynamic> showErrorDialog(BuildContext context, [String? message]) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Errore"),
+          content: Text(
+              "Errore durante il caricamento del documento: ${message ?? 'Errore generico'}"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

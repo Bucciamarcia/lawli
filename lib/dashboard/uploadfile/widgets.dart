@@ -1,17 +1,12 @@
 import 'dart:convert';
-import 'dart:js';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:file_picker/file_picker.dart";
 import 'package:lawli/dashboard/uploadfile/upload_logic.dart';
 import 'package:lawli/js/js_interop.dart';
-import 'package:lawli/services/cloud_storage.dart';
-import 'package:lawli/services/firestore.dart';
-import "package:path/path.dart" as p;
-import 'package:docx_to_text/docx_to_text.dart';
 import 'dart:js_util';
+import "package:lawli/shared/shared.dart";
 
 class FormData extends StatefulWidget {
   final double idPratica;
@@ -24,7 +19,7 @@ class FormData extends StatefulWidget {
 class _FormDataState extends State<FormData> {
   final NuovoDocumentoFormState formState = NuovoDocumentoFormState();
   List<PlatformFile> _uploadedFile = [];
-  late DateTime data;
+  DateTime? data;
 
   // Struttura della pagina
   @override
@@ -43,29 +38,61 @@ class _FormDataState extends State<FormData> {
 
   // Vari elementi della pagina
   Row selettoreCartellaPratica(BuildContext context) {
-    return Row(children: [
-      Expanded(
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                selectFolderAndUpload(allowInterop((List<dynamic> files) {
-                  for (var file in files) {
-                    var jsFile = jsify(file);
-                    String name = getProperty(jsFile, 'name');
-                    debugPrint('File name: $name');
-                    String base64Content = getProperty(jsFile, 'content');
-                    Uint8List content =
-                        base64Decode(base64Content.split(',').last);
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  CircularProgress.show(context);
+                  try {
+                    await selectFolderAndUpload(
+                      allowInterop(
+                        (List<dynamic> files) async {
+                          for (var file in files) {
+                            var jsFile = jsify(file);
+                            UploadFile uploadFile = UploadFile(
+                                b64Content: getProperty(jsFile, 'content'),
+                                filename: getProperty(jsFile, 'name'));
+                            uploadFile.content = uploadFile.getBytes();
+                            DocumentUploader uploader = DocumentUploader(
+                                file: uploadFile.content!,
+                                fileName: uploadFile.filename,
+                                idPratica: widget.idPratica,
+                                data: data,
+                                showPopup: false);
+                            if (uploadFile.filename.endsWith(".txt") ||
+                                uploadFile.filename.endsWith(".docx") ||
+                                uploadFile.filename.endsWith(".pdf")) {
+                              debugPrint(
+                                  "File ${uploadFile.filename} supportato: caricamento in corso...");
+                              await uploader
+                                  .uploadDocument(context); // Await the upload
+                            } else {
+                              debugPrint(
+                                  "File ${uploadFile.filename} non supportato");
+                            }
+                          }
+                          CircularProgress.pop(context);
+                          ConfirmationMessage.show(context, "Successo",
+                              "Cartella caricata con successo.");
+                        },
+                      ),
+                    );
+                  } catch (e) {
+                    debugPrint("Errore durante il caricamento: $e");
+                    ConfirmationMessage.show(context, "Errore",
+                        "Si è verificato un errore durante il caricamento.");
                   }
-                }));
-              },
-              child: const Text('Carica cartella'),
-            ),
-          ],
+                },
+                child: const Text('Carica cartella'),
+              ),
+            ],
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   Row selettoreData(BuildContext context) {
@@ -357,5 +384,17 @@ class NuovoDocumentoFormState {
   void clearAll() {
     dateController.clear();
     filenameController.clear();
+  }
+}
+
+class UploadFile {
+  final String filename;
+  final String b64Content;
+  Uint8List? content;
+
+  UploadFile({required this.filename, required this.b64Content, this.content});
+
+  Uint8List getBytes() {
+    return base64Decode(b64Content.split(',').last);
   }
 }
