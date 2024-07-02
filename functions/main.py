@@ -130,12 +130,13 @@ def count_tokens(req: https_fn.CallableRequest) -> int:
 
 @https_fn.on_call()
 def extract_date(req: https_fn.CallableRequest) -> str:
+    """Extension should be passed without the dot."""
     initialize_env()
     logger.info("extract_date called")
-    keys = ["accountName", "praticaId", "documentName"]
-    account_name, pratica_id, document_name = commons.get_data(req, keys)
+    keys = ["accountName", "praticaId", "documentName", "extension"]
+    account_name, pratica_id, document_name, extension = commons.get_data(req, keys)
     result = functions.ExtractDate(
-        account_name, pratica_id, document_name
+        account_name, pratica_id, document_name, extension
     ).extract_date()
     return result
 

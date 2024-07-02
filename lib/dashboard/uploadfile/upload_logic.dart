@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:docx_to_text/docx_to_text.dart';
 import 'package:lawli/services/cloud_storage.dart';
+import 'package:lawli/services/models.dart';
 import "package:path/path.dart" as p;
 
 import 'package:flutter/material.dart';
@@ -100,9 +101,12 @@ class DocumentUploader {
               "accountName": await AccountDb().getAccountName(),
               "praticaId": idPratica,
               "documentName": fileName,
+              "extension": fileExtension.substring(1),
             });
             String result_text = result.data;
-            if (result_text == "Data non trovata") {
+            if (data != null) {
+              debugPrint("Data già presente nel documento.");
+            } else if (result_text == "Data non trovata") {
               debugPrint("Data non trovata. Usata data attuale.");
               data = DateTime.now();
             } else if (result_text == "Data già presente in Firestore.") {

@@ -68,6 +68,7 @@ class AccountDb extends FirestoreService {
 class PraticheDb extends FirestoreService {
   Future<void> addNewDocument(
       String filename, DateTime? date, double idPratica) async {
+    debugPrint("Starting addNewDocument");
     final String accountName = await AccountDb().getAccountName();
 
     Map<String, dynamic> data;
@@ -91,6 +92,7 @@ class PraticheDb extends FirestoreService {
           .collection("documenti")
           .doc(filename);
       await docs.set(data, SetOptions(merge: true));
+      debugPrint("Added new document");
     } catch (e) {
       debugPrint("Error adding new document: $e");
       rethrow;
