@@ -28,7 +28,7 @@ logger = LoggerConfig().setup_logging()
 initialize_app()
 
 
-@https_fn.on_call()
+@https_fn.on_call(timeout_sec=240)
 def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
     initialize_env()
 
@@ -74,7 +74,7 @@ def create_thread(req: https_fn.CallableRequest) -> str:
     return functions.Create_Thread().create_thread()
 
 
-@https_fn.on_call()
+@https_fn.on_call(timeout_sec=180)
 def interrogate_chatbot(req: https_fn.CallableRequest) -> list[str]:
     initialize_env()
     logger.info("interrogate_chatbot called")
@@ -86,7 +86,7 @@ def interrogate_chatbot(req: https_fn.CallableRequest) -> list[str]:
     )
 
 
-@https_fn.on_call()
+@https_fn.on_call(timeout_sec=180)
 def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
     initialize_env()
     logger.info("create_general_summary called")
@@ -98,7 +98,7 @@ def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
     return {"status": "ok"}
 
 
-@https_fn.on_call()
+@https_fn.on_call(timeout_sec=180)
 def generate_timeline(req: https_fn.CallableRequest) -> str:
     initialize_env()
     logger.info("generate_timeline called")
@@ -153,7 +153,7 @@ def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     return {"status": "ok"}
 
 
-@functions_framework.cloud_event  # type: ignore
+@functions_framework.cloud_event()  # type: ignore
 def generate_document_summary(event: CloudEvent) -> dict[str, str]:
     logger.info("generate_document_summary called")
     logger.info(event)

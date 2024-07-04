@@ -55,9 +55,8 @@ class _FormDataState extends State<FormData> {
                     Text(
                         "Tutti i file saranno caricati nella pratica: ${Provider.of<DashboardProvider>(context).pratica.titolo}.",
                         style: Theme.of(context).textTheme.bodyMedium),
-                    Text(
-                        "Nota: non verranno caricati i file nelle sotto-cartelle.",
-                        style: Theme.of(context).textTheme.bodyMedium)
+                    const Text(
+                        "Nota: non verranno caricati i file nelle sotto-cartelle."),
                   ],
                 ),
               ),
@@ -357,11 +356,33 @@ class CaricaCartellaButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         onPressed: () async {
-          CircularProgress.show(context);
           try {
             await selectFolderAndUpload(
               allowInterop(
                 (List<dynamic> files) async {
+                  if (files.isNotEmpty) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: ((context) {
+                        return const AlertDialog(
+                          title: Text("Caricamento in corso..."),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(height: 10),
+                              Text(
+                                  "Caricamento della cartella in corso, attendere prego."),
+                              SizedBox(height: 10),
+                              Text(
+                                  "NOTA: A seconda della dimensione della cartella, il caricamento potrebbe richiedere del tempo.")
+                            ],
+                          ),
+                        );
+                      }),
+                    );
+                  }
                   for (var file in files) {
                     var jsFile = jsify(file);
                     UploadFile uploadFile = UploadFile(
@@ -393,6 +414,7 @@ class CaricaCartellaButton extends StatelessWidget {
             );
           } catch (e) {
             debugPrint("Errore durante il caricamento: $e");
+            CircularProgress.pop(context);
             ConfirmationMessage.show(context, "Errore",
                 "Si è verificato un errore durante il caricamento.");
           }
