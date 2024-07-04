@@ -8,7 +8,6 @@ import 'package:lawli/js/js_interop.dart';
 import 'package:lawli/services/provider.dart';
 import 'dart:js_util';
 import "package:lawli/shared/shared.dart";
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class FormData extends StatefulWidget {
@@ -50,12 +49,15 @@ class _FormDataState extends State<FormData> {
               Center(
                 child: Column(
                   children: [
-                    Text("Carica una cartella di documenti",
+                    Text("Carica una cartella",
                         style: Theme.of(context).textTheme.headlineMedium),
                     const SizedBox(height: 10),
                     Text(
-                        "Tutti i file saranno caricati nella pratica: ${Provider.of<DashboardProvider>(context).pratica.titolo}",
+                        "Tutti i file saranno caricati nella pratica: ${Provider.of<DashboardProvider>(context).pratica.titolo}.",
                         style: Theme.of(context).textTheme.bodyMedium),
+                    Text(
+                        "Nota: non verranno caricati i file nelle sotto-cartelle.",
+                        style: Theme.of(context).textTheme.bodyMedium)
                   ],
                 ),
               ),
@@ -117,9 +119,6 @@ class _FormDataState extends State<FormData> {
           },
           child: const Text(
             "Seleziona data",
-            style: TextStyle(
-              color: Colors.white,
-            ),
           ),
         ),
       ],
@@ -159,9 +158,6 @@ class _FormDataState extends State<FormData> {
           onPressed: _pickFile,
           child: const Text(
             "Carica file",
-            style: TextStyle(
-              color: Colors.white,
-            ),
           ),
         ),
       ],
@@ -360,48 +356,49 @@ class CaricaCartellaButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () async {
-        CircularProgress.show(context);
-        try {
-          await selectFolderAndUpload(
-            allowInterop(
-              (List<dynamic> files) async {
-                for (var file in files) {
-                  var jsFile = jsify(file);
-                  UploadFile uploadFile = UploadFile(
-                      b64Content: getProperty(jsFile, 'content'),
-                      filename: getProperty(jsFile, 'name'));
-                  uploadFile.content = uploadFile.getBytes();
-                  DocumentUploader uploader = DocumentUploader(
-                      file: uploadFile.content!,
-                      fileName: uploadFile.filename,
-                      idPratica: widget.idPratica,
-                      data: data,
-                      showPopup: false);
-                  if (uploadFile.filename.endsWith(".txt") ||
-                      uploadFile.filename.endsWith(".docx") ||
-                      uploadFile.filename.endsWith(".pdf")) {
-                    debugPrint(
-                        "File ${uploadFile.filename} supportato: caricamento in corso...");
-                    await uploader.uploadDocument(context); // Await the upload
-                  } else {
-                    debugPrint("File ${uploadFile.filename} non supportato");
+        onPressed: () async {
+          CircularProgress.show(context);
+          try {
+            await selectFolderAndUpload(
+              allowInterop(
+                (List<dynamic> files) async {
+                  for (var file in files) {
+                    var jsFile = jsify(file);
+                    UploadFile uploadFile = UploadFile(
+                        b64Content: getProperty(jsFile, 'content'),
+                        filename: getProperty(jsFile, 'name'));
+                    uploadFile.content = uploadFile.getBytes();
+                    DocumentUploader uploader = DocumentUploader(
+                        file: uploadFile.content!,
+                        fileName: uploadFile.filename,
+                        idPratica: widget.idPratica,
+                        data: data,
+                        showPopup: false);
+                    if (uploadFile.filename.endsWith(".txt") ||
+                        uploadFile.filename.endsWith(".docx") ||
+                        uploadFile.filename.endsWith(".pdf")) {
+                      debugPrint(
+                          "File ${uploadFile.filename} supportato: caricamento in corso...");
+                      await uploader
+                          .uploadDocument(context); // Await the upload
+                    } else {
+                      debugPrint("File ${uploadFile.filename} non supportato");
+                    }
                   }
-                }
-                CircularProgress.pop(context);
-                ConfirmationMessage.show(
-                    context, "Successo", "Cartella caricata con successo.");
-              },
-            ),
-          );
-        } catch (e) {
-          debugPrint("Errore durante il caricamento: $e");
-          ConfirmationMessage.show(context, "Errore",
-              "Si è verificato un errore durante il caricamento.");
-        }
-      },
-      child: const Text('Carica cartella'),
-    );
+                  CircularProgress.pop(context);
+                  ConfirmationMessage.show(
+                      context, "Successo", "Cartella caricata con successo.");
+                },
+              ),
+            );
+          } catch (e) {
+            debugPrint("Errore durante il caricamento: $e");
+            ConfirmationMessage.show(context, "Errore",
+                "Si è verificato un errore durante il caricamento.");
+          }
+        },
+        style: Theme.of(context).elevatedButtonTheme.style!,
+        child: const Text('Carica cartella'));
   }
 }
 
