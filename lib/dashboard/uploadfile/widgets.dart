@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import "package:file_picker/file_picker.dart";
 import 'package:lawli/dashboard/uploadfile/upload_logic.dart';
 import 'package:lawli/js/js_interop.dart';
+import 'package:lawli/services/provider.dart';
 import 'dart:js_util';
 import "package:lawli/shared/shared.dart";
+import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 
 class FormData extends StatefulWidget {
   final double idPratica;
@@ -43,51 +46,21 @@ class _FormDataState extends State<FormData> {
         Expanded(
           child: Column(
             children: [
-              ElevatedButton(
-                onPressed: () async {
-                  CircularProgress.show(context);
-                  try {
-                    await selectFolderAndUpload(
-                      allowInterop(
-                        (List<dynamic> files) async {
-                          for (var file in files) {
-                            var jsFile = jsify(file);
-                            UploadFile uploadFile = UploadFile(
-                                b64Content: getProperty(jsFile, 'content'),
-                                filename: getProperty(jsFile, 'name'));
-                            uploadFile.content = uploadFile.getBytes();
-                            DocumentUploader uploader = DocumentUploader(
-                                file: uploadFile.content!,
-                                fileName: uploadFile.filename,
-                                idPratica: widget.idPratica,
-                                data: data,
-                                showPopup: false);
-                            if (uploadFile.filename.endsWith(".txt") ||
-                                uploadFile.filename.endsWith(".docx") ||
-                                uploadFile.filename.endsWith(".pdf")) {
-                              debugPrint(
-                                  "File ${uploadFile.filename} supportato: caricamento in corso...");
-                              await uploader
-                                  .uploadDocument(context); // Await the upload
-                            } else {
-                              debugPrint(
-                                  "File ${uploadFile.filename} non supportato");
-                            }
-                          }
-                          CircularProgress.pop(context);
-                          ConfirmationMessage.show(context, "Successo",
-                              "Cartella caricata con successo.");
-                        },
-                      ),
-                    );
-                  } catch (e) {
-                    debugPrint("Errore durante il caricamento: $e");
-                    ConfirmationMessage.show(context, "Errore",
-                        "Si è verificato un errore durante il caricamento.");
-                  }
-                },
-                child: const Text('Carica cartella'),
+              const SizedBox(height: 20),
+              Center(
+                child: Column(
+                  children: [
+                    Text("Carica una cartella di documenti",
+                        style: Theme.of(context).textTheme.headlineMedium),
+                    const SizedBox(height: 10),
+                    Text(
+                        "Tutti i file saranno caricati nella pratica: ${Provider.of<DashboardProvider>(context).pratica.titolo}",
+                        style: Theme.of(context).textTheme.bodyMedium),
+                  ],
+                ),
               ),
+              const SizedBox(height: 20),
+              CaricaCartellaButton(widget: widget, data: data),
             ],
           ),
         ),
@@ -371,6 +344,64 @@ class _FormDataState extends State<FormData> {
         _uploadedFile = result.files;
       });
     }
+  }
+}
+
+class CaricaCartellaButton extends StatelessWidget {
+  const CaricaCartellaButton({
+    super.key,
+    required this.widget,
+    required this.data,
+  });
+
+  final FormData widget;
+  final DateTime? data;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        CircularProgress.show(context);
+        try {
+          await selectFolderAndUpload(
+            allowInterop(
+              (List<dynamic> files) async {
+                for (var file in files) {
+                  var jsFile = jsify(file);
+                  UploadFile uploadFile = UploadFile(
+                      b64Content: getProperty(jsFile, 'content'),
+                      filename: getProperty(jsFile, 'name'));
+                  uploadFile.content = uploadFile.getBytes();
+                  DocumentUploader uploader = DocumentUploader(
+                      file: uploadFile.content!,
+                      fileName: uploadFile.filename,
+                      idPratica: widget.idPratica,
+                      data: data,
+                      showPopup: false);
+                  if (uploadFile.filename.endsWith(".txt") ||
+                      uploadFile.filename.endsWith(".docx") ||
+                      uploadFile.filename.endsWith(".pdf")) {
+                    debugPrint(
+                        "File ${uploadFile.filename} supportato: caricamento in corso...");
+                    await uploader.uploadDocument(context); // Await the upload
+                  } else {
+                    debugPrint("File ${uploadFile.filename} non supportato");
+                  }
+                }
+                CircularProgress.pop(context);
+                ConfirmationMessage.show(
+                    context, "Successo", "Cartella caricata con successo.");
+              },
+            ),
+          );
+        } catch (e) {
+          debugPrint("Errore durante il caricamento: $e");
+          ConfirmationMessage.show(context, "Errore",
+              "Si è verificato un errore durante il caricamento.");
+        }
+      },
+      child: const Text('Carica cartella'),
+    );
   }
 }
 
