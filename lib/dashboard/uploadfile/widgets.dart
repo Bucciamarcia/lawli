@@ -1,12 +1,12 @@
-import 'package:cloud_functions/cloud_functions.dart';
+import 'dart:convert';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:file_picker/file_picker.dart";
-import 'package:lawli/services/cloud_storage.dart';
-import 'package:lawli/services/firestore.dart';
-import "package:path/path.dart" as p;
-import 'package:docx_to_text/docx_to_text.dart';
+import 'package:lawli/dashboard/uploadfile/upload_logic.dart';
+import 'package:lawli/js/js_interop.dart';
+import 'dart:js_util';
+import "package:lawli/shared/shared.dart";
 
 class FormData extends StatefulWidget {
   final double idPratica;
@@ -19,8 +19,9 @@ class FormData extends StatefulWidget {
 class _FormDataState extends State<FormData> {
   final NuovoDocumentoFormState formState = NuovoDocumentoFormState();
   List<PlatformFile> _uploadedFile = [];
-  late DateTime data;
+  DateTime? data;
 
+  // Struttura della pagina
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -30,6 +31,66 @@ class _FormDataState extends State<FormData> {
         selettoreFile(context),
         const SizedBox(height: 30),
         bottoni(context),
+        selettoreCartellaPratica(context)
+      ],
+    );
+  }
+
+  // Vari elementi della pagina
+  Row selettoreCartellaPratica(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  CircularProgress.show(context);
+                  try {
+                    await selectFolderAndUpload(
+                      allowInterop(
+                        (List<dynamic> files) async {
+                          for (var file in files) {
+                            var jsFile = jsify(file);
+                            UploadFile uploadFile = UploadFile(
+                                b64Content: getProperty(jsFile, 'content'),
+                                filename: getProperty(jsFile, 'name'));
+                            uploadFile.content = uploadFile.getBytes();
+                            DocumentUploader uploader = DocumentUploader(
+                                file: uploadFile.content!,
+                                fileName: uploadFile.filename,
+                                idPratica: widget.idPratica,
+                                data: data,
+                                showPopup: false);
+                            if (uploadFile.filename.endsWith(".txt") ||
+                                uploadFile.filename.endsWith(".docx") ||
+                                uploadFile.filename.endsWith(".pdf")) {
+                              debugPrint(
+                                  "File ${uploadFile.filename} supportato: caricamento in corso...");
+                              await uploader
+                                  .uploadDocument(context); // Await the upload
+                            } else {
+                              debugPrint(
+                                  "File ${uploadFile.filename} non supportato");
+                            }
+                          }
+                          CircularProgress.pop(context);
+                          ConfirmationMessage.show(context, "Successo",
+                              "Cartella caricata con successo.");
+                        },
+                      ),
+                    );
+                  } catch (e) {
+                    debugPrint("Errore durante il caricamento: $e");
+                    ConfirmationMessage.show(context, "Errore",
+                        "Si è verificato un errore durante il caricamento.");
+                  }
+                },
+                child: const Text('Carica cartella'),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -56,8 +117,7 @@ class _FormDataState extends State<FormData> {
                 controller: formState.dateController,
               ),
               const SizedBox(height: 5),
-              Text(
-                  "Inserisci la data in cui il documento è stato creato.",
+              Text("Inserisci la data in cui il documento è stato creato.",
                   style: Theme.of(context).textTheme.labelSmall)
             ],
           ),
@@ -115,7 +175,8 @@ class _FormDataState extends State<FormData> {
                 controller: formState.filenameController,
               ),
               const SizedBox(height: 5),
-              Text("Seleziona un file da caricare. Formati supportati. pdf, docx, txt.",
+              Text(
+                  "Seleziona un file da caricare. Formati supportati. pdf, docx, txt.",
                   style: Theme.of(context).textTheme.labelSmall)
             ],
           ),
@@ -147,175 +208,145 @@ class _FormDataState extends State<FormData> {
 
   ElevatedButton bottoneCarica(BuildContext context) {
     return ElevatedButton(
-        style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-            backgroundColor: MaterialStateProperty.all(Colors.green[700])),
-        onPressed: () async {
-          if (_uploadedFile.isNotEmpty && (formState.filenameController.text.endsWith(".txt") || formState.filenameController.text.endsWith(".docx") || formState.filenameController.text.endsWith(".pdf"))) {
-            try {
-            showCircularProgressIndicator(context);
-
-            await PraticheDb().addNewDocument(formState.filenameController.text, data, widget.idPratica);
-
-            final String fileExtension = p.extension(formState.filenameController.text);
-            await DocumentStorage().uploadNewDocumentOriginal(widget.idPratica.toString(), formState.filenameController.text, _uploadedFile.first.bytes!);
-
-            
-
-            if (fileExtension == ".docx") {
-              var filenameWithoutExtension = p.withoutExtension(formState.filenameController.text);
-              final String docxText = docxToText(_uploadedFile.first.bytes!);
-              await DocumentStorage().uploadNewDocumentText(widget.idPratica.toString(), "$filenameWithoutExtension.txt", docxText);
-              Navigator.of(context).pop();
-              showConfirmationDialog(context, "Documento caricato con successo.");
-
-            } else if (fileExtension == ".pdf") {
-              await FirebaseFunctions.instance.httpsCallable("get_text_from_pdf").call(<String, dynamic>{
-                "idPratica": widget.idPratica,
-                "fileName": formState.filenameController.text,
-                "fileBytes": _uploadedFile.first.bytes!,
-                "accountName": await AccountDb().getAccountName(),
-              });
-
-              Navigator.of(context).pop();
-              showConfirmationDialog(context, "Documento caricato con successo.\n\nNOTA: Elaborare un file PDF potrebbe richiedere da 1 a 10 minuti a seconda di lunghezza e complessità.");
-
-            } else if (fileExtension == ".txt") {
-              await DocumentStorage().uploadNewDocumentText(widget.idPratica.toString(), formState.filenameController.text, String.fromCharCodes(_uploadedFile.first.bytes!));
-              Navigator.of(context).pop();
-              showConfirmationDialog(context, "Documento caricato con successo.");
-            } else {
-              Navigator.of(context).pop();
-              showWrongFormatDialog(context);
-            }
-            
-            
-            } catch (e) {
-              Navigator.of(context).pop();
-              debugPrint("ERROR: ${e.toString()}");
-              showErrorDialog(context);
-            }
-          } else if (_uploadedFile.isEmpty || formState.filenameController.text.isEmpty || formState.dateController.text.isEmpty) {
-            showFillFieldsDialog(context);
-          } else {
-            showWrongFormatDialog(context);
-          }
-        },
-        child: const Text(
-          "Carica documento",
-          style: TextStyle(
-            color: Colors.white,
-          ),
+      style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+          backgroundColor: MaterialStateProperty.all(Colors.green[700])),
+      onPressed: () async {
+        if (_uploadedFile.isNotEmpty &&
+            (formState.filenameController.text.endsWith(".txt") ||
+                formState.filenameController.text.endsWith(".docx") ||
+                formState.filenameController.text.endsWith(".pdf"))) {
+          DocumentUploader uploader = DocumentUploader(
+              idPratica: widget.idPratica,
+              fileName: formState.filenameController.text,
+              file: _uploadedFile.first.bytes!,
+              data: data);
+          uploader.uploadDocument(context);
+        } else if (_uploadedFile.isEmpty ||
+            formState.filenameController.text.isEmpty ||
+            formState.dateController.text.isEmpty) {
+          showFillFieldsDialog(context);
+        } else {
+          showWrongFormatDialog(context);
+        }
+      },
+      child: const Text(
+        "Carica documento",
+        style: TextStyle(
+          color: Colors.white,
         ),
-      );
+      ),
+    );
   }
 
   Future<dynamic> showWrongFormatDialog(BuildContext context) {
     return showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text("Errore"),
-                content: const Text("Formato file non valido. Carica un file .pdf, .docx o .txt."),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("OK"),
-                  ),
-                ],
-              );
-            },
-          );
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Errore"),
+          content: const Text(
+              "Formato file non valido. Carica un file .pdf, .docx o .txt."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<dynamic> showFillFieldsDialog(BuildContext context) {
     return showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text("Errore"),
-                content: const Text("Seleziona un file da caricare e una data valida."),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("OK"),
-                  ),
-                ],
-              );
-            },
-          );
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Errore"),
+          content:
+              const Text("Seleziona un file da caricare e una data valida."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<dynamic> showErrorDialog(BuildContext context) {
     return showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text("Errore"),
-                  content: const Text("Errore durante il caricamento del documento."),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("OK"),
-                    ),
-                  ],
-                );
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Errore"),
+          content: const Text("Errore durante il caricamento del documento."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
               },
-            );
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<dynamic> showConfirmationDialog(BuildContext context, String message) {
     return showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text("Successo"),
-                content: Text(message),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("OK"),
-                  ),
-                ],
-              );
-            },
-          );
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Successo"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<dynamic> showCircularProgressIndicator(BuildContext context) {
     return showDialog(
-            context: context,
-            builder: (context) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          );
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
   }
 
   ElevatedButton bottoneCancella(BuildContext context) {
     return ElevatedButton(
-        style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-              backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
-            ),
-        onPressed: () {
-          formState.clearAll();
-          _uploadedFile.clear();
-        },
-        child: const Text(
-          "Cancella",
-          style: TextStyle(
-            color: Colors.white,
+      style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+            backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
           ),
+      onPressed: () {
+        formState.clearAll();
+        _uploadedFile.clear();
+      },
+      child: const Text(
+        "Cancella",
+        style: TextStyle(
+          color: Colors.white,
         ),
-      );
+      ),
+    );
   }
 
   // Logica per caricare un file
@@ -343,12 +374,27 @@ class _FormDataState extends State<FormData> {
   }
 }
 
+void selectAndUpload() {}
+
 class NuovoDocumentoFormState {
   TextEditingController dateController = TextEditingController();
   TextEditingController filenameController = TextEditingController();
+  TextEditingController directoryController = TextEditingController();
 
   void clearAll() {
     dateController.clear();
     filenameController.clear();
+  }
+}
+
+class UploadFile {
+  final String filename;
+  final String b64Content;
+  Uint8List? content;
+
+  UploadFile({required this.filename, required this.b64Content, this.content});
+
+  Uint8List getBytes() {
+    return base64Decode(b64Content.split(',').last);
   }
 }

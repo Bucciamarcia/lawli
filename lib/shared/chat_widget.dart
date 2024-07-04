@@ -172,13 +172,33 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     final Pratica pratica =
         Provider.of<DashboardProvider>(context, listen: false).pratica;
-    return Column(
-      children: <Widget>[
-        dropDownDocumentSelector(pratica),
-        const ChatbotHeader(),
-        messagesList(),
-        messageInputField(pratica),
-      ],
+    return FutureBuilder(
+      future: RetrieveObjectFromDb().doDocumentsExist(pratica.id),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Align(
+              alignment: Alignment.topCenter,
+              child: Text("Errore nel caricamento dei documenti"));
+        } else if (snapshot.data == null || snapshot.data == false) {
+          return const Align(
+            alignment: Alignment.topCenter,
+            child: Text(
+              "Nessun documento trovato: carica un documento per attivare il chatbot.",
+            ),
+          );
+        } else if (snapshot.hasData && snapshot.data == true) {
+          return Column(
+            children: <Widget>[
+              dropDownDocumentSelector(pratica),
+              const ChatbotHeader(),
+              messagesList(),
+              messageInputField(pratica),
+            ],
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
     );
   }
 
