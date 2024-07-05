@@ -68,7 +68,7 @@ cd functions &&
 (gcloud functions deploy get_txt_from_docai_json --trigger-topic=documentai_pdf_new_doc --env-vars-file .env.yaml --gen2 --runtime=python311 --entry-point=get_txt_from_docai_json --region=europe-west3 & 
 gcloud functions deploy generate_document_summary --trigger-topic=generate_document_summary --env-vars-file .env.yaml --gen2 --runtime=python311 --entry-point=generate_document_summary --region=europe-west3 &)
 wait
-echo "CAMBIA IL TIMEOUT DELLE FUNZIONI A 120 SECONDI!"
+cd ..
 ```
 
 Change the timeout of the functions to 120 seconds (must do it manually b/c firebase doesn't have that on cli).
