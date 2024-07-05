@@ -331,6 +331,25 @@ class RetrieveObjectFromDb extends FirestoreService {
 
   Future<List<Documento>> getDocumenti(double praticaId) async {
     try {
+      String accountName = await AccountDb().getAccountName();
+      var ref = _db
+          .collection("accounts")
+          .doc(accountName)
+          .collection("pratiche")
+          .doc(praticaId.toString())
+          .collection("documenti");
+      var snapshot = await ref.get();
+      var data = snapshot.docs.map((s) => s.data());
+      var topics = data.map((d) => Documento.fromJson(d));
+      var filteredTopics = topics.where((doc) => doc.data != null).toList();
+      return filteredTopics;
+    } catch (e) {
+      debugPrint("Error getting documenti: $e");
+      return [];
+    }
+  }
+
+  Stream<List<Documento>> streamDocumenti(double praticaId) async* {
     String accountName = await AccountDb().getAccountName();
     var ref = _db
         .collection("accounts")
@@ -338,14 +357,15 @@ class RetrieveObjectFromDb extends FirestoreService {
         .collection("pratiche")
         .doc(praticaId.toString())
         .collection("documenti");
-    var snapshot = await ref.get();
-    var data = snapshot.docs.map((s) => s.data());
-    var topics = data.map((d) => Documento.fromJson(d));
-    return topics.toList();
-    } catch (e) {
-      debugPrint("Error getting documenti: $e");
-      return [];
-    }
+
+    yield* ref.snapshots().map((snapshot) {
+      var data = snapshot.docs.map((s) => s.data());
+      var topics = data.map((d) => Documento.fromJson(d));
+      var filteredTopics = topics.where((doc) => doc.data != null).toList();
+      return filteredTopics;
+    }).handleError((e) {
+      debugPrint("Error in streamDocumenti: $e");
+    });
   }
 
   Future<bool> doDocumentsExist(double praticaId) async {

@@ -30,6 +30,7 @@ class LightTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.lightBlue[700]),
+          foregroundColor: MaterialStateProperty.all(Colors.white),
           textStyle: MaterialStateProperty.all(
             const TextStyle(
               color: Colors.white,
