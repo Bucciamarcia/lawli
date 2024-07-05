@@ -341,6 +341,7 @@ class RetrieveObjectFromDb extends FirestoreService {
       var snapshot = await ref.get();
       var data = snapshot.docs.map((s) => s.data());
       var topics = data.map((d) => Documento.fromJson(d));
+      // ignore: unnecessary_null_comparison
       var filteredTopics = topics.where((doc) => doc.data != null).toList();
       return filteredTopics;
     } catch (e) {
@@ -361,6 +362,7 @@ class RetrieveObjectFromDb extends FirestoreService {
     yield* ref.snapshots().map((snapshot) {
       var data = snapshot.docs.map((s) => s.data());
       var topics = data.map((d) => Documento.fromJson(d));
+      // ignore: unnecessary_null_comparison
       var filteredTopics = topics.where((doc) => doc.data != null).toList();
       return filteredTopics;
     }).handleError((e) {
