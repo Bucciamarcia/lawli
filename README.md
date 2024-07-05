@@ -70,5 +70,3 @@ gcloud functions deploy generate_document_summary --trigger-topic=generate_docum
 wait
 cd ..
 ```
-
-Change the timeout of the functions to 120 seconds (must do it manually b/c firebase doesn't have that on cli).

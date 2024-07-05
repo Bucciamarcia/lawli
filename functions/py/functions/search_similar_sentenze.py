@@ -10,15 +10,19 @@ class SentenzeSearcher:
 
         self.logger = LoggerConfig().setup_logging()
         self.corte = corte
-        self.w_client = weaviate.connect_to_wcs(
-            cluster_url=os.environ.get("WEAVIATE_URL", ""),
-            auth_credentials=weaviate.auth.AuthApiKey(
-                os.environ.get("WEAVIATE_APIKEY", "")
-            ),
-            headers={
-                "X-OpenAI-Api-Key": os.environ.get("OPENAI_APIKEY", "")
-            }
-        )
+        try:
+            self.w_client = weaviate.connect_to_wcs(
+                cluster_url=os.environ.get("WEAVIATE_URL", ""),
+                auth_credentials=weaviate.auth.AuthApiKey(
+                    os.environ.get("WEAVIATE_APIKEY", "")
+                ),
+                headers={
+                    "X-OpenAI-Api-Key": os.environ.get("OPENAI_APIKEY", "")
+                }
+            )
+        except Exception as e:
+            self.logger.error(f"Generic error connecting to Weaviate: {e}")
+            raise Exception(f"Generic error connecting to Weaviate: {e}")
         self.db = self.w_client.collections.get("Sentenze")
         self.limit = 10
 

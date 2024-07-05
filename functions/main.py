@@ -28,7 +28,7 @@ logger = LoggerConfig().setup_logging()
 initialize_app()
 
 
-@https_fn.on_call(timeout_sec=240)
+@https_fn.on_call(timeout_sec=360)
 def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
     initialize_env()
 

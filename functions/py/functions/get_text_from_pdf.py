@@ -55,5 +55,17 @@ class Pdf_Transformer:
             document_output_config=output_config,
         )
 
-        client.batch_process_documents(request=request)
+        max_tries = 3
+        initial_timeout_seconds = 10
+        incremental_timeout_seconds = 5
+        tries = 0
+        while tries < max_tries:
+            try:
+                operation = client.batch_process_documents(request=request)
+                operation.result(timeout=initial_timeout_seconds)
+                break
+            except Exception as e:
+                self.logger.error(f"Error in client.batch_process_documents: {e}")
+                tries += 1
+                initial_timeout_seconds += incremental_timeout_seconds
         self.logger.info("Operation started")
