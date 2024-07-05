@@ -366,7 +366,9 @@ class CaricaCartellaButton extends StatelessWidget {
                       barrierDismissible: false,
                       builder: ((context) {
                         return const AlertDialog(
-                          title: Text("Caricamento in corso..."),
+                          title: Center(
+                            child: Text("Caricamento in corso..."),
+                          ),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -407,8 +409,8 @@ class CaricaCartellaButton extends StatelessWidget {
                     }
                   }
                   CircularProgress.pop(context);
-                  ConfirmationMessage.show(
-                      context, "Successo", "Cartella caricata con successo.");
+                  ConfirmationMessage.show(context, "Successo",
+                      "Cartella caricata con successo. Nota che elaborare i PDF potrebbe richiedere ancora qualche minuto.");
                 },
               ),
             );

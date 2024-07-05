@@ -9,8 +9,8 @@ class DocumentTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Documento>>(
-      future: RetrieveObjectFromDb().getDocumenti(pratica.id),
+    return StreamBuilder<List<Documento>>(
+      stream: RetrieveObjectFromDb().streamDocumenti(pratica.id),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<Documento> documenti = snapshot.data!;
