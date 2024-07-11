@@ -152,7 +152,7 @@ def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     if is_docucment:
         functions.Json_Transformer(decoded, object_id).process_json()
     else:
-        logger.info("Not a document")
+        logger.info(f"Not a document: {object_id}")
 
     return {"status": "ok"}
 
@@ -171,6 +171,6 @@ def generate_document_summary(event: CloudEvent) -> dict[str, str]:
         functions.Generated_Document(decoded, object_id).process_document()
         functions.Brief_Description(decoded, object_id).process_brief_description()
     else:
-        logger.info("Not a txt file or not a document")
+        logger.info(f"Not a txt file or not a document: {object_id}")
 
     return {"status": "ok"}

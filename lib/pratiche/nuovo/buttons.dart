@@ -33,7 +33,8 @@ class _NuovaPraticaFormButtonsState extends State<NuovaPraticaFormButtons> {
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              debugPrint("Assistito ID: ${widget.formData.assistitoIdController.text}");
+              String assistitoName = widget.formData.assistitoIdController.text;
+              debugPrint("Assistito ID: $assistitoName");
               if (widget.formData.assistitoIdController.text == ""){
 
                 debugPrint("Assistito ID non presente. Ritorna errore");
