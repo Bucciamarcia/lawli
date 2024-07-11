@@ -2,11 +2,11 @@
 
 An AI CRM for lawyers.
 
-# Environment variables
+## Environment variables
 
 Google Functions requires a .env.yaml file. Rename .env.yaml.template from `functions/` and enter the variables.
 
-# Layout builder
+## Layout builder
 
 Code for each new page:
 
@@ -59,7 +59,7 @@ class UploadFileScreen extends StatelessWidget {
 
 The reason for this code is that there is a different menu on desktop.
 
-# Deploy
+## Deploy
 
 ```bash
 flutter build web &&
@@ -70,3 +70,9 @@ gcloud functions deploy generate_document_summary --trigger-topic=generate_docum
 wait
 cd ..
 ```
+
+## Pubsub storage
+
+Need  to set up a pubsub notification for google cloud storage for generate document summary and documentai pdf to doc:
+
+`gcloud storage buckets notifications create gs://lawli-bab83.appspot.com/ --topic="topic" --object-prefix=accounts/ --event-types=OBJECT_FINALIZE`

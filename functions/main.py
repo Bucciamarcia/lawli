@@ -60,10 +60,10 @@ def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
 def create_assistant(req: https_fn.CallableRequest) -> str:
     initialize_env()
     logger.info("create_assistant called")
-    keys = ["assistantName"]
-    (assistant_name,) = commons.get_data(req, keys)
+    keys = ["assistantName", "pratica_id"]
+    (assistant_name, pratica_id) = commons.get_data(req, keys)
     logger.info(f"ASSISTANT_ID: {assistant_name}")
-    result = functions.Create_Assistant().process_assistant(assistant_name)
+    result = functions.Create_Assistant(pratica_id).process_assistant(assistant_name)
     return result
 
 
@@ -147,8 +147,12 @@ def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info(event)
     object_id = event.data["message"]["attributes"]["objectId"]
     decoded = base64.b64decode(event.data["message"]["data"]).decode()
+    is_docucment = commons.check_is_document(object_id)
 
-    functions.Json_Transformer(decoded, object_id).process_json()
+    if is_docucment:
+        functions.Json_Transformer(decoded, object_id).process_json()
+    else:
+        logger.info("Not a document")
 
     return {"status": "ok"}
 
@@ -161,9 +165,12 @@ def generate_document_summary(event: CloudEvent) -> dict[str, str]:
     decoded = base64.b64decode(event.data["message"]["data"]).decode()
     filename = os.path.basename(object_id)
     is_txt = commons.check_ext(filename)
+    is_document = commons.check_is_document(object_id)
 
-    if is_txt:
+    if is_txt and is_document:
         functions.Generated_Document(decoded, object_id).process_document()
         functions.Brief_Description(decoded, object_id).process_brief_description()
+    else:
+        logger.info("Not a txt file or not a document")
 
     return {"status": "ok"}

@@ -1,6 +1,7 @@
 import json
 import os
 import libreria_ai_per_tutti as ai
+import re
 from py.logger_config import LoggerConfig
 from py.commons import Firestore_Util, Cloud_Storege_Util
 from py.constants import BRIEF_DESCRIPTION_ENGINE, BRIEF_DESCRIPTION_GPT_MESSAGE, USR_MSG_TEMPLATE
@@ -46,30 +47,39 @@ class Brief_Description:
 
     def get_blob_output_name(self, original_filename) -> str:
         """Get the name of the output blob."""
+        self.logger.debug(f"Original filename: {original_filename}")
 
         if "originale_" in self.filename:
             return original_filename.replace("originale_", "")
         else:
             return original_filename
 
-    def get_original_filename(self):
+    def get_original_filename(self, pratica_number: str):
         """Get the original extension of the file."""
         filname_no_ext = os.path.splitext(self.filename)[0]
         original_filename = Firestore_Util().search_document(
-            path="accounts/lawli/pratiche/1/documenti", filename=filname_no_ext
+            path=f"accounts/lawli/pratiche/{pratica_number}/documenti", filename=filname_no_ext
         )
         return original_filename
 
     def process_brief_description(self) -> None:
         """Entrypoint of the function. Process the brief description."""
         self.logger.info(f"File {self.object_id} is a txt file. Processing...")
+        pattern = r"pratiche/(\d+)/documenti"
+        match = re.search(pattern, self.object_id)
+        if match:
+            pratica_number: str = match.group(1)
+        else:
+            self.logger.error(f"Error while extracting pratica number from {self.object_id}")
+            return
+
         text = Cloud_Storege_Util().read_text_file(self.object_id)
 
         data = {
             "brief_description": self.generate_brief_description(text, self.filename)
         }
 
-        original_filename = self.get_original_filename()
+        original_filename = self.get_original_filename(pratica_number)
 
         document_path = f"{self.praticapath}/documenti/{self.get_blob_output_name(original_filename)}"
         Firestore_Util().write_to_firestore(data=data, merge=True, path=document_path)

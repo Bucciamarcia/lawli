@@ -7,6 +7,7 @@ from py.constants import BUCKET_NAME
 from google.cloud import storage
 from firebase_admin import firestore
 import os
+import re
 from py.logger_config import LoggerConfig
 
 
@@ -45,6 +46,18 @@ def change_ext_to_txt(filename: str) -> str:
     else:
         filename_no_ext = os.path.splitext(filename)[0]
         return f"{filename_no_ext}.txt"
+
+
+def check_is_document(path: str) -> bool:
+    """
+    Check if the pattern corresponds to a document.
+    """
+    pattern = r"^accounts/[^/]+/pratiche/[^/]+/documenti/[^/]+$"
+    match = re.match(pattern, path)
+    if match:
+        return True
+    else:
+        return False
 
 
 class Cloud_Storege_Util:
@@ -158,7 +171,7 @@ class Firestore_Util:
             doc_dict = doc.to_dict()
             if filename in doc_dict["filename"]:
                 return doc_dict["filename"]
-    
+
     def get_document(self, path: str) -> dict | None:
         ref = self.db.document(path)
         doc = ref.get()

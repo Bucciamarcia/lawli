@@ -120,6 +120,7 @@ class _ChatViewState extends State<ChatView> {
           .call(
         {
           "assistantName": assistantName,
+          "praticaId": pratica.id.toString(),
         },
       );
       String assistantId = response.data as String;

@@ -7,11 +7,12 @@ from io import BytesIO
 
 
 class Create_Assistant:
-    def __init__(self):
+    def __init__(self, pratica_id: str):
         self.logger = LoggerConfig().setup_logging()
         self.client = OpenAI(api_key=os.environ.get("OPENAI_APIKEY"))
         self.engine = CREATE_ASSISTANT_ENGINE
-        self.doc_id_path = "accounts/lawli/pratiche/1/documenti/{assistant_name}.txt"
+        self.temp = f"accounts/lawli/pratiche/{pratica_id}/documenti/"
+        self.doc_id_path = f"{self.temp}{{assistant_name}}.txt"
 
     def upload_document(self, blob_name: str) -> str:
         try:
@@ -33,7 +34,7 @@ class Create_Assistant:
         except Exception as e:
             self.logger.error(f"Error while uploading document: {e}")
             raise Exception(f"Error while uploading document: {e}")
-    
+
     def strip_extension(self, filename: str):
         return os.path.splitext(filename)[0]
 
@@ -52,7 +53,7 @@ class Create_Assistant:
                 name=assistant_name,
                 file_ids=[document_id],
                 tools=[{"type": "retrieval"}],
-                instructions=CREATE_ASSISTANT_INSTRUCTIONS
+                instructions=CREATE_ASSISTANT_INSTRUCTIONS,
             )
             self.logger.info(f"MY_ASSISTANT: {my_assistant}")
             return my_assistant.id
