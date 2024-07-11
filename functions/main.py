@@ -60,7 +60,7 @@ def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
 def create_assistant(req: https_fn.CallableRequest) -> str:
     initialize_env()
     logger.info("create_assistant called")
-    keys = ["assistantName", "pratica_id"]
+    keys = ["assistantName", "praticaId"]
     (assistant_name, pratica_id) = commons.get_data(req, keys)
     logger.info(f"ASSISTANT_ID: {assistant_name}")
     result = functions.Create_Assistant(pratica_id).process_assistant(assistant_name)

@@ -1,6 +1,5 @@
 import json
 import os
-import libreria_ai_per_tutti as ai
 from py.commons import *
 from py.constants import *
 from firebase_admin.firestore import firestore

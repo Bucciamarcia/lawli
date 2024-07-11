@@ -1,10 +1,14 @@
 import json
 import os
-import libreria_ai_per_tutti as ai
 import re
+from openai import OpenAI, OpenAIError
 from py.logger_config import LoggerConfig
 from py.commons import Firestore_Util, Cloud_Storege_Util
-from py.constants import BRIEF_DESCRIPTION_ENGINE, BRIEF_DESCRIPTION_GPT_MESSAGE, USR_MSG_TEMPLATE
+from py.constants import (
+    BRIEF_DESCRIPTION_ENGINE,
+    BRIEF_DESCRIPTION_GPT_MESSAGE,
+    USR_MSG_TEMPLATE,
+)
 
 
 class Brief_Description:
@@ -19,6 +23,7 @@ class Brief_Description:
         self.filename = os.path.basename(self.object_id)
         self.pathname = os.path.dirname(self.object_id)
         self.praticapath = os.path.dirname(self.pathname)
+        self.client = OpenAI(api_key=os.environ.get("OPENAI_APIKEY"))
 
     def generate_brief_description(self, text: str, filename: str) -> str:
         """
@@ -35,13 +40,13 @@ class Brief_Description:
         ]
 
         try:
-            return str(ai.gpt_call(
+            response = self.client.chat.completions.create(
+                model=BRIEF_DESCRIPTION_ENGINE,
                 messages=messages,
-                engine=BRIEF_DESCRIPTION_ENGINE,
                 temperature=0,
-                apikey=os.environ.get("OPENAI_APIKEY", "0"),
-            ))
-        except Exception as e:
+            )
+            return response.choices[0].message.content
+        except OpenAIError as e:
             self.logger.error(f"Error while generating the brief description: {e}")
             raise Exception(f"Error while generating the brief description: {e}")
 
@@ -58,7 +63,8 @@ class Brief_Description:
         """Get the original extension of the file."""
         filname_no_ext = os.path.splitext(self.filename)[0]
         original_filename = Firestore_Util().search_document(
-            path=f"accounts/lawli/pratiche/{pratica_number}/documenti", filename=filname_no_ext
+            path=f"accounts/lawli/pratiche/{pratica_number}/documenti",
+            filename=filname_no_ext,
         )
         return original_filename
 
@@ -70,7 +76,9 @@ class Brief_Description:
         if match:
             pratica_number: str = match.group(1)
         else:
-            self.logger.error(f"Error while extracting pratica number from {self.object_id}")
+            self.logger.error(
+                f"Error while extracting pratica number from {self.object_id}"
+            )
             return
 
         text = Cloud_Storege_Util().read_text_file(self.object_id)
