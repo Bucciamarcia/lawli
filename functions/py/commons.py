@@ -52,7 +52,7 @@ def check_is_document(path: str) -> bool:
     """
     Check if the pattern corresponds to a document.
     """
-    pattern = r'^accounts/[^/]+/pratiche/[^/]+/documenti/[^/]+(/.*)?$'
+    pattern = r"^accounts/[^/]+/pratiche/[^/]+/documenti/[^/]+(/.*)?$"
     match = re.match(pattern, path)
     if match:
         return True
@@ -181,8 +181,7 @@ class Firestore_Util:
         """
         Get all the document IDs"""
         docs = self.db.collection(
-            f"accounts/{assistito}/pratiche/{pratica}/\
-        documenti"
+            f"accounts/{assistito}/pratiche/{pratica}/documenti"
         ).stream()
         documents = []
         for doc in docs:

@@ -1,7 +1,7 @@
-from py.functions import Create_Assistant
+from py.functions import TimelineGenerator
 import firebase_admin
 
 firebase_admin.initialize_app()
 
-tester = Create_Assistant()
-print(tester.process_assistant("2 fasc di I grado 6 memoria 183 n 1.pdf"))
+tester = TimelineGenerator(account_name="lawli", pratica_id="6")
+tester.generate_timeline()
