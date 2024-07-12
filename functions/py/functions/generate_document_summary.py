@@ -1,6 +1,6 @@
 import json
+from openai import OpenAI, OpenAIError
 import os
-import libreria_ai_per_tutti as ai
 from py.commons import Cloud_Storege_Util
 from py.constants import DOCUMENT_SUMMARY_GPT_MESSAGE, SUMMARY_ENGINE
 
@@ -25,13 +25,14 @@ class Generated_Document:
             {"role": "user", "content": text},
         ]
         try:
-            summary = ai.gpt_call(
+            client = OpenAI(api_key=os.environ.get("OPENAI_APIKEY", "000"))
+            response = client.chat.completions.create(
+                model=SUMMARY_ENGINE,
                 messages=messages,
-                engine=SUMMARY_ENGINE,
                 temperature=0,
-                apikey=os.environ.get("OPENAI_APIKEY", "000"),
             )
-        except Exception as e:
+            summary = response.choices[0].message.content
+        except OpenAIError as e:
             raise Exception(f"Error while summarizing the file: {e}")
 
         return str(summary)
