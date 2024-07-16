@@ -8,11 +8,11 @@ from time import sleep
 
 
 class Create_Assistant:
-    def __init__(self, pratica_id: str):
+    def __init__(self, pratica_id: str, account_id: str):
         self.logger = LoggerConfig().setup_logging()
         self.client = OpenAI(api_key=os.environ.get("OPENAI_APIKEY"))
         self.engine = CREATE_ASSISTANT_ENGINE
-        self.temp = f"accounts/lawli/pratiche/{pratica_id}/documenti/"
+        self.temp = f"accounts/{account_id}/pratiche/{pratica_id}/documenti/"
         self.doc_id_path = f"{self.temp}{{assistant_name}}.txt"
 
     def vector_store_upload(self, blob_name: str, assistant_name: str) -> str:

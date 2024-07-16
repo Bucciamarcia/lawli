@@ -121,6 +121,7 @@ class _ChatViewState extends State<ChatView> {
         {
           "assistantName": assistantName,
           "praticaId": pratica.id.toString(),
+          "accountId": AccountDb().getAccountName(),
         },
       );
       String assistantId = response.data as String;
@@ -173,8 +174,8 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     final Pratica pratica =
         Provider.of<DashboardProvider>(context, listen: false).pratica;
-    return FutureBuilder(
-      future: RetrieveObjectFromDb().doDocumentsExist(pratica.id),
+    return StreamBuilder(
+      stream: RetrieveObjectFromDb().streamDocumentsExist(pratica.id),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Align(

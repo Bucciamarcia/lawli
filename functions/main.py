@@ -60,10 +60,10 @@ def does_assistant_exist(req: https_fn.CallableRequest) -> bool:
 def create_assistant(req: https_fn.CallableRequest) -> str:
     initialize_env()
     logger.info("create_assistant called")
-    keys = ["assistantName", "praticaId"]
-    (assistant_name, pratica_id) = commons.get_data(req, keys)
+    keys = ["assistantName", "praticaId", "accountId"]
+    (assistant_name, pratica_id, account_id) = commons.get_data(req, keys)
     logger.info(f"ASSISTANT_ID: {assistant_name}")
-    result = functions.Create_Assistant(pratica_id).process_assistant(assistant_name)
+    result = functions.Create_Assistant(pratica_id, account_id).process_assistant(assistant_name)
     return result
 
 
@@ -98,7 +98,7 @@ def create_general_summary(req: https_fn.CallableRequest) -> dict[str, str]:
     return {"status": "ok"}
 
 
-@https_fn.on_call(timeout_sec=180)
+@https_fn.on_call(timeout_sec=300)
 def generate_timeline(req: https_fn.CallableRequest) -> str:
     initialize_env()
     logger.info("generate_timeline called")

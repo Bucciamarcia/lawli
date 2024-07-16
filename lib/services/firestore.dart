@@ -98,6 +98,91 @@ class PraticheDb extends FirestoreService {
       rethrow;
     }
   }
+
+  Future<void> addRiassuntoGeneraleTimestamp(double idPratica) async {
+    final String accountName = await AccountDb().getAccountName();
+    final DateTime now = DateTime.now();
+
+    final Map<String, dynamic> data = <String, dynamic>{
+      "riassuntoGeneraleTimestamp": now,
+    };
+
+    try {
+      final DocumentReference docs = _db
+          .collection("accounts")
+          .doc(accountName)
+          .collection("pratiche")
+          .doc(idPratica.toString());
+      await docs.set(data, SetOptions(merge: true));
+      debugPrint("Added riassunto generale timestamp");
+    } catch (e) {
+      debugPrint("Error adding riassunto generale timestamp: $e");
+      rethrow;
+    }
+  }
+
+  Stream<Timestamp?> getRiassuntoGeneraleTimestamp(double idPratica) async* {
+    final String accountName = await AccountDb().getAccountName();
+
+    var ref = _db
+        .collection("accounts")
+        .doc(accountName)
+        .collection("pratiche")
+        .doc(idPratica.toString());
+
+    yield* ref.snapshots().map(
+      (snapshot) {
+        return snapshot.get("riassuntoGeneraleTimestamp") as Timestamp?;
+      },
+    ).handleError(
+      (e) {
+        debugPrint("Error in getRiassuntoGeneraleTimestamp: $e");
+        return null;
+      },
+    );
+  }
+
+  Future<void> addTimelineTimestamp(double idPratica) async {
+    final String accountName = await AccountDb().getAccountName();
+    final DateTime now = DateTime.now();
+
+    final Map<String, dynamic> data = <String, dynamic>{
+      "timelineTimestamp": now,
+    };
+
+    try {
+      final DocumentReference docs = _db
+          .collection("accounts")
+          .doc(accountName)
+          .collection("pratiche")
+          .doc(idPratica.toString());
+      await docs.set(data, SetOptions(merge: true));
+      debugPrint("Added timeline timestamp");
+    } catch (e) {
+      debugPrint("Error adding timeline timestamp: $e");
+      rethrow;
+    }
+  }
+
+  Stream<Timestamp?> getTimelineTimestamp(double idPratica) async* {
+    final String accountName = await AccountDb().getAccountName();
+
+    var ref = _db
+        .collection("accounts")
+        .doc(accountName)
+        .collection("pratiche")
+        .doc(idPratica.toString());
+
+    yield* ref.snapshots().map(
+      (snapshot) {
+        return snapshot.get("timelineTimestamp") as Timestamp?;
+      },
+    ).handleError(
+      (e) {
+        debugPrint("Error in getTimelineTimestamp: $e");
+      },
+    );
+  }
 }
 
 class AssistitoDb extends FirestoreService {
@@ -385,6 +470,22 @@ class RetrieveObjectFromDb extends FirestoreService {
       debugPrint("Error checking if documents exist: $e");
       return false;
     }
+  }
+
+  Stream<bool> streamDocumentsExist(double praticaId) async* {
+    String accountName = await AccountDb().getAccountName();
+    var ref = _db
+        .collection("accounts")
+        .doc(accountName)
+        .collection("pratiche")
+        .doc(praticaId.toString())
+        .collection("documenti");
+
+    yield* ref.snapshots().map((snapshot) {
+      return snapshot.docs.isNotEmpty;
+    }).handleError((e) {
+      debugPrint("Error in streamDocumentsExist: $e");
+    });
   }
 
   Future<Documento> getDocumento(double praticaId, String filename) async {

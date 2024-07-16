@@ -59,25 +59,35 @@ class Brief_Description:
         else:
             return original_filename
 
-    def get_original_filename(self, pratica_number: str):
+    def get_original_filename(self, pratica_number: str, account_id: str) -> str:
         """Get the original extension of the file."""
         filname_no_ext = os.path.splitext(self.filename)[0]
         original_filename = Firestore_Util().search_document(
-            path=f"accounts/lawli/pratiche/{pratica_number}/documenti",
+            path=f"accounts/{account_id}/pratiche/{pratica_number}/documenti",
             filename=filname_no_ext,
         )
-        return original_filename
+        return original_filename if original_filename else self.filename
 
     def process_brief_description(self) -> None:
         """Entrypoint of the function. Process the brief description."""
         self.logger.info(f"File {self.object_id} is a txt file. Processing...")
         pattern = r"pratiche/(\d+)/documenti"
         match = re.search(pattern, self.object_id)
+        account_pattern = r"raccounts/([^/]+)/pratiche"
+        match_pattern = re.search(account_pattern, self.object_id)
+
         if match:
             pratica_number: str = match.group(1)
         else:
             self.logger.error(
                 f"Error while extracting pratica number from {self.object_id}"
+            )
+            return
+        if match_pattern:
+            account_id: str = match_pattern.group(1)
+        else:
+            self.logger.error(
+                f"Error while extracting account id from {self.object_id}"
             )
             return
 
@@ -87,7 +97,7 @@ class Brief_Description:
             "brief_description": self.generate_brief_description(text, self.filename)
         }
 
-        original_filename = self.get_original_filename(pratica_number)
+        original_filename = self.get_original_filename(pratica_number, account_id)
 
         document_path = f"{self.praticapath}/documenti/{self.get_blob_output_name(original_filename)}"
         Firestore_Util().write_to_firestore(data=data, merge=True, path=document_path)

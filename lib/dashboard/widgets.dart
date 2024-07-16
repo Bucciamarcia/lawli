@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,8 @@ import 'package:provider/provider.dart';
 import '../services/cloud_storage.dart';
 
 class ExpandableOverview extends StatelessWidget {
-  const ExpandableOverview({super.key});
+  final Pratica pratica;
+  const ExpandableOverview({super.key, required this.pratica});
 
   @override
   Widget build(BuildContext context) {
@@ -45,39 +47,67 @@ class ExpandableOverview extends StatelessWidget {
             child: SizedBox(
               width: 800,
               child: Center(
-                child: FutureBuilder(
-                  future: DocumentStorage().getTextDocument(
-                      "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}/riassunto generale.txt"),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return const Text(
-                          "Errore nel caricamento del riassunto generale");
-                    } else if (snapshot.connectionState ==
+                child: StreamBuilder<Timestamp?>(
+                  stream:
+                      PraticheDb().getRiassuntoGeneraleTimestamp(pratica.id),
+                  builder:
+                      (context, AsyncSnapshot<Timestamp?> timestampSnapshot) {
+                    if (timestampSnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return const Text("Caricamento in corso...");
-                    } else {
-                      if (snapshot.data == null) {
-                        return const Text("Nessun riassunto generale presente");
-                      } else {
+                      return const CircularProgressIndicator();
+                    }
+                    if (timestampSnapshot.hasError) {
+                      return Text(
+                          'Error retrieving data: ${timestampSnapshot.error}');
+                    }
+                    if (!timestampSnapshot.hasData ||
+                        timestampSnapshot.data == null) {
+                      return const Text('No data available');
+                    }
+
+                    final Timestamp timestamp = timestampSnapshot.data!;
+                    final DateTime lastUpdated = timestamp.toDate();
+                    debugPrint("Last updated: $lastUpdated");
+
+                    return FutureBuilder<String>(
+                      future: DocumentStorage().getTextDocument(
+                          "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}/riassunto generale.txt"),
+                      builder: (context, textSnapshot) {
+                        if (textSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text("Caricamento in corso...");
+                        }
+                        if (textSnapshot.hasError) {
+                          return const Text(
+                              "Errore nel caricamento del riassunto generale");
+                        }
+                        if (!textSnapshot.hasData ||
+                            textSnapshot.data!.isEmpty) {
+                          return const Text(
+                              "Nessun riassunto generale presente");
+                        }
+
+                        final textData = textSnapshot.data!;
+
                         return Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
                               child: ExpandableText(
-                                snapshot.data!,
+                                textData,
                                 expandText: "Leggi di più",
                                 collapseText: "Leggi di meno",
                                 maxLines: 10,
                               ),
                             ),
                             CopyIcon(
-                              textToCopy: snapshot.data!,
+                              textToCopy: textData,
                               onCopy: () {},
                             ),
                           ],
                         );
-                      }
-                    }
+                      },
+                    );
                   },
                 ),
               ),
@@ -198,6 +228,8 @@ class Documenti extends StatelessWidget {
                           "praticaId": pratica.id.toString(),
                           "accountName": accountName,
                         });
+                        await PraticheDb()
+                            .addRiassuntoGeneraleTimestamp(pratica.id);
                       } catch (e) {
                         debugPrint(
                             "Errore nella creazione del riassunto generale: $e");
@@ -217,9 +249,15 @@ class Documenti extends StatelessWidget {
                             "Creazione cronologia",
                             "Lawli sta creando la cronologia della  causa. Portrebbe prendere da 1 a 15 minuti a seconda della complessità della causa. Puoi continuare a usare l'applicazione nel frattempo.",
                             "OK");
+
                         try {
                           var result = await FirebaseFunctions.instance
-                              .httpsCallable("generate_timeline")
+                              .httpsCallable(
+                            "generate_timeline",
+                            options: HttpsCallableOptions(
+                              timeout: const Duration(seconds: 540),
+                            ),
+                          )
                               .call({
                             "accountName": accountName,
                             "praticaId": pratica.id.toString(),
@@ -231,6 +269,7 @@ class Documenti extends StatelessWidget {
                           await updateTimeline(
                               newTimeline, accountName, pratica.id);
                           debugPrint("Timeline updated");
+                          await PraticheDb().addTimelineTimestamp(pratica.id);
                         } catch (e) {
                           debugPrint(
                               "Errore nella creazione della timeline: $e");
@@ -264,7 +303,8 @@ class Documenti extends StatelessWidget {
 }
 
 class TimelineWidget extends StatelessWidget {
-  const TimelineWidget({super.key});
+  final Pratica pratica;
+  const TimelineWidget({super.key, required this.pratica});
 
   @override
   Widget build(BuildContext context) {
@@ -279,39 +319,57 @@ class TimelineWidget extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 20),
-            FutureBuilder(
-              future: DocumentStorage().getJson(
-                "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}",
-                "timeline.json",
-              ),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Text("Errore nel caricamento della cronologia");
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else {
-                  if (snapshot.data == null) {
-                    return const Text("Nessuna cronologia presente");
-                  } else {
-                    List timeline = snapshot.data!['timeline'];
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: timeline.length,
-                      itemBuilder: (context, index) {
-                        final event = timeline[index];
-                        return TimelineEventWidget(
-                          date: event['data'],
-                          event: event['evento'],
-                          isLast: index == timeline.length - 1,
-                        );
-                      },
-                    );
+            StreamBuilder<Timestamp?>(
+                stream: PraticheDb().getTimelineTimestamp(pratica.id),
+                builder: (context, AsyncSnapshot<Timestamp?> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
                   }
-                }
-              },
-            ),
+                  if (snapshot.hasError) {
+                    return Text('Error retrieving data: ${snapshot.error}');
+                  }
+                  if (!snapshot.hasData || snapshot.data == null) {
+                    return const Text('No data available');
+                  }
+
+                  final Timestamp timestamp = snapshot.data!;
+                  final DateTime lastUpdated = timestamp.toDate();
+                  debugPrint("Last updated: $lastUpdated");
+                  return FutureBuilder(
+                    future: DocumentStorage().getJson(
+                      "accounts/${Provider.of<DashboardProvider>(context, listen: false).accountName}/pratiche/${Provider.of<DashboardProvider>(context, listen: false).idPratica}",
+                      "timeline.json",
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text(
+                            "Errore nel caricamento della cronologia");
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else {
+                        if (snapshot.data == null) {
+                          return const Text("Nessuna cronologia presente");
+                        } else {
+                          List timeline = snapshot.data!['timeline'];
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: timeline.length,
+                            itemBuilder: (context, index) {
+                              final event = timeline[index];
+                              return TimelineEventWidget(
+                                date: event['data'],
+                                event: event['evento'],
+                                isLast: index == timeline.length - 1,
+                              );
+                            },
+                          );
+                        }
+                      }
+                    },
+                  );
+                }),
           ],
         ),
       ),

@@ -24,7 +24,8 @@ class MainWindow extends StatelessWidget {
                 style: Theme.of(context).textTheme.displayLarge,
               ),
               const SizedBox(height: 20),
-              const ExpandableOverview(
+              ExpandableOverview(
+                pratica: pratica,
               ),
               const SizedBox(height: 20),
               SizedBox(
@@ -59,7 +60,7 @@ class MainWindow extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-              const TimelineWidget(),
+              TimelineWidget(pratica: pratica),
               const SizedBox(height: 50)
             ],
           ),
