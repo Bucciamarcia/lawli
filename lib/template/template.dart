@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import "package:lawli/template/template_main.dart";
+import "package:provider/provider.dart";
 import "../../shared/shared.dart";
 import "../../services/services.dart";
+import "provider.dart";
 
 class TemplateScreen extends StatelessWidget {
   const TemplateScreen({super.key});
@@ -18,9 +20,11 @@ class TemplateScreen extends StatelessWidget {
                 "Template",
                 style: Theme.of(context).textTheme.displayLarge,
               ),
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: TemplateHomeWidget(),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: ChangeNotifierProvider(
+                  create:(context) => TemplateProvider(),
+                  child: const TemplateHomeWidget()),
               ),
             ],
           ),
