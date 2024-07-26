@@ -71,7 +71,12 @@ class MenuElements {
           Navigator.pushNamed(context, '/ricerca_sentenze');
         },
       ),
-      ListTile(title: const Text("Logout"),
+      ListTile(
+        title: const Text("Template"),
+        onTap: () => Navigator.pushNamed(context, '/template'),
+      ),
+      ListTile(
+          title: const Text("Logout"),
           onTap: () async {
             await AuthService().signOut();
             Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
