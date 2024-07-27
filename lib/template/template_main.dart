@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lawli/ricerca_sentenze/motore_ricerca_sentenze.dart';
 import 'package:lawli/services/firestore.dart';
 import 'package:lawli/services/models.dart';
-import 'package:lawli/template/nuovo_modello_button.dart';
+import 'package:lawli/template/nuovo/nuovo_modello_button.dart';
 import 'package:provider/provider.dart';
 import 'provider.dart';
 

@@ -176,3 +176,16 @@ EXTRACT_DATE_PROMPT = (
     "Se non riesci a trovare la data, restituisci 'Data non trovata'.\n"
     "SUGGERIMENTO: La data è spesso presente all'inizio o alla fine del documento."
 )
+
+TEMPLATE_ENGINE = BEST_GPT_MODEL
+TEMPLATE_SYPROMPT = (
+    "Sei un assistente legale che lavora con documenti legali. "
+    "L'avvocato ti passerà un template che utilizza per velocizzare la scrittura di documenti legali, "
+    "e il tuo lavoro è dare una breve descrizione di massimo 5 parole.\n"
+    "Il tuo output è unicamente la descrizione, senza alcun'altra informazione.\n"
+    "ESEMPIO 1: 'Ricorso per licenziamento illegittimo'\n"
+    "ESEMPIO 2: 'Contratto di lavoro'\n"
+    "ESEMPIO 3: 'Decreto ingiuntivo'\n"
+    "ESEMPIO SBAGLIATO 1: 'Questo è un ricorso per licenziamento illegittimo'\n"
+    "ESEMPIO SBAGLIATO 2: 'Descrizione breve: ricorso per licenziamento illegittimo'"
+)

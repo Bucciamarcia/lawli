@@ -53,6 +53,7 @@ class FirestoreService {
 }
 
 class AccountDb extends FirestoreService {
+  /// Returns the account name for the user. Eg. "lawli"
   Future<String> getAccountName() async {
     try {
       final DocumentSnapshot userDoc =
@@ -499,5 +500,40 @@ class RetrieveObjectFromDb extends FirestoreService {
         .doc(filename);
     var snapshot = await ref.get();
     return Documento.fromJson(snapshot.data() ?? {});
+  }
+
+  /// Returns a list of all the templates of the account
+  Future<List<Template>> getTemplates() async {
+    try {
+      String accountName = await AccountDb().getAccountName();
+      var ref = _db
+          .collection("accounts")
+          .doc(accountName)
+          .collection("templates");
+      var snapshot = await ref.get();
+      var data = snapshot.docs.map((s) => s.data());
+      var topics = data.map((d) => Template.fromJson(d));
+      return topics.toList();
+    } catch (e) {
+      debugPrint("Error getting templates: $e");
+      return [];
+    }
+  }
+
+  /// Returns a single template of the account by its name/title
+  Future<Template> getTemplate(String templateId) async {
+    try {
+      String accountName = await AccountDb().getAccountName();
+      var ref = _db
+          .collection("accounts")
+          .doc(accountName)
+          .collection("templates")
+          .doc(templateId);
+      var snapshot = await ref.get();
+      return Template.fromJson(snapshot.data() ?? {});
+    } catch (e) {
+      debugPrint("Error getting template: $e");
+      return Template();
+    }
   }
 }

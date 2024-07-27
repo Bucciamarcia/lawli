@@ -63,7 +63,9 @@ def create_assistant(req: https_fn.CallableRequest) -> str:
     keys = ["assistantName", "praticaId", "accountId"]
     (assistant_name, pratica_id, account_id) = commons.get_data(req, keys)
     logger.info(f"ASSISTANT_ID: {assistant_name}")
-    result = functions.Create_Assistant(pratica_id, account_id).process_assistant(assistant_name)
+    result = functions.Create_Assistant(pratica_id, account_id).process_assistant(
+        assistant_name
+    )
     return result
 
 
@@ -138,6 +140,16 @@ def extract_date(req: https_fn.CallableRequest) -> str:
     result = functions.ExtractDate(
         account_name, pratica_id, document_name, extension
     ).extract_date()
+    return result
+
+
+@https_fn.on_call(timeout_sec=180)
+def get_template_brief_description(req: https_fn.CallableRequest) -> str:
+    initialize_env()
+    logger.info("get_template_brief_description called")
+    keys = ["title", "text"]
+    title, text = commons.get_data(req, keys)
+    result = functions.Template(title, text).get_brief_description()
     return result
 
 

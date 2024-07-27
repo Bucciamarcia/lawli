@@ -65,3 +65,15 @@ Map<String, dynamic> _$DocumentoToJson(Documento instance) => <String, dynamic>{
       'brief_description': instance.brief_description,
       'assistantId': instance.assistantId,
     };
+
+Template _$TemplateFromJson(Map<String, dynamic> json) => Template(
+      title: json['title'] as String? ?? '',
+      text: json['text'] as String? ?? '',
+      briefDescription: json['briefDescription'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$TemplateToJson(Template instance) => <String, dynamic>{
+      'title': instance.title,
+      'text': instance.text,
+      'briefDescription': instance.briefDescription,
+    };

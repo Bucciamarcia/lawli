@@ -11,6 +11,7 @@ from .generate_timeline import TimelineGenerator
 from .search_similar_sentenze import SentenzeSearcher
 from .count_tokens import Tokenizer
 from .extract_date import ExtractDate
+from .template_operations import Template
 
 __all__ = [
     "Pdf_Transformer",
@@ -25,5 +26,6 @@ __all__ = [
     "TimelineGenerator",
     "SentenzeSearcher",
     "Tokenizer",
-    "ExtractDate"
+    "ExtractDate",
+    "Template"
 ]

@@ -1,5 +1,8 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:cloud_functions/cloud_functions.dart";
+import "package:flutter/foundation.dart";
 import "package:json_annotation/json_annotation.dart";
+import "package:lawli/services/firestore.dart";
 part "models.g.dart";
 
 @JsonSerializable()
@@ -35,10 +38,9 @@ class Assistito {
     this.nazione = '',
   });
 
-    factory Assistito.fromJson(Map<String, dynamic> json) => _$AssistitoFromJson(json);
-    Map<String, dynamic> toJson() => _$AssistitoToJson(this);
-
-
+  factory Assistito.fromJson(Map<String, dynamic> json) =>
+      _$AssistitoFromJson(json);
+  Map<String, dynamic> toJson() => _$AssistitoToJson(this);
 }
 
 @JsonSerializable()
@@ -55,18 +57,19 @@ class Pratica {
     this.descrizione = '',
   });
 
-  factory Pratica.fromJson(Map<String, dynamic> json) => _$PraticaFromJson(json);
+  factory Pratica.fromJson(Map<String, dynamic> json) =>
+      _$PraticaFromJson(json);
 
   @override
-  bool operator == (Object other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is Pratica &&
-      other.id == id &&
-      other.assistitoId == assistitoId &&
-      other.titolo == titolo &&
-      other.descrizione == descrizione;
-}
+        other.id == id &&
+        other.assistitoId == assistitoId &&
+        other.titolo == titolo &&
+        other.descrizione == descrizione;
+  }
 }
 
 @JsonSerializable()
@@ -82,24 +85,81 @@ class Documento {
     required this.data,
     this.brief_description = '',
     this.assistantId,
-  });  
+  });
 
-  factory Documento.fromJson(Map<String, dynamic> json) => _$DocumentoFromJson(json);
+  factory Documento.fromJson(Map<String, dynamic> json) =>
+      _$DocumentoFromJson(json);
 
   static DateTime _fromJsonTimestamp(Timestamp timestamp) => timestamp.toDate();
-  static Timestamp _toJsonTimestamp(DateTime dateTime) => Timestamp.fromDate(dateTime);
+  static Timestamp _toJsonTimestamp(DateTime dateTime) =>
+      Timestamp.fromDate(dateTime);
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Documento &&
-      other.filename == filename &&
-      other.data == data &&
-      other.brief_description == brief_description &&
-      other.assistantId == assistantId;
+        other.filename == filename &&
+        other.data == data &&
+        other.brief_description == brief_description &&
+        other.assistantId == assistantId;
   }
 
   @override
-  int get hashCode => Object.hash(filename, data, brief_description, assistantId);
+  int get hashCode =>
+      Object.hash(filename, data, brief_description, assistantId);
+}
+
+@JsonSerializable()
+class Template extends FirestoreService {
+  final String title;
+  final String text;
+  String briefDescription;
+
+  Template({
+    this.title = '',
+    this.text = '',
+    this.briefDescription = '',
+  });
+
+  /// Get the brief description of the template
+  Future<void> getBriefDescription({bool addToDb = false}) async {
+    var result = await FirebaseFunctions.instance
+        .httpsCallable("get_template_brief_description")
+        .call({"title": title, "text": text});
+
+    briefDescription = result.data;
+    if (addToDb) {
+      try {
+      await addTemplateToDb();
+      } catch (e) {
+        rethrow;
+      }
+    }
+  }
+
+  Future<void> addTemplateToDb() async {
+    String accountName = await AccountDb().getAccountName();
+    Map<String, String> data = {
+      "title": title,
+      "briefDescription": briefDescription,
+      "text": text,
+    };
+    try {
+      FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference docs = db
+          .collection("accounts")
+          .doc(accountName)
+          .collection("templates")
+          .doc(title);
+      await docs.set(data);
+    } catch (e) {
+      debugPrint("Error while adding template to db: $e");
+      rethrow;
+    }
+  }
+
+  factory Template.fromJson(Map<String, dynamic> json) =>
+      _$TemplateFromJson(json);
+  Map<String, dynamic> toJson() => _$TemplateToJson(this);
 }
