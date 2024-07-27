@@ -113,7 +113,7 @@ class Documento {
 @JsonSerializable()
 class Template extends FirestoreService {
   final String title;
-  final String text;
+  String text;
   String briefDescription;
 
   Template({
@@ -122,23 +122,49 @@ class Template extends FirestoreService {
     this.briefDescription = '',
   });
 
+  Future<void> processNew() async {
+
+    try {
+      await _formatText();
+    } catch (e) {
+      debugPrint("Error while formatting text: $e");
+      rethrow;
+    }
+
+    try {
+      await _getBriefDescription();
+    } catch (e) {
+      debugPrint("Error while getting brief description: $e");
+      rethrow;
+    }
+
+    try {
+      await _addTemplateToDb();
+    } catch (e) {
+      debugPrint("Error while adding template to db: $e");
+      rethrow;
+    }
+
+  }
+
   /// Get the brief description of the template
-  Future<void> getBriefDescription({bool addToDb = false}) async {
+  Future<void> _getBriefDescription() async {
     var result = await FirebaseFunctions.instance
         .httpsCallable("get_template_brief_description")
         .call({"title": title, "text": text});
 
     briefDescription = result.data;
-    if (addToDb) {
-      try {
-      await addTemplateToDb();
-      } catch (e) {
-        rethrow;
-      }
-    }
   }
 
-  Future<void> addTemplateToDb() async {
+  Future<void> _formatText() async {
+    var result = await FirebaseFunctions.instance
+        .httpsCallable("get_template_formatted")
+        .call({"title": title, "text": text});
+    
+    text = result.data;
+  }
+
+  Future<void> _addTemplateToDb() async {
     String accountName = await AccountDb().getAccountName();
     Map<String, String> data = {
       "title": title,

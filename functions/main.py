@@ -153,6 +153,19 @@ def get_template_brief_description(req: https_fn.CallableRequest) -> str:
     return result
 
 
+@https_fn.on_call(timeout_sec=180)
+def get_template_formatted(req: https_fn.CallableRequest) -> str:
+    initialize_env()
+    logger.info("get_template_formatted called")
+    keys = ["title", "text"]
+    title, text = commons.get_data(req, keys)
+    result = functions.Template(title, text).process_text()
+    if result:
+        return result
+    else:
+        raise Exception("Error in processing the template")
+
+
 @functions_framework.cloud_event  # type: ignore
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")

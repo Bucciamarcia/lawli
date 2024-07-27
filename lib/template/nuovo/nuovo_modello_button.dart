@@ -54,8 +54,7 @@ class NuovoModelloButton extends StatelessWidget {
               }
               for (Template template in templates) {
                 try {
-                await template.getBriefDescription(addToDb: true);
-                debugPrint("File: ${template.title}; Description: ${template.briefDescription}");
+                template.processNew();
                 } catch (e) {
                   debugPrint("Errore durante getBriefDescription: $e");
                   ConfirmationMessage.show(context, "Errore",
