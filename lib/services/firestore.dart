@@ -536,4 +536,21 @@ class RetrieveObjectFromDb extends FirestoreService {
       return Template();
     }
   }
+
+  /// Streams a list of all the templates of the account
+  Stream<List<Template>> streamTemplates() async* {
+    String accountName = await AccountDb().getAccountName();
+    var ref = _db
+        .collection("accounts")
+        .doc(accountName)
+        .collection("templates");
+
+    yield* ref.snapshots().map((snapshot) {
+      var data = snapshot.docs.map((s) => s.data());
+      var topics = data.map((d) => Template.fromJson(d));
+      return topics.toList();
+    }).handleError((e) {
+      debugPrint("Error in streamTemplates: $e");
+    });
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:docx_to_text/docx_to_text.dart';
-import 'package:file_picker/_internal/file_picker_web.dart';
+import "package:lawli/services/filepicker.dart";
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:lawli/services/models.dart';
@@ -19,7 +19,9 @@ class NuovoModelloButton extends StatelessWidget {
     return ElevatedButton.icon(
       onPressed: () {
         CircularProgress.show(context);
-        _pickFile(context).then(
+        pickFile(context,
+                allowedExtensions: ["txt", "docx"], allowMultiple: true)
+            .then(
           (result) async {
             CircularProgress.pop(context);
             if (result != null) {
@@ -54,7 +56,8 @@ class NuovoModelloButton extends StatelessWidget {
               }
               for (Template template in templates) {
                 try {
-                template.processNew(); // Sistema di merda, carica 1 alla volta su Weaviate. Da fare in batch.
+                  template
+                      .processNew(); // Sistema di merda, carica 1 alla volta su Weaviate. Da fare in batch.
                 } catch (e) {
                   debugPrint("Errore durante getBriefDescription: $e");
                   ConfirmationMessage.show(context, "Errore",
@@ -73,25 +76,5 @@ class NuovoModelloButton extends StatelessWidget {
       label: const Text("Nuovo modello"),
       icon: const Icon(Icons.add),
     );
-  }
-
-  Future<FilePickerResult?> _pickFile(context) async {
-    FilePickerResult? result;
-    try {
-      result = await FilePickerWeb.platform.pickFiles(
-        allowMultiple: true,
-        type: FileType.custom,
-        allowedExtensions: ["docx", "txt"],
-      );
-    } catch (e) {
-      debugPrint("Error: $e");
-      ConfirmationMessage.show(
-          context, "Errore", "Errore durante il caricamento del file: $e");
-    }
-    if (result != null) {
-      return result;
-    } else {
-      return null;
-    }
   }
 }

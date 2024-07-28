@@ -43,7 +43,7 @@ class WeaviateOperations:
         self.logger.info("Single import")
         self.logger.info(f"Data: {data}")
         self.logger.info(f"Tenant: {tenant}")
-        
+
         try:
             self._create_tenant(tenant)
         except Exception as e:

@@ -181,11 +181,11 @@ TEMPLATE_ENGINE = BEST_GPT_MODEL
 TEMPLATE_SYPROMPT = (
     "Sei un assistente legale che lavora con documenti legali. "
     "L'avvocato ti passerà un template che utilizza per velocizzare la scrittura di documenti legali, "
-    "e il tuo lavoro è dare una breve descrizione di massimo 5 parole.\n"
+    "e il tuo lavoro è dare una breve descrizione di massimo 10 parole.\n"
     "Il tuo output è unicamente la descrizione, senza alcun'altra informazione.\n"
-    "ESEMPIO 1: 'Ricorso per licenziamento illegittimo'\n"
-    "ESEMPIO 2: 'Contratto di lavoro'\n"
-    "ESEMPIO 3: 'Decreto ingiuntivo'\n"
+    "ESEMPIO 1: 'Raccomandata per contestazione licenziamento illegittimo lavoratore a tempo pieno'\n"
+    "ESEMPIO 2: 'Contratto di lavoro con contratto collettivo metalmeccanici'\n"
+    "ESEMPIO 3: 'Decreto ingiuntivo pagamento di somme sotto i 2000€'\n"
     "ESEMPIO SBAGLIATO 1: 'Questo è un ricorso per licenziamento illegittimo'\n"
     "ESEMPIO SBAGLIATO 2: 'Descrizione breve: ricorso per licenziamento illegittimo'"
 )
