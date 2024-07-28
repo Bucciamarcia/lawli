@@ -166,6 +166,20 @@ def get_template_formatted(req: https_fn.CallableRequest) -> str:
         raise Exception("Error in processing the template")
 
 
+@https_fn.on_call()
+def add_template_to_weaviate(req: https_fn.CallableRequest) -> str:
+    initialize_env()
+    logger.info("add_template_to_weaviate called")
+    keys = ["title", "text", "briefDescription", "tenant"]
+    title, text, brief_description, tenant = commons.get_data(req, keys)
+    try:
+        functions.Template(title, text, brief_description).save_to_weaviate(tenant)
+        return "OK"
+    except Exception as e:
+        logger.error(f"Error in add_template_to_weaviate: {e}")
+        raise Exception(f"Error in add_template_to_weaviate: {e}")
+
+
 @functions_framework.cloud_event  # type: ignore
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")

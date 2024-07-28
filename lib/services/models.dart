@@ -145,6 +145,13 @@ class Template extends FirestoreService {
       rethrow;
     }
 
+    try { // Sistema di merda, ora carica 1 alla volta ed è lentissimo. Da fare in batch.
+      await _uploadWeaviate();
+    } catch (e) {
+      debugPrint("Error while uploading to weaviate: $e");
+      rethrow;
+    }
+
   }
 
   /// Get the brief description of the template
@@ -181,6 +188,24 @@ class Template extends FirestoreService {
       await docs.set(data);
     } catch (e) {
       debugPrint("Error while adding template to db: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> _uploadWeaviate() async {
+    try {
+      await FirebaseFunctions.instance
+      .httpsCallable("add_template_to_weaviate")
+      .call(
+        {
+          "title": title,
+          "text": text,
+          "briefDescription": briefDescription,
+          "tenant": await AccountDb().getAccountName(),
+        }
+      );
+    } catch (e) {
+      debugPrint("Error while uploading to weaviate: $e");
       rethrow;
     }
   }

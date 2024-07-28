@@ -1,4 +1,5 @@
 from openai import OpenAI, OpenAIError
+from py.weaviate_operations import WeaviateOperations
 from py.logger_config import LoggerConfig
 from py.constants import (
     OPENAI_API_KEY,
@@ -13,9 +14,10 @@ class Template:
     Template or models for documents.
     """
 
-    def __init__(self, title: str, text: str):
+    def __init__(self, title: str, text: str, brief_description: str | None = None):
         self.title = title
         self.text = text
+        self.brief_description = brief_description
         self.logger = LoggerConfig().setup_logging()
         self.client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -53,3 +55,22 @@ class Template:
         except OpenAIError as e:
             self.logger.error(f"OpenAIError: {e}")
             return None
+
+    def save_to_weaviate(self, tenant: str):
+        """Save the template to Weaviate."""
+        self.logger.info("Saving template to Weaviate")
+        dict_template = self.to_dict(self)
+        with WeaviateOperations(collection="Template") as w_client:
+            try:
+                w_client.single_import(dict_template, tenant)
+            except Exception as e:
+                self.logger.error(f"Error in saving to Weaviate: {e}")
+
+    @classmethod
+    def to_dict(cls, template: "Template") -> dict:
+        """Convert the template to a dictionary."""
+        return {
+            "title": template.title,
+            "text": template.text,
+            "brief_description": template.brief_description,
+        }

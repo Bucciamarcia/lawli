@@ -17,13 +17,12 @@ class LoggerConfig:
                 client = google.cloud.logging.Client()
                 handler = client.get_default_handler()
                 client.setup_logging()
-                logger.setLevel(logging.DEBUG)
-                logger.addHandler(handler)
+                logger.setLevel(logging.INFO)
                 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
                 handler.setFormatter(formatter)
             else:
                 # Log to console
-                logging.basicConfig(level=logging.DEBUG)
+                logging.basicConfig(level=logging.INFO)
                 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
                 console = logging.StreamHandler()
                 console.setFormatter(formatter)

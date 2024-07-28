@@ -59,6 +59,9 @@ class UploadFileScreen extends StatelessWidget {
 
 The reason for this code is that there is a different menu on desktop.
 
+## Weaviate database
+Need to inizialize the weaviate DB once. In functions/weaviate_setup_template_collection.py
+
 ## Deploy
 
 ```bash
