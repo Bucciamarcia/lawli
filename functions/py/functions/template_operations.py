@@ -1,5 +1,7 @@
+import time
 from openai import OpenAI, OpenAIError
 from py.weaviate_operations import WeaviateOperations
+from weaviate.classes.query import Filter
 from py.logger_config import LoggerConfig
 from py.constants import (
     OPENAI_API_KEY,
@@ -74,3 +76,27 @@ class Template:
             "text": template.text,
             "brief_description": template.brief_description,
         }
+
+    def delete_from_weaviate(self, tenant: str):
+        self.logger.info("Deleting template from Weaviate")
+        with WeaviateOperations() as w:
+            tries = 0
+            while tries < 3:
+                try:
+                    client = w.start()
+                    collection = client.collections.get("Template")
+                    collection = collection.with_tenant(tenant)
+                    collection.data.delete_many(
+                        where=Filter.by_property("title").like(self.title),
+                    )
+                    self.logger.info("Successfully deleted from Weaviate")
+                    break
+                except Exception as e:  # Replace SpecificException with the actual exception(s) you expect
+                    self.logger.error(f"Error in deleting from Weaviate: {e}")
+                    tries += 1
+                    if tries < 3:
+                        self.logger.info(f"Retrying... (attempt {tries + 1})")
+                        time.sleep(2)  # Add a delay before retrying
+            else:
+                self.logger.error("Failed to delete from Weaviate after 3 attempts")
+                raise Exception("Error in deleting from Weaviate")

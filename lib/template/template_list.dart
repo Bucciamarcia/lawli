@@ -112,25 +112,26 @@ class _SearchBarState extends State<SearchBar> {
 
   /// Action to perform when a search is triggered
   void _handleSearchAction(String query) {
-  final templateProvider = Provider.of<TemplateProvider>(context, listen: false);
-  
-  if (query.isEmpty) {
-    templateProvider.setSearchBoxEmpty(true);
-    templateProvider.setSearchResults([]);
-  } else {
-    templateProvider.setSearchBoxEmpty(false);
-    templateProvider.setSearching(true);
-    
-    _searchTemplate(query).then((results) {
-      templateProvider.setSearching(false);
-      if (results != null) {
-        templateProvider.setSearchResults(results);
-      } else {
-        templateProvider.setSearchResults([]);
-      }
-    });
+    final templateProvider =
+        Provider.of<TemplateProvider>(context, listen: false);
+
+    if (query.isEmpty) {
+      templateProvider.setSearchBoxEmpty(true);
+      templateProvider.setSearchResults([]);
+    } else {
+      templateProvider.setSearchBoxEmpty(false);
+      templateProvider.setSearching(true);
+
+      _searchTemplate(query).then((results) {
+        templateProvider.setSearching(false);
+        if (results != null) {
+          templateProvider.setSearchResults(results);
+        } else {
+          templateProvider.setSearchResults([]);
+        }
+      });
+    }
   }
-}
 
   Future<List<Template>?> _searchTemplate(String query) async {
     Provider.of<TemplateProvider>(context, listen: false).setSearching(true);
@@ -201,7 +202,12 @@ class TemplateCard extends StatelessWidget {
                   IconButton(
                     tooltip: "Elimina template",
                     onPressed: () {
-                      // Add your onPressed code here!
+                      try {
+                        Template().deleteTemplate(template);
+                      } catch (e) {
+                        ConfirmationMessage.show(context, "Errore",
+                            "Errore durante l'eliminazione del template: $e");
+                      }
                     },
                     icon: Icon(
                       Icons.delete,

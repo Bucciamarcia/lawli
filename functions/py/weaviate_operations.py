@@ -34,6 +34,7 @@ class WeaviateOperations:
         self.client.close()
 
     def start(self):
+        """Starts the Weaviate client so that it can be used."""
         return self.client
 
     def get_collections(self):

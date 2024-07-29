@@ -190,6 +190,21 @@ def search_similar_templates(req: https_fn.CallableRequest) -> list[dict[str, st
     return result
 
 
+@https_fn.on_call()
+def delete_template_from_weaviate(req: https_fn.CallableRequest) -> str:
+    initialize_env()
+    logger.info("delete_template_from_weaviate called")
+    keys = ["title", "text", "client"]
+    title, text, tenant = commons.get_data(req, keys)
+    try:
+        functions.Template(title, text).delete_from_weaviate(tenant)
+        logger.info("OK!")
+        return "OK"
+    except Exception as e:
+        logger.error(f"Error in delete_template_from_weaviate: {e}")
+        raise Exception(f"Error in delete_template_from_weaviate: {e}")
+
+
 @functions_framework.cloud_event  # type: ignore
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")

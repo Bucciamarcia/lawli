@@ -123,7 +123,6 @@ class Template extends FirestoreService {
   });
 
   Future<void> processNew() async {
-
     try {
       await _formatText();
     } catch (e) {
@@ -145,13 +144,13 @@ class Template extends FirestoreService {
       rethrow;
     }
 
-    try { // Sistema di merda, ora carica 1 alla volta ed è lentissimo. Da fare in batch.
+    try {
+      // Sistema di merda, ora carica 1 alla volta ed è lentissimo. Da fare in batch.
       await _uploadWeaviate();
     } catch (e) {
       debugPrint("Error while uploading to weaviate: $e");
       rethrow;
     }
-
   }
 
   /// Get the brief description of the template
@@ -167,7 +166,7 @@ class Template extends FirestoreService {
     var result = await FirebaseFunctions.instance
         .httpsCallable("get_template_formatted")
         .call({"title": title, "text": text});
-    
+
     text = result.data;
   }
 
@@ -195,19 +194,41 @@ class Template extends FirestoreService {
   Future<void> _uploadWeaviate() async {
     try {
       await FirebaseFunctions.instance
-      .httpsCallable("add_template_to_weaviate")
-      .call(
-        {
-          "title": title,
-          "text": text,
-          "briefDescription": briefDescription,
-          "tenant": await AccountDb().getAccountName(),
-        }
-      );
+          .httpsCallable("add_template_to_weaviate")
+          .call({
+        "title": title,
+        "text": text,
+        "briefDescription": briefDescription,
+        "tenant": await AccountDb().getAccountName(),
+      });
     } catch (e) {
       debugPrint("Error while uploading to weaviate: $e");
       rethrow;
     }
+  }
+
+  Future<void> deleteTemplate(Template template) async {
+    try {
+      await TemplateDb().deleteTemplate(template);
+    } catch (e) {
+      debugPrint("Error while deleting template from db: $e");
+      rethrow;
+    }
+    try {
+      await FirebaseFunctions.instance
+          .httpsCallable("delete_template_from_weaviate")
+          .call(
+        {
+          "title": template.title,
+          "text": template.text,
+          "client": await AccountDb().getAccountName(),
+        },
+      );
+    } catch (e) {
+      debugPrint("Error while deleting template from weaviate: $e");
+      rethrow;
+    }
+
   }
 
   factory Template.fromJson(Map<String, dynamic> json) =>

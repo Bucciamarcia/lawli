@@ -45,7 +45,7 @@ with WeaviateOperations() as w_client:
     client = w_client.start()
     template = client.collections.get("Template")
     tenant = template.with_tenant("lawli")
-    response = tenant.query.near_text(query="ricorso", limit=3)
+    response = tenant.query.near_text(query="decreto", limit=5)
     objects = response.objects
     for o in objects:
         print(o.properties["title"])

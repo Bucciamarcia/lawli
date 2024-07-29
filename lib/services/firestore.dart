@@ -367,6 +367,18 @@ class DocumentoDb extends FirestoreService {
   }
 }
 
+class TemplateDb extends FirestoreService {
+  Future<void> deleteTemplate(Template template) async {
+    try {
+      final accountRef = await retrieveAccountObject();
+      await accountRef.collection("templates").doc(template.title).delete();
+    } catch (e) {
+      debugPrint("Error deleting template: $e");
+      rethrow;
+    }
+  }
+}
+
 class RetrieveObjectFromDb extends FirestoreService {
   Future<List<Assistito>> getAssistiti() async {
     String accountName = await AccountDb().getAccountName();
