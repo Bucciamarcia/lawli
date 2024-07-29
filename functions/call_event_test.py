@@ -1,7 +1,7 @@
-from py.functions import TimelineGenerator
+from py.functions import TemplateSearcher
 import firebase_admin
 
 firebase_admin.initialize_app()
 
-tester = TimelineGenerator(account_name="lawli", pratica_id="6")
-tester.generate_timeline()
+tester = TemplateSearcher()
+tester.search("pignoramento", "lawli")

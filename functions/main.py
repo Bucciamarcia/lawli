@@ -180,6 +180,16 @@ def add_template_to_weaviate(req: https_fn.CallableRequest) -> str:
         raise Exception(f"Error in add_template_to_weaviate: {e}")
 
 
+@https_fn.on_call()
+def search_similar_templates(req: https_fn.CallableRequest) -> list[dict[str, str]]:
+    initialize_env()
+    logger.info("search_similar_templates called")
+    keys = ["query", "account"]
+    query, tenant = commons.get_data(req, keys)
+    result = functions.TemplateSearcher().search(query, tenant)
+    return result
+
+
 @functions_framework.cloud_event  # type: ignore
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")

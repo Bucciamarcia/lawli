@@ -4,7 +4,7 @@ import logging
 
 
 class LoggerConfig:
-    """Set ups logging. Detects if running on GCP or local."""
+    """Set up logging. Detects if running on GCP or local."""
     def __init__(self):
         pass
 
@@ -20,12 +20,13 @@ class LoggerConfig:
                 logger.setLevel(logging.INFO)
                 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
                 handler.setFormatter(formatter)
+                logger.addHandler(handler)  # Make sure to add the handler here
             else:
                 # Log to console
-                logging.basicConfig(level=logging.INFO)
-                formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
                 console = logging.StreamHandler()
+                formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
                 console.setFormatter(formatter)
                 logger.addHandler(console)
+                logger.setLevel(logging.INFO)
 
         return logger

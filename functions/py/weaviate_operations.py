@@ -97,6 +97,21 @@ class WeaviateOperations:
             self.logger.error(f"Generic error in batch_import: {e}")
             raise Exception(f"Generic error in batch_import: {e}")
 
+    def near_text(self, query: str, tenant: str | None = None, limit: int = 3) -> list:
+        if not self.collection:
+            self.logger.error("Collection not set")
+            raise Exception("Collection not set")
+        try:
+            template = self.client.collections.get(self.collection)
+            if tenant:
+                template = template.with_tenant(tenant)
+            response = template.query.near_text(query=query, limit=limit)
+            objects = response.objects
+            return objects
+        except Exception as e:
+            self.logger.error(f"Generic error in near_text: {e}")
+            raise Exception(f"Generic error in near_text: {e}")
+
     def _create_tenant(self, tenant: str):
         """Create a tenant if it does not exist."""
         if not self.collection:
