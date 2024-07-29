@@ -29,15 +29,31 @@ class TemplateList extends StatelessWidget {
                 child: const SearchBar(),
               ),
               const SizedBox(height: 20),
-              Provider.of<TemplateProvider>(context).isSearchBoxEmpty
-                  ? Wrap(
+              Consumer<TemplateProvider>(
+                builder: (context, templateProvider, child) {
+                  if (templateProvider.isSearchBoxEmpty) {
+                    return Wrap(
                       spacing: 16.0,
                       runSpacing: 16.0,
                       children: snapshot.data!.map((template) {
                         return TemplateCard(template: template);
                       }).toList(),
-                    )
-                  : Text("Hewwo uwu"),
+                    );
+                  } else if (templateProvider.isSearching) {
+                    return const CircularProgressIndicator();
+                  } else if (templateProvider.searchResults.isNotEmpty) {
+                    return Wrap(
+                      spacing: 16.0,
+                      runSpacing: 16.0,
+                      children: templateProvider.searchResults.map((template) {
+                        return TemplateCard(template: template);
+                      }).toList(),
+                    );
+                  } else {
+                    return const Text("Nessun risultato trovato");
+                  }
+                },
+              ),
             ],
           );
         }
@@ -96,38 +112,25 @@ class _SearchBarState extends State<SearchBar> {
 
   /// Action to perform when a search is triggered
   void _handleSearchAction(String query) {
-    Provider.of<TemplateProvider>(context, listen: false).setResultsExist(false);
-    if (query.isEmpty) {
-      Provider.of<TemplateProvider>(context, listen: false)
-          .setSearchBoxEmpty(true);
-    } else {
-      Provider.of<TemplateProvider>(context, listen: false)
-          .setSearchBoxEmpty(false);
-      FutureBuilder(
-        future: _searchTemplate(query),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text(
-                'Errore durante la ricerca dei modelli: ${snapshot.error}');
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.data == null || snapshot.data == []) {
-            return const Text("Nessun modello trovato");
-          } else {
-            Provider.of<TemplateProvider>(context, listen: false)
-                .setResultsExist(true);
-            return Wrap(
-              spacing: 16.0,
-              runSpacing: 16.0,
-              children: snapshot.data!.map((template) {
-                return TemplateCard(template: template);
-              }).toList(),
-            );
-          }
-        },
-      );
-    }
+  final templateProvider = Provider.of<TemplateProvider>(context, listen: false);
+  
+  if (query.isEmpty) {
+    templateProvider.setSearchBoxEmpty(true);
+    templateProvider.setSearchResults([]);
+  } else {
+    templateProvider.setSearchBoxEmpty(false);
+    templateProvider.setSearching(true);
+    
+    _searchTemplate(query).then((results) {
+      templateProvider.setSearching(false);
+      if (results != null) {
+        templateProvider.setSearchResults(results);
+      } else {
+        templateProvider.setSearchResults([]);
+      }
+    });
   }
+}
 
   Future<List<Template>?> _searchTemplate(String query) async {
     Provider.of<TemplateProvider>(context, listen: false).setSearching(true);
