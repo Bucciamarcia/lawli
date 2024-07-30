@@ -9,7 +9,7 @@ class TemplateSearcher:
     def search(self, query, tenant) -> list[dict[str, str]]:
         self.logger.info("search_similar_templates called")
         with WeaviateOperations(collection="Template") as w:
-            objects = w.near_text(query=query, tenant=tenant)
+            objects = w.near_text(query=query, tenant=tenant, limit=10)
         results = []
         for o in objects:
             properties = o.properties

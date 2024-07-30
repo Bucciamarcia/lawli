@@ -12,9 +12,12 @@ class TemplateProvider extends ChangeNotifier {
   List<Template> get searchResults => _searchResults;
   void setPratica(Pratica pratica) {
     selectedPratica = pratica;
-    debugPrint("Pratica selezionata: ${selectedPratica!.titolo}");
+    if (selectedPratica != null) {
+      debugPrint("Pratica selezionata: ${selectedPratica!.titolo}");
+    }
     notifyListeners();
   }
+
   void setSearchBoxEmpty(bool value) {
     _isSearchBoxEmpty = value;
     notifyListeners();

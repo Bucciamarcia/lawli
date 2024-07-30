@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lawli/ricerca_sentenze/motore_ricerca_sentenze.dart';
 import 'package:lawli/services/firestore.dart';
-import 'package:lawli/services/models.dart';
 import 'package:lawli/template/nuovo/nuovo_modello_button.dart';
 import 'package:lawli/template/template_list.dart';
 import 'package:provider/provider.dart';
+import 'dropdown_selector_pratica.dart';
 import 'provider.dart';
 
 class TemplateHomeWidget extends StatelessWidget {
@@ -88,24 +87,7 @@ class InputRow extends StatelessWidget {
             } else if (snapshot.hasError) {
               return const Text("Errore");
             } else {
-              return DropdownSelector(
-                preText: "Seleziona la pratica",
-                snapshot: snapshot,
-                dropDownValue:
-                    Provider.of<TemplateProvider>(context, listen: true)
-                        .selectedPratica,
-                onChangedAction: (value) {
-                  Provider.of<TemplateProvider>(context, listen: false)
-                      .setPratica(value as Pratica);
-                },
-                dropDownItems: [
-                  for (Pratica pratica in snapshot.data!)
-                    DropdownMenuItem(
-                      value: pratica,
-                      child: Text(pratica.titolo),
-                    )
-                ],
-              );
+              return DropdownSelectorPratica(snapshot: snapshot);
             }
           },
         ),
