@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:lawli/ricerca_sentenze/motore_ricerca_sentenze.dart';
 import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/services/models.dart';
