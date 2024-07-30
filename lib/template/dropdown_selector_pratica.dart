@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lawli/ricerca_sentenze/motore_ricerca_sentenze.dart';
+import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/services/models.dart';
 import 'package:lawli/services/provider.dart';
 import 'package:lawli/template/provider.dart';
@@ -25,9 +30,10 @@ class _DropdownSelectorPraticaState extends State<DropdownSelectorPratica> {
       snapshot: widget.snapshot,
       dropDownValue:
           Provider.of<TemplateProvider>(context, listen: true).selectedPratica,
-      onChangedAction: (value) {
+      onChangedAction: (Pratica value) {
         Provider.of<TemplateProvider>(context, listen: false)
-            .setPratica(value as Pratica);
+            .setPratica(value);
+        getLikelyTemplates(context, value);
       },
       dropDownItems: [
         for (Pratica pratica in widget.snapshot.data!)
@@ -40,8 +46,28 @@ class _DropdownSelectorPraticaState extends State<DropdownSelectorPratica> {
   }
 }
 
-Future<List<Template>> getLikelyTemplates(BuildContext context, Pratica pratica) async {
-  String account = Provider.of<DashboardProvider>(context, listen: false)
-      .accountName;
-  String riassuntoGenerale
+Future<List<Template>> getLikelyTemplates(
+    BuildContext context, Pratica pratica) async {
+  String account =
+      Provider.of<DashboardProvider>(context, listen: false).accountName;
+  String riassuntoPath =
+      "accounts/$account/pratiche/${pratica.id.toString()}/riassunto generale.txt";
+  String riassuntoGenerale =
+      await DocumentStorage().getTextDocument(riassuntoPath);
+  var result = await FirebaseFunctions.instance
+      .httpsCallable("get_likley_templates")
+      .call({"query": riassuntoGenerale, "client": account});
+
+  List<dynamic> data = result.data;
+  List<Template> templates = [];
+  for (var d in data) {
+    if (d is Map<String, dynamic>) {
+      // Convert Map<String, dynamic> to Map<String, String>
+      Map<String, String> stringMap = d.map((key, value) => MapEntry(key, value.toString()));
+      templates.add(Template.fromJson(stringMap));
+    } else {
+      throw Exception("Unexpected data format");
+    }
+  }
+  return templates;
 }

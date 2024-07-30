@@ -13,6 +13,7 @@ from .count_tokens import Tokenizer
 from .extract_date import ExtractDate
 from .template_operations import Template
 from .search_similar_templates import TemplateSearcher
+from .get_likley_templates import LikleyTemplateFinder
 
 __all__ = [
     "Pdf_Transformer",
@@ -30,4 +31,5 @@ __all__ = [
     "ExtractDate",
     "Template",
     "TemplateSearcher",
+    "LikleyTemplateFinder",
 ]

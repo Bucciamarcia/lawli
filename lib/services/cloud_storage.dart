@@ -148,9 +148,3 @@ class DocumentStorage extends StorageService {
     }
   }
 }
-
-class StreamStorage extends StorageService {
-  String? accountName;
-
-  StreamStorage({this.accountName});
-}
