@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lawli/ricerca_sentenze/motore_ricerca_sentenze.dart';
 import 'package:lawli/services/models.dart';
+import 'package:lawli/services/provider.dart';
 import 'package:lawli/template/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -37,4 +38,10 @@ class _DropdownSelectorPraticaState extends State<DropdownSelectorPratica> {
       ],
     );
   }
+}
+
+Future<List<Template>> getLikelyTemplates(BuildContext context, Pratica pratica) async {
+  String account = Provider.of<DashboardProvider>(context, listen: false)
+      .accountName;
+  String riassuntoGenerale
 }

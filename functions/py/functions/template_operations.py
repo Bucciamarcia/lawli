@@ -64,7 +64,7 @@ class Template:
         dict_template = self.to_dict(self)
         with WeaviateOperations(collection="Template") as w_client:
             try:
-                w_client.single_import(dict_template, tenant)
+                w_client.single_import(dict_template, tenant, check_template=True)
             except Exception as e:
                 self.logger.error(f"Error in saving to Weaviate: {e}")
 

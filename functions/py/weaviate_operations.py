@@ -1,4 +1,5 @@
 import weaviate
+from weaviate.classes.config import Configure
 import os
 from py.logger_config import LoggerConfig
 
@@ -40,10 +41,19 @@ class WeaviateOperations:
     def get_collections(self):
         return self.client.collections.list_all()
 
-    def single_import(self, data: dict, tenant: str):
+    def single_import(self, data: dict, tenant: str, check_template: bool = False):
         self.logger.info("Single import")
         self.logger.info(f"Data: {data}")
         self.logger.info(f"Tenant: {tenant}")
+        try:
+            if not self.collection:
+                self.logger.error("Collection not set")
+                raise Exception("Collection not set")
+            if not self._collection_exists():
+                self._create_collection()
+        except Exception as e:
+            self.logger.error(f"Error in collection_exists: {e}")
+            raise Exception(f"Error in collection_exists: {e}")
 
         try:
             self._create_tenant(tenant)
@@ -51,18 +61,15 @@ class WeaviateOperations:
             self.logger.error(f"Error in create_tenant: {e}")
             raise Exception(f"Error in create_tenant: {e}")
 
+        if check_template:
+            try:
+                if self._does_template_exist(data["title"], tenant):
+                    self.logger.info("Template already exists")
+                    return
+            except Exception as e:
+                self.logger.error(f"Error in does_template_exist: {e}")
+                raise Exception(f"Error in does_template_exist: {e}")
         try:
-            if self._does_template_exist(data["title"], tenant):
-                self.logger.info("Template already exists")
-                return
-        except Exception as e:
-            self.logger.error(f"Error in does_template_exist: {e}")
-            raise Exception(f"Error in does_template_exist: {e}")
-
-        try:
-            if not self.collection:
-                self.logger.error("Collection not set")
-                raise Exception("Collection not set")
             template = self.client.collections.get(self.collection)
             template = template.with_tenant(tenant)
             uuid = template.data.insert(data)
@@ -71,7 +78,7 @@ class WeaviateOperations:
             self.logger.error(f"Generic error in single_import: {e}")
             raise Exception(f"Generic error in single_import: {e}")
 
-    # Per ora inutilizzato: solo single_import funziona. Manca _does_template_exist
+    # Per ora inutilizzato: solo single_import funziona. Manca _does_template_exist etc.
     def batch_import(self, data: list[dict], tenant: str):
         self.logger.info("Batch import")
         self.logger.info(f"Data: {data}")
@@ -79,6 +86,9 @@ class WeaviateOperations:
         if not self.collection:
             self.logger.error("Collection not set")
             raise Exception("Collection not set")
+        if not self._collection_exists():
+            self._create_collection()
+
         try:
             template = self.client.collections.get(self.collection)
             self._create_tenant(tenant)
@@ -139,3 +149,23 @@ class WeaviateOperations:
             return True
         else:
             return False
+
+    def _collection_exists(self) -> bool:
+        if self.client.collections.exists(self.collection if self.collection else ""):
+            return True
+        else:
+            return False
+
+    def _create_collection(self):
+        if self.collection:
+            self.client.collections.create(
+                name=self.collection,
+                vectorizer_config=Configure.Vectorizer.text2vec_openai(
+                    model="text-embedding-3-large",
+                    dimensions=3072,
+                ),
+                multi_tenancy_config=Configure.multi_tenancy(enabled=True),
+            )
+        else:
+            self.logger.error("Collection not set")
+            raise Exception("Collection not set")
