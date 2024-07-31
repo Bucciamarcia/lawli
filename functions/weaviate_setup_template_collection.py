@@ -43,9 +43,9 @@ from weaviate.classes.config import Property, DataType, Configure
 # Vector search Template collection
 with WeaviateOperations() as w_client:
     client = w_client.start()
-    template = client.collections.get("Riassunto_generale")
+    template = client.collections.get("Template")
     tenant = template.with_tenant("lawli")
     response = tenant.query.near_text(query="decreto", limit=5)
     objects = response.objects
     for o in objects:
-        print(o.properties["text"])
+        print(o.properties["title"])

@@ -25,6 +25,11 @@ class TemplateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void refreshTemplates() {
+    // This method doesn't need to do anything except notify listeners
+    notifyListeners();
+  }
+
   void setSearchBoxEmpty(bool value) {
     _isSearchBoxEmpty = value;
     notifyListeners();

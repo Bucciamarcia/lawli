@@ -57,7 +57,7 @@ class NuovoModelloButton extends StatelessWidget {
               for (Template template in templates) {
                 try {
                   template
-                      .processNew(); // Sistema di merda, carica 1 alla volta su Weaviate. Da fare in batch.
+                      .processNew(context); // Sistema di merda, carica 1 alla volta su Weaviate. Da fare in batch.
                 } catch (e) {
                   debugPrint("Errore durante getBriefDescription: $e");
                   ConfirmationMessage.show(context, "Errore",

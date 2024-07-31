@@ -1,8 +1,12 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:cloud_functions/cloud_functions.dart";
 import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:lawli/services/firestore.dart";
+import "package:lawli/template/provider.dart";
+import "package:path/path.dart";
+import "package:provider/provider.dart";
 part "models.g.dart";
 
 @JsonSerializable()
@@ -122,7 +126,7 @@ class Template extends FirestoreService {
     this.briefDescription = '',
   });
 
-  Future<void> processNew() async {
+  Future<void> processNew(BuildContext context) async {
     try {
       await _formatText();
     } catch (e) {
@@ -138,7 +142,7 @@ class Template extends FirestoreService {
     }
 
     try {
-      await _addTemplateToDb();
+      await _addTemplateToDb(context);
     } catch (e) {
       debugPrint("Error while adding template to db: $e");
       rethrow;
@@ -170,7 +174,7 @@ class Template extends FirestoreService {
     text = result.data;
   }
 
-  Future<void> _addTemplateToDb() async {
+  Future<void> _addTemplateToDb(BuildContext context) async {
     String accountName = await AccountDb().getAccountName();
     Map<String, String> data = {
       "title": title,
@@ -185,6 +189,10 @@ class Template extends FirestoreService {
           .collection("templates")
           .doc(title);
       await docs.set(data);
+      Provider.of<TemplateProvider>(context, listen: false).selectedPratica =
+          null;
+      Provider.of<TemplateProvider>(context, listen: false)
+          .setLikelyTemplates([]);
     } catch (e) {
       debugPrint("Error while adding template to db: $e");
       rethrow;
@@ -228,7 +236,6 @@ class Template extends FirestoreService {
       debugPrint("Error while deleting template from weaviate: $e");
       rethrow;
     }
-
   }
 
   factory Template.fromJson(Map<String, dynamic> json) =>
