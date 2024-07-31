@@ -6,6 +6,8 @@ class TemplateProvider extends ChangeNotifier {
   bool _isSearchBoxEmpty = true;
   bool _isSearching = false;
   List<Template> _searchResults = [];
+  bool isSearchingLikley = false;
+  List<Template> likelyTemplates = [];
 
   bool get isSearchBoxEmpty => _isSearchBoxEmpty;
   bool get isSearching => _isSearching;
@@ -18,9 +20,20 @@ class TemplateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setIsSearchingLikley(bool value) {
+    isSearchingLikley = value;
+    notifyListeners();
+  }
+
   void setSearchBoxEmpty(bool value) {
     _isSearchBoxEmpty = value;
     notifyListeners();
+  }
+
+  void setLikelyTemplates(List<Template> templates) {
+    likelyTemplates = templates;
+    notifyListeners();
+    debugPrint("Likely templates have been set.");
   }
 
   void setSearching(bool value) {

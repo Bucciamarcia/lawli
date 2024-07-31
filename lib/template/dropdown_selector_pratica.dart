@@ -27,10 +27,13 @@ class _DropdownSelectorPraticaState extends State<DropdownSelectorPratica> {
       snapshot: widget.snapshot,
       dropDownValue:
           Provider.of<TemplateProvider>(context, listen: true).selectedPratica,
-      onChangedAction: (Pratica value) {
+      onChangedAction: (Pratica value) async {
         Provider.of<TemplateProvider>(context, listen: false)
-            .setPratica(value);
-        getLikelyTemplates(context, value);
+            .setIsSearchingLikley(true);
+        Provider.of<TemplateProvider>(context, listen: false).setPratica(value);
+        await getLikelyTemplates(context, value);
+        Provider.of<TemplateProvider>(context, listen: false)
+            .setIsSearchingLikley(false);
       },
       dropDownItems: [
         for (Pratica pratica in widget.snapshot.data!)
@@ -43,8 +46,7 @@ class _DropdownSelectorPraticaState extends State<DropdownSelectorPratica> {
   }
 }
 
-Future<List<Template>> getLikelyTemplates(
-    BuildContext context, Pratica pratica) async {
+Future<void> getLikelyTemplates(BuildContext context, Pratica pratica) async {
   String account =
       Provider.of<DashboardProvider>(context, listen: false).accountName;
   String riassuntoPath =
@@ -60,11 +62,13 @@ Future<List<Template>> getLikelyTemplates(
   for (var d in data) {
     if (d is Map<String, dynamic>) {
       // Convert Map<String, dynamic> to Map<String, String>
-      Map<String, String> stringMap = d.map((key, value) => MapEntry(key, value.toString()));
+      Map<String, String> stringMap =
+          d.map((key, value) => MapEntry(key, value.toString()));
       templates.add(Template.fromJson(stringMap));
     } else {
       throw Exception("Unexpected data format");
     }
   }
-  return templates;
+  Provider.of<TemplateProvider>(context, listen: false)
+      .setLikelyTemplates(templates);
 }

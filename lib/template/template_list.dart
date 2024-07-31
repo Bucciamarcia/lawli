@@ -31,21 +31,36 @@ class TemplateList extends StatelessWidget {
               const SizedBox(height: 20),
               Consumer<TemplateProvider>(
                 builder: (context, templateProvider, child) {
-                  if (templateProvider.isSearchBoxEmpty) {
+                  if (templateProvider.isSearchingLikley) {
+                    debugPrint("Searching likely templates...");
+                    return const CircularProgressIndicator();
+                  } else if (templateProvider.likelyTemplates.isNotEmpty) {
+                    debugPrint("Likely templates are not empty");
                     return Wrap(
                       spacing: 16.0,
                       runSpacing: 16.0,
-                      children: snapshot.data!.map((template) {
+                      children: templateProvider.likelyTemplates.map((template) {
                         return TemplateCard(template: template);
                       }).toList(),
                     );
                   } else if (templateProvider.isSearching) {
+                    debugPrint("Searching...");
                     return const CircularProgressIndicator();
                   } else if (templateProvider.searchResults.isNotEmpty) {
+                    debugPrint("Search results are not empty");
                     return Wrap(
                       spacing: 16.0,
                       runSpacing: 16.0,
                       children: templateProvider.searchResults.map((template) {
+                        return TemplateCard(template: template);
+                      }).toList(),
+                    );
+                  } else if (templateProvider.isSearchBoxEmpty) {
+                    debugPrint("Search box is empty");
+                    return Wrap(
+                      spacing: 16.0,
+                      runSpacing: 16.0,
+                      children: snapshot.data!.map((template) {
                         return TemplateCard(template: template);
                       }).toList(),
                     );
