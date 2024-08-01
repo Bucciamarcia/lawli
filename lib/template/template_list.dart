@@ -5,7 +5,7 @@ import 'package:lawli/services/firestore.dart';
 import 'package:lawli/services/models.dart';
 import 'package:lawli/shared/confirmation_message.dart';
 import 'package:lawli/template/provider.dart';
-import 'package:lawli/template/template_editor.dart';
+import 'package:lawli/template/editor/template_editor.dart';
 import 'package:provider/provider.dart';
 
 class TemplateList extends StatelessWidget {

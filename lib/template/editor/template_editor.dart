@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
-import "../../shared/shared.dart";
-import "../../services/services.dart";
+import "package:lawli/template/editor/main_editor.dart";
+import "../../../shared/shared.dart";
+import "../../../services/services.dart";
 
-class TemplateEditorScreen extends StatefulWidget {
+class TemplateEditorScreen extends StatelessWidget {
   final Template template;
   const TemplateEditorScreen({super.key, required this.template});
 
-  @override
-  State<TemplateEditorScreen> createState() => _TemplateEditorScreenState();
-}
-
-class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
   Scaffold body(BuildContext context) {
     return Scaffold(
-      body: Container(
-        alignment: Alignment.topCenter,
-        padding: ResponsiveLayout.mainWindowPadding(context),
-        child: Column(
-          children: [
-            Text(
-              "Usa il template!",
-              style: Theme.of(context).textTheme.displayLarge,
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.topCenter,
+          padding: ResponsiveLayout.mainWindowPadding(context),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: Column(
+              children: [
+                Text(
+                  "Usa il template!",
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+                TemplateEditorMain(template: template)
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

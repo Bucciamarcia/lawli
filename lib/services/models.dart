@@ -1,11 +1,9 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:cloud_functions/cloud_functions.dart";
-import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:lawli/services/firestore.dart";
 import "package:lawli/template/provider.dart";
-import "package:path/path.dart";
 import "package:provider/provider.dart";
 part "models.g.dart";
 
