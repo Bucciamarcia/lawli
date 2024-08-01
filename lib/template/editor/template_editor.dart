@@ -9,19 +9,22 @@ class TemplateEditorScreen extends StatelessWidget {
 
   Scaffold body(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          alignment: Alignment.topCenter,
-          padding: ResponsiveLayout.mainWindowPadding(context),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
+      body: Container(
+        alignment: Alignment.topCenter,
+        padding: ResponsiveLayout.mainWindowPadding(context),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 30, right: 30),
+          child: SingleChildScrollView(
             child: Column(
               children: [
-                Text(
-                  "Usa il template!",
-                  style: Theme.of(context).textTheme.displayLarge,
+                Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 20),
+                  child: Text(
+                    "Template: ${template.title}",
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
                 ),
-                TemplateEditorMain(template: template)
+                TemplateDocumentView(templateText: template.text)
               ],
             ),
           ),
