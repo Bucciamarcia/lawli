@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class TemplateDocumentView extends StatefulWidget {
   final String templateText;
-  
+
   TemplateDocumentView({super.key, required this.templateText});
-  
+
   @override
   _TemplateDocumentViewState createState() => _TemplateDocumentViewState();
 }
@@ -25,8 +25,9 @@ class _TemplateDocumentViewState extends State<TemplateDocumentView> {
   void _parseTemplate() {
     RegExp exp = RegExp(r'\{\{([^}]+)\}\}');
     _textSpans = [];
-    
-    widget.templateText.splitMapJoin(exp,
+
+    widget.templateText.splitMapJoin(
+      exp,
       onMatch: (Match m) {
         String placeholder = m.group(1)!;
         _allPlaceholders.add(placeholder);
@@ -57,9 +58,9 @@ class _TemplateDocumentViewState extends State<TemplateDocumentView> {
 
   /// Checks if all placeholders have been filled and updates [_allFieldsFilled]
   void _checkAllFieldsFilled() {
-    _allFieldsFilled = _allPlaceholders.every((placeholder) => 
-      _filledValues.containsKey(placeholder) && _filledValues[placeholder]!.isNotEmpty
-    );
+    _allFieldsFilled = _allPlaceholders.every((placeholder) =>
+        _filledValues.containsKey(placeholder) &&
+        _filledValues[placeholder]!.isNotEmpty);
   }
 
   /// Returns the template text with all placeholders filled
@@ -71,6 +72,14 @@ class _TemplateDocumentViewState extends State<TemplateDocumentView> {
     return filledText;
   }
 
+  /// Clears all input fields
+  void clearAllFields() {
+    setState(() {
+      _filledValues.clear();
+      _parseTemplate();
+    });
+  }
+
   /// Returns true if all placeholders have been filled
   bool areAllFieldsFilled() {
     return _allFieldsFilled;
@@ -78,13 +87,56 @@ class _TemplateDocumentViewState extends State<TemplateDocumentView> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: RichText(
-        text: TextSpan(
-          style: DefaultTextStyle.of(context).style,
-          children: _textSpans,
+    return Column(
+      children: [
+        SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1000),
+              child: RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style,
+                  children: _textSpans,
+                ),
+              ),
+            ),
+          ),
         ),
-      ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton.icon(
+              onPressed: areAllFieldsFilled() ? () {} : null,
+              label: const Text("Exporta in PDF"),
+              icon: const Icon(Icons.picture_as_pdf),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton.icon(
+              onPressed: areAllFieldsFilled() ? () {} : null,
+              icon: const Icon(Icons.edit_document),
+              label: const Text("Esporta in .docx"),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+              onPressed: clearAllFields,
+              label: const Text("Ricomincia"),
+              icon: const Icon(Icons.clear),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              label: const Text("Annulla"),
+              icon: const Icon(Icons.arrow_back),
+            )
+          ],
+        ),
+        const SizedBox(height: 20),
+      ],
     );
   }
 }
@@ -95,7 +147,8 @@ class InlineTextField extends StatelessWidget {
   final String value;
   final ValueChanged<String> onChanged;
 
-  const InlineTextField({super.key, 
+  const InlineTextField({
+    super.key,
     required this.placeholder,
     required this.value,
     required this.onChanged,
@@ -110,7 +163,8 @@ class InlineTextField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: placeholder,
           isDense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
           ),

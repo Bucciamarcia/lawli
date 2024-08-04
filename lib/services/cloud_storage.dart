@@ -69,6 +69,20 @@ class DocumentStorage extends StorageService {
     }
   }
 
+  /// Uploads a generic document.
+  /// [path] is the path to the document, e.g "accounts/lawli/pratiche/1/documenti/originale_filename.pdf"
+  /// [file] is the file to upload in bytes
+  Future<void> uploadDocument(String path, Uint8List file) async {
+    debugPrint("Uploading document");
+    try {
+      var docRef = storageRef.child(path);
+      await docRef.putData(file);
+    } catch (e) {
+      debugPrint("Error uploading file: $e");
+      rethrow;
+    }
+  }
+
   Future<Map?> getJson(String path, String fileName) async {
     try {
       final Uint8List? jsonString = await storageRef.child(path).child(fileName).getData();
