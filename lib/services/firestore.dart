@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
+import "package:lawli/account/models.dart";
 import "dart:async";
 import "../services/auth.dart";
 import "../services/models.dart";
@@ -15,13 +16,13 @@ class FirestoreService {
       final DocumentSnapshot userDoc =
           await _db.collection('users').doc(user).get();
       if (userDoc.data() == null) {
-        log("User data null");
+        debugPrint("User data null");
       } else {
-        log("User data existing");
+        debugPrint("User data existing");
       }
       return userDoc.data();
     } catch (e) {
-      log('Error getting user data: $e');
+      debugPrint('Error getting user data: $e');
       return null;
     }
   }
@@ -46,7 +47,7 @@ class FirestoreService {
       final accountName = userDocument.get('account');
       return _db.collection("accounts").doc(accountName);
     } catch (e) {
-      log("Error retrieving account name");
+      debugPrint("Error retrieving account name");
       rethrow;
     }
   }
@@ -60,7 +61,7 @@ class AccountDb extends FirestoreService {
           await _db.collection('users').doc(userId).get();
       return userDoc.get('account');
     } catch (e) {
-      log('Error getting account name: $e');
+      debugPrint('Error getting account name: $e');
       return "Error";
     }
   }
@@ -380,6 +381,40 @@ class TemplateDb extends FirestoreService {
 }
 
 class RetrieveObjectFromDb extends FirestoreService {
+  Future<AccountInfo> getAccount() async {
+  debugPrint("STARTING GET ACCOUNT");
+  try {
+    final String accountName = await AccountDb().getAccountName();
+    debugPrint("Account Name: $accountName");
+
+    if (accountName == null || accountName.isEmpty) {
+      throw Exception("Account name is null or empty");
+    }
+
+    var ref = _db.collection("accounts").doc(accountName);
+    debugPrint("Document Reference: $ref");
+
+    var snapshot = await ref.get();
+    debugPrint("SNAPSHOT: $snapshot");
+
+    if (!snapshot.exists) {
+      throw Exception("Account document does not exist");
+    }
+
+    var data = snapshot.data();
+    debugPrint("SNAPSHOT DATA: $data");
+
+    if (data == null) {
+      throw Exception("Snapshot data is null");
+    }
+
+    return AccountInfo.fromJson(data);
+  } catch (e) {
+    debugPrint("Error getting account: $e");
+    rethrow;
+  }
+}
+
   Future<List<Assistito>> getAssistiti() async {
     String accountName = await AccountDb().getAccountName();
 

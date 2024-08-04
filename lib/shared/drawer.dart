@@ -76,6 +76,11 @@ class MenuElements {
         onTap: () => Navigator.pushNamed(context, '/template'),
       ),
       ListTile(
+          title: const Text("Account"),
+          onTap: () async {
+            Navigator.pushNamedAndRemoveUntil(context, '/account', (route) => false);
+          }),
+      ListTile(
           title: const Text("Logout"),
           onTap: () async {
             await AuthService().signOut();

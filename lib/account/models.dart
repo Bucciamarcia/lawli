@@ -6,7 +6,7 @@ part "models.g.dart";
 @JsonSerializable()
 
 /// Represents an account
-class Account {
+class AccountInfo {
   /// Name of the account. E.g "lawli"
   final String id;
 
@@ -19,10 +19,7 @@ class Account {
   /// Extension of the logo, WITH the dot. E.g ".png"
   final String logoExtension;
 
-  /// Logo of the account
-  Uint8List? logo;
-
-  Account({
+  AccountInfo({
     this.id = "",
     this.logoExtension = "",
     this.displayName = "",
@@ -30,9 +27,10 @@ class Account {
   });
 
   /// Gets the logo of the account and adds it to the object
-  Future<void> getLogo() async {
-    logo = await DocumentStorage()
+  Future<Uint8List> getLogo() async {
+    Uint8List logo = await DocumentStorage()
         .getDocument("accounts/$id/logo$logoExtension");
+        return logo;
   }
 
   /// Uploads the logo of the account object to the cloud storage
@@ -42,7 +40,7 @@ class Account {
     debugPrint("Logo uploaded");
   }
 
-  factory Account.fromJson(Map<String, dynamic> json) =>
-      _$AccountFromJson(json);
-  Map<String, dynamic> toJson() => _$AccountToJson(this);
+  factory AccountInfo.fromJson(Map<String, dynamic> json) =>
+      _$AccountInfoFromJson(json);
+  Map<String, dynamic> toJson() => _$AccountInfoToJson(this);
 }

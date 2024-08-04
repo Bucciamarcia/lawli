@@ -8,6 +8,16 @@ class AuthService {
   final userStream = FirebaseAuth.instance.authStateChanges();
   final user = FirebaseAuth.instance.currentUser;
 
+  User? getUser() {
+    debugPrint("Getting user");
+    try {
+      return FirebaseAuth.instance.currentUser;
+    } catch (e) {
+      debugPrint("User not logged in in getUser");
+      rethrow;
+    }
+  }
+
   Future<void> googleLogin() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
@@ -67,7 +77,12 @@ class AuthService {
   }
 
   String userId() {
-    return FirebaseAuth.instance.currentUser!.uid;
+    try {
+      return FirebaseAuth.instance.currentUser!.uid;
+    } catch (e) {
+      debugPrint("User not logged in in userId");
+      rethrow;
+    }
   }
 
   bool isSignedIn() {

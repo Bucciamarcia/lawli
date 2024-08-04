@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import "package:lawli/account/main.dart";
 import "../../shared/shared.dart";
 import "../../services/services.dart";
+import "models.dart";
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -15,10 +17,26 @@ class AccountScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Column(
               children: [
-                Text(
-                  "OK!",
-                  style: Theme.of(context).textTheme.displayLarge,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20, top: 20),
+                  child: Text(
+                    "Account",
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
                 ),
+                FutureBuilder(
+                  future: RetrieveObjectFromDb().getAccount(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.data == null) {
+                      return const Text("No account found");
+                    } else {
+                      final AccountInfo account = snapshot.data!;
+                      return AccountMainView(account: account);
+                    }
+                  },
+                )
               ],
             ),
           ),
