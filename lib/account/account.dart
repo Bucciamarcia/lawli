@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import "package:lawli/account/main.dart";
+import "package:provider/provider.dart";
 import "../../shared/shared.dart";
 import "../../services/services.dart";
 import "models.dart";
+import "provider.dart";
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -33,7 +35,11 @@ class AccountScreen extends StatelessWidget {
                       return const Text("No account found");
                     } else {
                       final AccountInfo account = snapshot.data!;
-                      return AccountMainView(account: account);
+                      return SingleChildScrollView(
+                        child: ChangeNotifierProvider(
+                            create: (context) => AccountInfoProvider(),
+                            child: AccountMainView(account: account)),
+                      );
                     }
                   },
                 )

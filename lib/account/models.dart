@@ -19,6 +19,20 @@ class AccountInfo {
   /// Extension of the logo, WITH the dot. E.g ".png"
   final String logoExtension;
 
+  /// Information strings for the account editing page
+  final Map<String, Map<String, String>> infoStrings = {
+    "displayName": {
+      "title": "Nome account",
+      "description": "Nome dell'account. E.g. 'lawli'",
+      "label": "Nome",
+    },
+    "address": {
+      "title": "Indirizzo legale",
+      "description": "Indirizzo legale dell'account",
+      "label": "Indirizzo",
+    },
+  };
+
   AccountInfo({
     this.id = "",
     this.logoExtension = "",
@@ -28,9 +42,9 @@ class AccountInfo {
 
   /// Gets the logo of the account and adds it to the object
   Future<Uint8List> getLogo() async {
-    Uint8List logo = await DocumentStorage()
-        .getDocument("accounts/$id/logo$logoExtension");
-        return logo;
+    Uint8List logo =
+        await DocumentStorage().getDocument("accounts/$id/logo$logoExtension");
+    return logo;
   }
 
   /// Uploads the logo of the account object to the cloud storage
