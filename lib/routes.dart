@@ -13,6 +13,7 @@ import "pratiche/pratiche.dart";
 import "assistiti/nuovo/nuovo.dart";
 import "ricerca_sentenze/ricerca_sentenze.dart";
 import "template/template.dart";
+import "account/account.dart";
 
 final Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => const HomeScreen(),
@@ -29,5 +30,6 @@ final Map<String, WidgetBuilder> routes = {
   '/ricerca_sentenze': (BuildContext context) => const RicercaSentenzeScreen(),
   '/trascrizione_audio': (BuildContext context) => const TrascrizioneAudioScreen(),
   '/template': (BuildContext context) => const TemplateScreen(),
+  '/account': (BuildContext context) => const AccountScreen(),
 };
 
