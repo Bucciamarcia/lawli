@@ -1,4 +1,6 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:lawli/shared/upload_file.dart';
 import 'models.dart';
 
 class AccountMainView extends StatefulWidget {
@@ -12,6 +14,19 @@ class AccountMainView extends StatefulWidget {
 class _AccountMainViewState extends State<AccountMainView> {
   String displayName = '';
   String address = '';
+  PlatformFile? _selectedFile;
+
+  void _handleFileSelected(PlatformFile? file) {
+    setState(() {
+      _selectedFile = file;
+    });
+    // You can do whatever you want with the file data here
+    if (file != null) {
+      debugPrint('Selected file: ${file.name}');
+      debugPrint('File size: ${file.size}');
+      // Access other properties as needed
+    }
+  }
 
   void updateDisplayName(String newValue) {
     setState(() {
@@ -29,22 +44,31 @@ class _AccountMainViewState extends State<AccountMainView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        FileUploader(
+          labelText: 'Upload File',
+          helperText: 'Select a file to upload',
+          buttonText: 'Choose File',
+          path: 'your/upload/path',
+          onFileSelected: _handleFileSelected,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AccountEditBoxSingleLine(
               title: "Nome dello studio",
-              description: "Il nome dello studio. Verrà visualizzato nei documenti.",
+              description:
+                  "Il nome dello studio. Verrà visualizzato nei documenti.",
               label: "Nome studio",
               initialValue: widget.account.displayName,
               onChanged: updateDisplayName,
             ),
-        AccountEditBoxMultiLine(
-            title: "Indirizzo",
-            description: "Indirizzo legale dello studio, verrà visualizzato nei documenti.",
-            label: "Indirizzo",
-            initialValue: widget.account.address,
-            onChanged: updateAddress)
+            AccountEditBoxMultiLine(
+                title: "Indirizzo",
+                description:
+                    "Indirizzo legale dello studio, verrà visualizzato nei documenti.",
+                label: "Indirizzo",
+                initialValue: widget.account.address,
+                onChanged: updateAddress)
           ],
         ),
       ],
@@ -65,8 +89,7 @@ class AccountEditBoxSingleLine extends StatefulWidget {
       required this.description,
       required this.label,
       required this.initialValue,
-      required this.onChanged})
-      ;
+      required this.onChanged});
 
   @override
   State<AccountEditBoxSingleLine> createState() =>
@@ -76,7 +99,8 @@ class AccountEditBoxSingleLine extends StatefulWidget {
 class _AccountEditBoxSingleLineState extends State<AccountEditBoxSingleLine> {
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController(text: widget.initialValue);
+    TextEditingController controller =
+        TextEditingController(text: widget.initialValue);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
@@ -144,8 +168,7 @@ class AccountEditBoxMultiLine extends StatefulWidget {
       required this.description,
       required this.label,
       required this.initialValue,
-      required this.onChanged})
-      ;
+      required this.onChanged});
 
   @override
   State<AccountEditBoxMultiLine> createState() =>
@@ -155,7 +178,8 @@ class AccountEditBoxMultiLine extends StatefulWidget {
 class _AccountEditBoxMultiLineState extends State<AccountEditBoxMultiLine> {
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController(text: widget.initialValue);
+    TextEditingController controller =
+        TextEditingController(text: widget.initialValue);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(

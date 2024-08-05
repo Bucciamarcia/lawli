@@ -20,13 +20,17 @@ class FileUploader extends StatefulWidget {
   /// Where to upload in cloud storage
   final String path;
 
+  /// Callback function to return the selected file
+  final Function(PlatformFile?) onFileSelected;
+
   const FileUploader(
       {super.key,
       required this.labelText,
       required this.helperText,
       required this.buttonText,
       this.allowedExtensions,
-      required this.path});
+      required this.path,
+      required this.onFileSelected});
 
   @override
   State<FileUploader> createState() => _FileUploaderState();
@@ -75,25 +79,42 @@ class _FileUploaderState extends State<FileUploader> {
 
   // Logica per caricare un file
   void _pickFile() async {
-    FilePickerResult? result;
+  FilePickerResult? result;
+  try {
     if (kIsWeb) {
       result = await FilePickerWeb.platform.pickFiles(
         allowMultiple: false,
-        type: FileType.custom,
+        type: widget.allowedExtensions != null ? FileType.custom : FileType.any,
         allowedExtensions: widget.allowedExtensions,
       );
     } else {
       result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
-        type: FileType.custom,
+        type: widget.allowedExtensions != null ? FileType.custom : FileType.any,
         allowedExtensions: widget.allowedExtensions,
       );
     }
-    if (result != null) {
+    if (result != null && result.files.isNotEmpty) {
       setState(() {
         controller.text = result!.files.single.name;
         uploadedFile = result.files;
       });
+      widget.onFileSelected(result.files.single);
+    } else {
+      setState(() {
+        controller.text = '';
+        uploadedFile = [];
+      });
+      widget.onFileSelected(null);
     }
+  } catch (e) {
+    print('Error picking file: $e');
+    setState(() {
+      controller.text = '';
+      uploadedFile = [];
+    });
+    widget.onFileSelected(null);
   }
+}
+
 }
