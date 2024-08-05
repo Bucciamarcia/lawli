@@ -4,7 +4,6 @@ import "package:lawli/account/models.dart";
 import "dart:async";
 import "../services/auth.dart";
 import "../services/models.dart";
-import "dart:developer";
 import "cloud_storage.dart";
 
 class FirestoreService {
@@ -387,7 +386,7 @@ class RetrieveObjectFromDb extends FirestoreService {
     final String accountName = await AccountDb().getAccountName();
     debugPrint("Account Name: $accountName");
 
-    if (accountName == null || accountName.isEmpty) {
+    if (accountName.isEmpty) {
       throw Exception("Account name is null or empty");
     }
 

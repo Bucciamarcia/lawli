@@ -3,14 +3,22 @@ import 'package:flutter/material.dart';
 /// A class to show a circular progress indicator
 class CircularProgress {
   /// Show a circular progress indicator
-  static Future<dynamic> show(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
+  static OverlayEntry? show(BuildContext context) {
+    OverlayEntry overlayEntry = OverlayEntry(builder: (context) {
+      return Stack(
+        children: [
+          // Add a transparent container to fade the whole screen
+          Container(
+            color: Colors.black.withOpacity(0.5),
+          ),
+          const Center(
             child: CircularProgressIndicator(),
-          );
-        });
+          ),
+        ],
+      );
+    });
+    Overlay.of(context).insert(overlayEntry);
+    return overlayEntry;
   }
 
   /// Simply pop the current screen

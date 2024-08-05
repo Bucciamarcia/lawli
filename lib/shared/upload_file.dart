@@ -2,6 +2,7 @@ import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lawli/shared/circular_progress_indicator.dart';
 
 /// A widget that allows the user to upload a file. Uploads the file to the specified path with the filename.
 class FileUploader extends StatefulWidget {
@@ -17,9 +18,6 @@ class FileUploader extends StatefulWidget {
   /// Allowed file extensions. If null, all files are allowed
   final List<String>? allowedExtensions;
 
-  /// Where to upload in cloud storage
-  final String path;
-
   /// Callback function to return the selected file
   final Function(PlatformFile?) onFileSelected;
 
@@ -29,7 +27,6 @@ class FileUploader extends StatefulWidget {
       required this.helperText,
       required this.buttonText,
       this.allowedExtensions,
-      required this.path,
       required this.onFileSelected});
 
   @override
@@ -79,7 +76,9 @@ class _FileUploaderState extends State<FileUploader> {
 
   // Logica per caricare un file
   void _pickFile() async {
+    OverlayEntry? progressOverlay;
   FilePickerResult? result;
+  progressOverlay = CircularProgress.show(context);
   try {
     if (kIsWeb) {
       result = await FilePickerWeb.platform.pickFiles(
@@ -114,6 +113,9 @@ class _FileUploaderState extends State<FileUploader> {
       uploadedFile = [];
     });
     widget.onFileSelected(null);
+  } finally {
+    progressOverlay?.remove();
+    progressOverlay = null;
   }
 }
 

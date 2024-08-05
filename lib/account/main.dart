@@ -20,11 +20,12 @@ class _AccountMainViewState extends State<AccountMainView> {
     setState(() {
       _selectedFile = file;
     });
-    // You can do whatever you want with the file data here
     if (file != null) {
       debugPrint('Selected file: ${file.name}');
       debugPrint('File size: ${file.size}');
-      // Access other properties as needed
+      debugPrint("File extension: ${file.extension}");
+    } else {
+      debugPrint('No file selected');
     }
   }
 
@@ -45,13 +46,14 @@ class _AccountMainViewState extends State<AccountMainView> {
     return Column(
       children: [
         FileUploader(
-          labelText: 'Upload File',
-          helperText: 'Select a file to upload',
-          buttonText: 'Choose File',
-          path: 'your/upload/path',
+          labelText: "Carica un logo",
+          helperText: "Il logo verrà visualizzato nei documenti",
+          buttonText: "Carica logo",
+          allowedExtensions: const ["png", "jpg", "jpeg"],
           onFileSelected: _handleFileSelected,
         ),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AccountEditBoxSingleLine(
