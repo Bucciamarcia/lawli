@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lawli/shared/circular_progress_indicator.dart';
+import 'package:lawli/shared/confirmation_message.dart';
 
 /// A widget that allows the user to upload a file. Uploads the file to the specified path with the filename.
 class FileUploader extends StatefulWidget {
@@ -107,7 +108,8 @@ class _FileUploaderState extends State<FileUploader> {
       widget.onFileSelected(null);
     }
   } catch (e) {
-    print('Error picking file: $e');
+    debugPrint('Error picking file: $e');
+    if (mounted) ConfirmationMessage.show(context, "Errore", "Errore durante il caricamento del file");
     setState(() {
       controller.text = '';
       uploadedFile = [];
