@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/shared/upload_file.dart';
 import 'models.dart';
 
@@ -20,10 +21,12 @@ class _AccountMainViewState extends State<AccountMainView> {
     setState(() {
       _selectedFile = file;
     });
-    if (file != null) {
+    if (file != null && file.bytes != null) {
       debugPrint('Selected file: ${file.name}');
       debugPrint('File size: ${file.size}');
       debugPrint("File extension: ${file.extension}");
+      DocumentStorage().uploadDocument(
+          "accounts/${widget.account.id}/logo.${file.extension}", file.bytes!);
     } else {
       debugPrint('No file selected');
     }
@@ -47,7 +50,8 @@ class _AccountMainViewState extends State<AccountMainView> {
       children: [
         FileUploader(
           labelText: "Carica un logo",
-          helperText: "Il logo verrà visualizzato nei documenti",
+          helperText:
+              "Il logo verrà visualizzato nei documenti. Formati supportati: png, jpg, jpeg",
           buttonText: "Carica logo",
           allowedExtensions: const ["png", "jpg", "jpeg"],
           onFileSelected: _handleFileSelected,

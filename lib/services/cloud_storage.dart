@@ -69,9 +69,9 @@ class DocumentStorage extends StorageService {
     }
   }
 
-  /// Uploads a generic document.
-  /// [path] is the path to the document, e.g "accounts/lawli/pratiche/1/documenti/originale_filename.pdf"
-  /// [file] is the file to upload in bytes
+/*   Uploads a generic document.
+  [path] is the path to the document, e.g "accounts/lawli/pratiche/1/documenti/originale_filename.pdf"
+  [file] is the file to upload in bytes */
   Future<void> uploadDocument(String path, Uint8List file) async {
     debugPrint("Uploading document");
     try {
