@@ -19,20 +19,6 @@ class AccountInfo {
   /// Extension of the logo, WITH the dot. E.g ".png"
   final String logoExtension;
 
-  /// Information strings for the account editing page
-  final Map<String, Map<String, String>> infoStrings = {
-    "displayName": {
-      "title": "Nome account",
-      "description": "Nome dell'account. E.g. 'lawli'",
-      "label": "Nome",
-    },
-    "address": {
-      "title": "Indirizzo legale",
-      "description": "Indirizzo legale dell'account",
-      "label": "Indirizzo",
-    },
-  };
-
   AccountInfo({
     this.id = "",
     this.logoExtension = "",

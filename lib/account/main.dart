@@ -29,19 +29,24 @@ class _AccountMainViewState extends State<AccountMainView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AccountEditBoxSingleLine(
-          title: "Nome account",
-          description: "Nome dell'account. E.g. 'lawli'",
-          label: "Nome",
-          initialValue: widget.account.displayName,
-          onChanged: updateDisplayName,
-        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AccountEditBoxSingleLine(
+              title: "Nome dello studio",
+              description: "Il nome dello studio. Verrà visualizzato nei documenti.",
+              label: "Nome studio",
+              initialValue: widget.account.displayName,
+              onChanged: updateDisplayName,
+            ),
         AccountEditBoxMultiLine(
             title: "Indirizzo",
-            description: "Indirizzo legale dello studio",
+            description: "Indirizzo legale dello studio, verrà visualizzato nei documenti.",
             label: "Indirizzo",
             initialValue: widget.account.address,
             onChanged: updateAddress)
+          ],
+        ),
       ],
     );
   }
