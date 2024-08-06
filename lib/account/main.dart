@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lawli/services/cloud_storage.dart';
+import 'package:lawli/shared/circular_progress_indicator.dart';
 import 'package:lawli/shared/confirmation_message.dart';
 import 'package:lawli/shared/upload_file.dart';
 import 'models.dart';
@@ -89,32 +90,7 @@ class _AccountMainViewState extends State<AccountMainView> {
       children: [
         Row(
           children: [
-            SizedBox(
-                width: 400,
-                child: FutureBuilder<Image?>(
-                  future: getLogoImage(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }
-                    if (snapshot.hasError) {
-                      return const Text("Errore nel caricamento del logo");
-                    }
-                    if (!snapshot.hasData || snapshot.data == null) {
-                      return const Placeholder(); // Handle no logo scenario
-                    }
-                    return Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.black26,
-                              width: 1,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: snapshot.data!);
-                  },
-                )),
+            _logoImage(),
             const SizedBox(width: 25),
             Expanded(
               child: FileUploader(
@@ -150,8 +126,60 @@ class _AccountMainViewState extends State<AccountMainView> {
                 onChanged: updateAddress)
           ],
         ),
+        ElevatedButton(
+          child: const Text(
+            "Salva modifiche",
+          ),
+          onPressed: () async {
+            CircularProgress.show(context);
+            await _updateAccount();
+            CircularProgress.pop(context);
+          },
+        )
       ],
     );
+  }
+
+  Future<void> _updateAccount() async {
+    Map<String, dynamic> data = {
+      "displayName": displayName,
+      "address": address,
+    };
+    try {
+      await widget.account.updateAccountInfo(data);
+    } catch (e) {
+      debugPrint("Error updating account: $e");
+      rethrow;
+    }
+  }
+
+  Widget _logoImage() {
+    return SizedBox(
+        width: 400,
+        child: FutureBuilder<Image?>(
+          future: getLogoImage(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            if (snapshot.hasError) {
+              return const Text("Errore nel caricamento del logo");
+            }
+            if (!snapshot.hasData || snapshot.data == null) {
+              return const Placeholder(); // Handle no logo scenario
+            }
+            return Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: Colors.black26,
+                      width: 1,
+                      style: BorderStyle.solid),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: snapshot.data!);
+          },
+        ));
   }
 
   Future<Uint8List?> getLogoBytes() async {

@@ -1,6 +1,7 @@
 import "package:flutter/foundation.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:lawli/services/cloud_storage.dart";
+import "package:lawli/services/firestore.dart";
 part "models.g.dart";
 
 @JsonSerializable()
@@ -31,6 +32,15 @@ class AccountInfo {
     Uint8List logo =
         await DocumentStorage().getDocument("accounts/$id/logo$logoExtension");
     return logo;
+  }
+
+  Future<void> updateAccountInfo(Map<String, dynamic> data) async {
+    try {
+      await FirestoreService().uploadMap(data, "accounts/$id", merge: true);
+    } catch (e) {
+      debugPrint("Error uploading account info: $e");
+      rethrow;
+    }
   }
 
   /// Uploads the logo of the account object to the cloud storage

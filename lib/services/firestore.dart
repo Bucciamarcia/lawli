@@ -50,6 +50,15 @@ class FirestoreService {
       rethrow;
     }
   }
+
+  Future<void> uploadMap(Map<String, dynamic> data, String path, {bool merge = false}) async {
+    try {
+      await _db.doc(path).set(data, SetOptions(merge: merge));
+    } catch (e) {
+      debugPrint("Error uploading map: $e");
+      rethrow;
+    }
+  }
 }
 
 class AccountDb extends FirestoreService {
@@ -599,4 +608,5 @@ class RetrieveObjectFromDb extends FirestoreService {
       debugPrint("Error in streamTemplates: $e");
     });
   }
+
 }
