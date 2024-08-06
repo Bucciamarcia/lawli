@@ -123,6 +123,7 @@ class DocumentStorage extends StorageService {
     }
   }
 
+  /// Returns the document as a Uint8List
   Future<Uint8List> getDocument(String path) async {
     try {
       final Uint8List? u8list = await storageRef.child(path).getData();
@@ -158,6 +159,17 @@ class DocumentStorage extends StorageService {
       }
     } catch (e) {
       debugPrint("Error getting file: $e");
+      rethrow;
+    }
+  }
+
+  Future<ListResult> searchAll(String path) async {
+    try {
+      accountName ??= await AccountDb().getAccountName();
+      final listResults = await storageRef.child(path).listAll();
+      return listResults;
+    } catch (e) {
+      debugPrint("Error searching file: $e");
       rethrow;
     }
   }

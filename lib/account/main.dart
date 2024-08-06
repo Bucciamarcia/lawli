@@ -1,6 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:lawli/services/cloud_storage.dart';
+import 'package:lawli/shared/confirmation_message.dart';
 import 'package:lawli/shared/upload_file.dart';
 import 'models.dart';
 
@@ -17,18 +22,52 @@ class _AccountMainViewState extends State<AccountMainView> {
   String address = '';
   PlatformFile? _selectedFile;
 
-  void _handleFileSelected(PlatformFile? file) {
-    setState(() {
-      _selectedFile = file;
-    });
+  void _handleFileSelected(PlatformFile? file) async {
     if (file != null && file.bytes != null) {
       debugPrint('Selected file: ${file.name}');
       debugPrint('File size: ${file.size}');
       debugPrint("File extension: ${file.extension}");
-      DocumentStorage().uploadDocument(
-          "accounts/${widget.account.id}/logo.${file.extension}", file.bytes!);
+      try {
+        await _deleteOldLogo();
+      } catch (e) {
+        debugPrint("Error deleting old logo: $e");
+        ConfirmationMessage.show(context, "Errore",
+            "Errore durante l'eliminazione del logo esistente.");
+        return;
+      }
+      try {
+        await DocumentStorage().uploadDocument(
+            "accounts/${widget.account.id}/logo.${file.extension}",
+            file.bytes!);
+        // After successful upload, update the state
+        setState(() {
+          _selectedFile = file;
+        });
+      } catch (e) {
+        debugPrint("Error uploading new logo: $e");
+        ConfirmationMessage.show(
+            context, "Errore", "Errore durante il caricamento del nuovo logo.");
+      }
     } else {
       debugPrint('No file selected');
+    }
+  }
+
+  Future<void> _deleteOldLogo() async {
+    try {
+      ListResult files =
+          await DocumentStorage().searchAll("accounts/${widget.account.id}");
+      List<String> filenames = files.items.map((e) => e.name).toList();
+      String logoFilename = filenames.firstWhere(
+          (element) => element.startsWith("logo"),
+          orElse: () => "");
+      if (logoFilename.isNotEmpty) {
+        await DocumentStorage()
+            .deleteDocument("accounts/${widget.account.id}/", logoFilename);
+      }
+    } catch (e) {
+      debugPrint("Error deleting old logo: $e");
+      rethrow;
     }
   }
 
@@ -48,14 +87,48 @@ class _AccountMainViewState extends State<AccountMainView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FileUploader(
-          labelText: "Carica un logo",
-          helperText:
-              "Il logo verrà visualizzato nei documenti. Formati supportati: png, jpg, jpeg",
-          buttonText: "Carica logo",
-          allowedExtensions: const ["png", "jpg", "jpeg"],
-          onFileSelected: _handleFileSelected,
+        Row(
+          children: [
+            SizedBox(
+                width: 400,
+                child: FutureBuilder<Image?>(
+                  future: getLogoImage(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (snapshot.hasError) {
+                      return const Text("Errore nel caricamento del logo");
+                    }
+                    if (!snapshot.hasData || snapshot.data == null) {
+                      return const Placeholder(); // Handle no logo scenario
+                    }
+                    return Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.black26,
+                              width: 1,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: snapshot.data!);
+                  },
+                )),
+            const SizedBox(width: 25),
+            Expanded(
+              child: FileUploader(
+                labelText: "Carica un logo",
+                helperText:
+                    "Il logo verrà visualizzato nei documenti. Formati supportati: png, jpg, jpeg",
+                buttonText: "Carica logo",
+                allowedExtensions: const ["png", "jpg", "jpeg"],
+                onFileSelected: _handleFileSelected,
+              ),
+            ),
+          ],
         ),
+        const SizedBox(height: 16),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -78,6 +151,52 @@ class _AccountMainViewState extends State<AccountMainView> {
           ],
         ),
       ],
+    );
+  }
+
+  Future<Uint8List?> getLogoBytes() async {
+    try {
+      ListResult files =
+          await DocumentStorage().searchAll("accounts/${widget.account.id}");
+      List<String> filenames = files.items.map((e) => e.name).toList();
+      String logoFilename = filenames.firstWhere(
+          (element) => element.startsWith("logo"),
+          orElse: () => "");
+      if (logoFilename.isEmpty) {
+        return null;
+      } else {
+        return await DocumentStorage()
+            .getDocument("accounts/${widget.account.id}/$logoFilename");
+      }
+    } catch (e) {
+      debugPrint("Error getting logo: $e");
+      return Uint8List(0);
+    }
+  }
+
+  Future<Image?> getLogoImage() async {
+    Uint8List bytes;
+    try {
+      ListResult files =
+          await DocumentStorage().searchAll("accounts/${widget.account.id}");
+      List<String> filenames = files.items.map((e) => e.name).toList();
+      String logoFilename = filenames.firstWhere(
+        (element) => element.startsWith("logo"),
+        orElse: () => "",
+      );
+      if (logoFilename.isEmpty) {
+        return null; // No logo found
+      }
+      bytes = await DocumentStorage()
+          .getDocument("accounts/${widget.account.id}/$logoFilename");
+    } catch (e) {
+      debugPrint("Error getting logo for account ${widget.account.id}: $e");
+      return null; // Return null on error to handle gracefully
+    }
+    return Image.memory(
+      bytes,
+      height: 200,
+      fit: BoxFit.fitHeight,
     );
   }
 }
