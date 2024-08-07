@@ -18,12 +18,13 @@ class NuovoModelloButton extends StatelessWidget {
     int uploadedTemplates = 0;
     return ElevatedButton.icon(
       onPressed: () {
-        CircularProgress.show(context);
+        OverlayEntry? overlay = CircularProgress.show(context);
         pickFile(context,
                 allowedExtensions: ["txt", "docx"], allowMultiple: true)
             .then(
           (result) async {
-            CircularProgress.pop(context);
+            overlay?.remove();
+            overlay = null;
             if (result != null) {
               List<PlatformFile> files = result.files;
               for (PlatformFile file in files) {

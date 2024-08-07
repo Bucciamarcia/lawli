@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/shared/circular_progress_indicator.dart';
 import 'package:lawli/shared/confirmation_message.dart';
@@ -21,7 +20,14 @@ class AccountMainView extends StatefulWidget {
 class _AccountMainViewState extends State<AccountMainView> {
   String displayName = '';
   String address = '';
-  PlatformFile? _selectedFile;
+  PlatformFile? selectedFile;
+
+  @override
+  void initState() {
+    super.initState();
+    displayName = widget.account.displayName;
+    address = widget.account.address;
+  }
 
   void _handleFileSelected(PlatformFile? file) async {
     if (file != null && file.bytes != null) {
@@ -42,7 +48,7 @@ class _AccountMainViewState extends State<AccountMainView> {
             file.bytes!);
         // After successful upload, update the state
         setState(() {
-          _selectedFile = file;
+          selectedFile = file;
         });
       } catch (e) {
         debugPrint("Error uploading new logo: $e");
@@ -114,7 +120,7 @@ class _AccountMainViewState extends State<AccountMainView> {
               description:
                   "Il nome dello studio. Verrà visualizzato nei documenti.",
               label: "Nome studio",
-              initialValue: widget.account.displayName,
+              initialValue: displayName,
               onChanged: updateDisplayName,
             ),
             AccountEditBoxMultiLine(
@@ -122,7 +128,7 @@ class _AccountMainViewState extends State<AccountMainView> {
                 description:
                     "Indirizzo legale dello studio, verrà visualizzato nei documenti.",
                 label: "Indirizzo",
-                initialValue: widget.account.address,
+                initialValue: address,
                 onChanged: updateAddress)
           ],
         ),
@@ -131,9 +137,19 @@ class _AccountMainViewState extends State<AccountMainView> {
             "Salva modifiche",
           ),
           onPressed: () async {
-            CircularProgress.show(context);
-            await _updateAccount();
-            CircularProgress.pop(context);
+            OverlayEntry? overlay = CircularProgress.show(context);
+            try {
+              await _updateAccount();
+              ConfirmationMessage.show(context, "Modifiche salvate",
+                  "Le modifiche sono state salvate correttamente.");
+            } catch (e) {
+              debugPrint("Error updating account: $e");
+              ConfirmationMessage.show(context, "Errore",
+                  "Errore durante il salvataggio delle modifiche.");
+            } finally {
+              overlay?.remove();
+              overlay = null;
+            }
           },
         )
       ],
@@ -250,10 +266,22 @@ class AccountEditBoxSingleLine extends StatefulWidget {
 }
 
 class _AccountEditBoxSingleLineState extends State<AccountEditBoxSingleLine> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller =
-        TextEditingController(text: widget.initialValue);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
@@ -298,7 +326,8 @@ class _AccountEditBoxSingleLineState extends State<AccountEditBoxSingleLine> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                controller: controller,
+                controller: _controller,
+                onChanged: widget.onChanged,
               ),
             ],
           ),
@@ -329,10 +358,22 @@ class AccountEditBoxMultiLine extends StatefulWidget {
 }
 
 class _AccountEditBoxMultiLineState extends State<AccountEditBoxMultiLine> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller =
-        TextEditingController(text: widget.initialValue);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
@@ -379,7 +420,8 @@ class _AccountEditBoxMultiLineState extends State<AccountEditBoxMultiLine> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                controller: controller,
+                controller: _controller,
+                onChanged: widget.onChanged,
               ),
             ],
           ),
