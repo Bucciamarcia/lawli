@@ -51,7 +51,8 @@ class FirestoreService {
     }
   }
 
-  Future<void> uploadMap(Map<String, dynamic> data, String path, {bool merge = false}) async {
+  Future<void> uploadMap(Map<String, dynamic> data, String path,
+      {bool merge = false}) async {
     try {
       await _db.doc(path).set(data, SetOptions(merge: merge));
     } catch (e) {
@@ -390,38 +391,38 @@ class TemplateDb extends FirestoreService {
 
 class RetrieveObjectFromDb extends FirestoreService {
   Future<AccountInfo> getAccount() async {
-  debugPrint("STARTING GET ACCOUNT");
-  try {
-    final String accountName = await AccountDb().getAccountName();
-    debugPrint("Account Name: $accountName");
+    debugPrint("STARTING GET ACCOUNT");
+    try {
+      final String accountName = await AccountDb().getAccountName();
+      debugPrint("Account Name: $accountName");
 
-    if (accountName.isEmpty) {
-      throw Exception("Account name is null or empty");
+      if (accountName.isEmpty) {
+        throw Exception("Account name is null or empty");
+      }
+
+      var ref = _db.collection("accounts").doc(accountName);
+      debugPrint("Document Reference: $ref");
+
+      var snapshot = await ref.get();
+      debugPrint("SNAPSHOT: $snapshot");
+
+      if (!snapshot.exists) {
+        throw Exception("Account document does not exist");
+      }
+
+      var data = snapshot.data();
+      debugPrint("SNAPSHOT DATA: $data");
+
+      if (data == null) {
+        throw Exception("Snapshot data is null");
+      }
+
+      return AccountInfo.fromJson(data);
+    } catch (e) {
+      debugPrint("Error getting account: $e");
+      rethrow;
     }
-
-    var ref = _db.collection("accounts").doc(accountName);
-    debugPrint("Document Reference: $ref");
-
-    var snapshot = await ref.get();
-    debugPrint("SNAPSHOT: $snapshot");
-
-    if (!snapshot.exists) {
-      throw Exception("Account document does not exist");
-    }
-
-    var data = snapshot.data();
-    debugPrint("SNAPSHOT DATA: $data");
-
-    if (data == null) {
-      throw Exception("Snapshot data is null");
-    }
-
-    return AccountInfo.fromJson(data);
-  } catch (e) {
-    debugPrint("Error getting account: $e");
-    rethrow;
   }
-}
 
   Future<List<Assistito>> getAssistiti() async {
     String accountName = await AccountDb().getAccountName();
@@ -561,10 +562,8 @@ class RetrieveObjectFromDb extends FirestoreService {
   Future<List<Template>> getTemplates() async {
     try {
       String accountName = await AccountDb().getAccountName();
-      var ref = _db
-          .collection("accounts")
-          .doc(accountName)
-          .collection("templates");
+      var ref =
+          _db.collection("accounts").doc(accountName).collection("templates");
       var snapshot = await ref.get();
       var data = snapshot.docs.map((s) => s.data());
       var topics = data.map((d) => Template.fromJson(d));
@@ -595,10 +594,8 @@ class RetrieveObjectFromDb extends FirestoreService {
   /// Streams a list of all the templates of the account
   Stream<List<Template>> streamTemplates() async* {
     String accountName = await AccountDb().getAccountName();
-    var ref = _db
-        .collection("accounts")
-        .doc(accountName)
-        .collection("templates");
+    var ref =
+        _db.collection("accounts").doc(accountName).collection("templates");
 
     yield* ref.snapshots().map((snapshot) {
       var data = snapshot.docs.map((s) => s.data());
@@ -609,4 +606,15 @@ class RetrieveObjectFromDb extends FirestoreService {
     });
   }
 
+  /// Returns the account object of the user
+  Future<AccountInfo> getAccountInfo() async {
+    try {
+      final String accountName = await AccountDb().getAccountName();
+      var accountDoc = await _db.collection("accounts").doc(accountName).get();
+      return AccountInfo.fromJson(accountDoc.data() ?? {});
+    } catch (e) {
+      debugPrint("Error getting account info: $e");
+      return AccountInfo();
+    }
+  }
 }

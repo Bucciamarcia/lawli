@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lawli/shared/confirmation_message.dart';
+import 'package:lawli/template/editor/pdf_export.dart';
 
 class TemplateDocumentView extends StatefulWidget {
   final String templateText;
@@ -67,7 +69,7 @@ class _TemplateDocumentViewState extends State<TemplateDocumentView> {
   String getFilledTemplate() {
     String filledText = widget.templateText;
     _filledValues.forEach((key, value) {
-      filledText = filledText.replaceAll('{$key}', value);
+      filledText = filledText.replaceAll('{{$key}}', value);
     });
     return filledText;
   }
@@ -107,13 +109,35 @@ class _TemplateDocumentViewState extends State<TemplateDocumentView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton.icon(
-              onPressed: areAllFieldsFilled() ? () {} : null,
+              onPressed: () {
+                _checkAllFieldsFilled();
+                if (areAllFieldsFilled()) {
+                  PdfExporter(templateText: getFilledTemplate()).export();
+                } else {
+                  ConfirmationMessage.show(
+                    context,
+                    "Campi vuoti",
+                    "Alcuni campi sono vuoti. Assicurati di aver compilato tutti i campi prima di esportare il documento.",
+                  );
+                }
+              },
               label: const Text("Exporta in PDF"),
               icon: const Icon(Icons.picture_as_pdf),
             ),
             const SizedBox(width: 10),
             ElevatedButton.icon(
-              onPressed: areAllFieldsFilled() ? () {} : null,
+              onPressed: () {
+                _checkAllFieldsFilled();
+                if (areAllFieldsFilled()) {
+                  debugPrint("ok");
+                } else {
+                  ConfirmationMessage.show(
+                    context,
+                    "Campi vuoti",
+                    "Alcuni campi sono vuoti. Assicurati di aver compilato tutti i campi prima di esportare il documento.",
+                  );
+                }
+              },
               icon: const Icon(Icons.edit_document),
               label: const Text("Esporta in .docx"),
             ),
