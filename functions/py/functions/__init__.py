@@ -14,6 +14,7 @@ from .extract_date import ExtractDate
 from .template_operations import Template
 from .search_similar_templates import TemplateSearcher
 from .get_likley_templates import LikleyTemplateFinder
+from .string_to_docx import DocxCreator
 
 __all__ = [
     "Pdf_Transformer",
@@ -32,4 +33,5 @@ __all__ = [
     "Template",
     "TemplateSearcher",
     "LikleyTemplateFinder",
+    "DocxCreator",
 ]

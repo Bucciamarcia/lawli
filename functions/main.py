@@ -215,6 +215,15 @@ def get_likley_templates(req: https_fn.CallableRequest) -> list[dict[str, str]]:
     return result
 
 
+@https_fn.on_call()
+def string_to_docx(req: https_fn.CallableRequest) -> str:
+    initialize_env()
+    logger.info("string_to_docx called")
+    keys = ["text"]
+    (text,) = commons.get_data(req, keys)
+    return functions.DocxCreator(text).create_docx()
+
+
 @functions_framework.cloud_event  # type: ignore
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")

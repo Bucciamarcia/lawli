@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lawli/shared/confirmation_message.dart';
-import 'package:lawli/template/editor/pdf_export.dart';
+import 'package:lawli/template/editor/exporter.dart';
 
 class TemplateDocumentView extends StatefulWidget {
   final String templateText;
@@ -112,7 +112,7 @@ class _TemplateDocumentViewState extends State<TemplateDocumentView> {
               onPressed: () {
                 _checkAllFieldsFilled();
                 if (areAllFieldsFilled()) {
-                  PdfExporter(templateText: getFilledTemplate()).export();
+                  Exporter(templateText: getFilledTemplate()).exportPdf();
                 } else {
                   ConfirmationMessage.show(
                     context,
@@ -129,7 +129,11 @@ class _TemplateDocumentViewState extends State<TemplateDocumentView> {
               onPressed: () {
                 _checkAllFieldsFilled();
                 if (areAllFieldsFilled()) {
-                  debugPrint("ok");
+                  try {
+                  Exporter(templateText: getFilledTemplate()).exportDocx();
+                  } catch (e) {
+                    debugPrint("Error exporting to .docx: $e");
+                  }
                 } else {
                   ConfirmationMessage.show(
                     context,
