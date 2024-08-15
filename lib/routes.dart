@@ -14,6 +14,7 @@ import "assistiti/nuovo/nuovo.dart";
 import "ricerca_sentenze/ricerca_sentenze.dart";
 import "template/template.dart";
 import "account/account.dart";
+import "home/guestlogin.dart";
 
 final Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => const HomeScreen(),
@@ -31,5 +32,6 @@ final Map<String, WidgetBuilder> routes = {
   '/trascrizione_audio': (BuildContext context) => const TrascrizioneAudioScreen(),
   '/template': (BuildContext context) => const TemplateScreen(),
   '/account': (BuildContext context) => const AccountScreen(),
+  '/guestlogin': (BuildContext context) => const GuestLogin(),
 };
 

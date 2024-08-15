@@ -18,6 +18,30 @@ class AuthService {
     }
   }
 
+  Future<void> anonLogin() async {
+    try {
+
+      await FirebaseAuth.instance.signInAnonymously();
+      final loggedUser = FirebaseAuth.instance.currentUser;
+      final userData = await FirestoreService().getUserData(loggedUser?.uid ?? "");
+      if (userData == null) {
+        await FirestoreService().addUserToDb(loggedUser!.uid, true);
+      }
+
+      debugPrint("Logged in as anonymous user");
+
+
+    } on FirebaseAuthException catch (e) {
+      
+      debugPrint("Error in anonLogin: $e");
+
+    } catch (e) {
+
+      debugPrint("Generic error in anonLogin: $e");
+
+    }
+  }
+
   Future<void> googleLogin() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
@@ -48,6 +72,11 @@ class AuthService {
         email: emailAddress,
         password: password,
       );
+      final loggedUser = FirebaseAuth.instance.currentUser;
+      final userData = await FirestoreService().getUserData(loggedUser?.uid ?? "");
+      if (userData == null) {
+        await FirestoreService().addUserToDb(loggedUser!.uid, false);
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         debugPrint('The password provided is too weak.');

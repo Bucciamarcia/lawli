@@ -33,6 +33,13 @@ class FirestoreService {
           "account": false,
         },
       );
+      if (anon) {
+        await FirebaseFirestore.instance.collection("users").doc(id).set(
+          {
+            "account": id,
+          },
+        );
+      }
       debugPrint("Added anon $id user to db");
     } catch (e) {
       debugPrint("Error adding anon user to db: $e");
