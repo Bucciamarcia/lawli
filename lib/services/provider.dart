@@ -86,6 +86,8 @@ class DashboardProvider extends ChangeNotifier {
 
   Map? timeline;
 
+  bool isGuest = false;
+
   void setIdPratica(double id) {
     idPratica = id;
     notifyListeners();
@@ -115,6 +117,12 @@ class DashboardProvider extends ChangeNotifier {
 
   void setTimeline(Map t) {
     timeline = t;
+    notifyListeners();
+  }
+
+  void setIsGuest(bool b) {
+    isGuest = b;
+    debugPrint("Set isGuest to $b");
     notifyListeners();
   }
 }

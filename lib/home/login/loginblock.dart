@@ -25,6 +25,15 @@ class _LoginBlockState extends State<LoginBlock> {
                   const SizedBox(height: 10),
                   loginButton(
                     context,
+                    const FaIcon(FontAwesomeIcons.user, color: Colors.black),
+                    Colors.grey[300] ?? Colors.grey,
+                    Colors.black,
+                    _handleGuestRegistration,
+                    "Provalo come ospite",
+                  ),
+                  const SizedBox(height: 10),
+                  loginButton(
+                    context,
                     const FaIcon(FontAwesomeIcons.google, color: Colors.red),
                     Colors.green[300] ?? Colors.green,
                     Colors.white,
@@ -53,6 +62,10 @@ class _LoginBlockState extends State<LoginBlock> {
               ),
       ],
     );
+  }
+
+  Future<void> _handleGuestRegistration() async {
+
   }
 
   Future<void> _handleEmailRegistration() async {
