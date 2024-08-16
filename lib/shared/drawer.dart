@@ -66,19 +66,22 @@ class MenuElements {
         },
       ),
       ListTile(
-        title: const Text("Ricerca sentenze"),
-        onTap: () {
-          Navigator.pushNamed(context, '/ricerca_sentenze');
-        },
-      ),
-      ListTile(
         title: const Text("Template"),
         onTap: () => Navigator.pushNamed(context, '/template'),
       ),
+      ExpansionTile(title: const Text("Strumenti"), children: [
+        ListTile(
+          title: const Text("Ricerca sentenze"),
+          onTap: () {
+            Navigator.pushNamed(context, '/ricerca_sentenze');
+          },
+        ),
+      ]),
       ListTile(
           title: const Text("Account"),
           onTap: () async {
-            Navigator.pushNamedAndRemoveUntil(context, '/account', (route) => false);
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/account', (route) => false);
           }),
       ListTile(
           title: const Text("Logout"),

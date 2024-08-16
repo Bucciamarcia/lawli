@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
     String? anonLogin = uri.queryParameters['anonlogin'];
     if (anonLogin == 'true' && Provider.of<DashboardProvider>(context, listen: true).isGuest == false) {
       return FutureBuilder(
-        future: AuthService().anonLogin(),
+        future: AuthService().anonLogin(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(

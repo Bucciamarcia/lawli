@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
+import "package:provider/provider.dart";
 import "../../services/services.dart";
 
 class LoginBlock extends StatefulWidget {
@@ -66,7 +67,8 @@ class _LoginBlockState extends State<LoginBlock> {
 
   Future<void> _handleGuestRegistration() async {
 
-    await AuthService().anonLogin();
+    await AuthService().anonLogin(context);
+    Provider.of<DashboardProvider>(context, listen: false).setIsGuest(true);
 
   }
 

@@ -202,5 +202,3 @@ class InlineTextField extends StatelessWidget {
     );
   }
 }
-
-// TODO: Create a button to export the PDF

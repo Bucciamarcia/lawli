@@ -1,6 +1,8 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:google_sign_in/google_sign_in.dart";
+import "package:lawli/services/provider.dart";
+import "package:provider/provider.dart";
 import "dart:developer";
 import "../services/firestore.dart";
 
@@ -18,27 +20,31 @@ class AuthService {
     }
   }
 
-  Future<void> anonLogin() async {
-    try {
+  bool isGuest() {
+    if (user == null) {
+      debugPrint("User is null in isGuest");
+      return true;
+    } else {
+      return user!.isAnonymous;
+    }
+  }
 
+  Future<void> anonLogin(BuildContext context) async {
+    try {
       await FirebaseAuth.instance.signInAnonymously();
       final loggedUser = FirebaseAuth.instance.currentUser;
-      final userData = await FirestoreService().getUserData(loggedUser?.uid ?? "");
+      final userData =
+          await FirestoreService().getUserData(loggedUser?.uid ?? "");
       if (userData == null) {
         await FirestoreService().addUserToDb(loggedUser!.uid, true);
       }
 
       debugPrint("Logged in as anonymous user");
-
-
+      Provider.of<DashboardProvider>(context, listen: false).setIsGuest(true);
     } on FirebaseAuthException catch (e) {
-      
       debugPrint("Error in anonLogin: $e");
-
     } catch (e) {
-
       debugPrint("Generic error in anonLogin: $e");
-
     }
   }
 
@@ -73,7 +79,8 @@ class AuthService {
         password: password,
       );
       final loggedUser = FirebaseAuth.instance.currentUser;
-      final userData = await FirestoreService().getUserData(loggedUser?.uid ?? "");
+      final userData =
+          await FirestoreService().getUserData(loggedUser?.uid ?? "");
       if (userData == null) {
         await FirestoreService().addUserToDb(loggedUser!.uid, false);
       }
