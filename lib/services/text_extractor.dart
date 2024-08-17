@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:docx_to_text/docx_to_text.dart';
+
 /* Extracts text from a given text. Supports PDF, DOCX, and TXT files.
 Extension must include the dot, eg. ".pdf", ".docx", ".txt". */
 class TextExtractor {
@@ -18,10 +20,11 @@ class TextExtractor {
   }
 
   String _pdfToText(Uint8List bytes) {
+    // TODO: Implement PDF to text conversion.
     return "moi!";
   }
 
   String _docxToText(Uint8List bytes) {
-    return "moi!";
+    return docxToText(bytes);
   }
 }

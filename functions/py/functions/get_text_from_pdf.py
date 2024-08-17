@@ -1,5 +1,4 @@
 from google.cloud import documentai_v1 as documentai
-import os
 from .. import constants
 from google.api_core.client_options import ClientOptions
 from py.logger_config import LoggerConfig
@@ -10,15 +9,10 @@ class Pdf_Transformer:
     Transform the pdf file into text
     """
 
-    def __init__(
-        self, id_pratica: int, file_name: str, file_bytes: bytes, account_name: str
-    ):
-        self.id_pratica = id_pratica
-        self.file_name = file_name
+    def __init__(self, path: str, file_bytes: bytes):
+        self.path = path
         self.logger = LoggerConfig().setup_logging()
-        self.file_name_no_ext = os.path.splitext(file_name)[0]
         self.file_bytes = file_bytes
-        self.account_name = account_name
 
     def process_pdf(self):
         """
@@ -31,9 +25,8 @@ class Pdf_Transformer:
 
         opts = ClientOptions(api_endpoint=f"{location}-documentai.googleapis.com")
         client = documentai.DocumentProcessorServiceClient(client_options=opts)
-
-        source_uri = f"gs://{project_id}.appspot.com/accounts/{self.account_name}/pratiche/{str(self.id_pratica)}/documenti/originale_{self.file_name}"
-        destination_uri = f"gs://{project_id}.appspot.com/accounts/{self.account_name}/pratiche/{str(self.id_pratica)}/documenti/{self.file_name}_docai"
+        source_uri = self.path
+        destination_uri = f"{self.path}_docai"
 
         # Configure API Endpoint (may be needed for some setups)
         gcs_document = documentai.GcsDocument(

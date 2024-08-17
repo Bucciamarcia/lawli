@@ -13,6 +13,7 @@ import functions_framework
 import base64
 from py.logger_config import LoggerConfig
 import yaml
+from py.constants import PROJECT_ID
 
 
 def initialize_env():
@@ -37,10 +38,11 @@ def get_text_from_pdf(req: https_fn.CallableRequest) -> dict[str, str]:
     keys = ["idPratica", "fileName", "fileBytes", "accountName"]
 
     id_pratica, file_name, file_bytes, account_name = commons.get_data(req, keys)
+    project_id = PROJECT_ID
+    path = f"gs://{project_id}.appspot.com/accounts/{account_name}/pratiche/{str(id_pratica)}/documenti/originale_{file_name}"
 
-    functions.Pdf_Transformer(
-        id_pratica, file_name, file_bytes, account_name
-    ).process_pdf()
+    functions.Pdf_Transformer(path, file_bytes).process_pdf()
+    # TODO: Test this function after putting path in here.
     logger.info("OK!")
 
     return {"status": "ok"}
