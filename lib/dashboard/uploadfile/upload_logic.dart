@@ -71,8 +71,7 @@ class DocumentUploader {
       return;
     }
     if (showPopup == true) {
-      
-    Navigator.of(context).pop();
+      Navigator.of(context).pop();
     }
     showConfirmationDialog(context, "Documento caricato con successo.");
   }
@@ -136,7 +135,9 @@ class DocumentUploader {
                 "Errore durante l'estrazione della data dal documento: ${e.toString()}");
           }
         }
-        await PraticheDb().addNewDocument(fileName, data, idPratica);
+        if (!fileName.contains("originale")) {
+          await PraticheDb().addNewDocument(fileName, data, idPratica);
+        }
       } catch (e) {
         if (!context.mounted) {
           debugPrint("Context not mounted");

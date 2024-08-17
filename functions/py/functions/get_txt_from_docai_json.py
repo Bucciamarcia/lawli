@@ -125,6 +125,8 @@ class DateExtractor:
         self.logger.info(f"New path: {newpath}")
         try:
             account, pratica, documento = self.extract_path(newpath)  # type: ignore
+            if account is None or pratica is None or documento is None:
+                raise ValueError("Error extracting path.")
             self.logger.info(
                 f"Extracted path in extract_date: ACCOUNT: {account}, PRATICA: {pratica}, DOCUMENTO: {documento}"
             )
