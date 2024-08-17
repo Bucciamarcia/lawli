@@ -6,6 +6,8 @@ import 'package:lawli/ricerca_sentenze/tribunale_selector.dart';
 import 'package:lawli/services/auth.dart';
 import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/services/firestore.dart';
+import 'package:lawli/services/text_extractor.dart';
+import 'package:lawli/shared/confirmation_message.dart';
 import 'package:lawli/shared/upload_file.dart';
 import '../services/models.dart';
 import "result_box.dart";
@@ -190,7 +192,12 @@ class _RicercaDocumentoState extends State<RicercaDocumento> {
         Provider.of<RicercaSentenzeProvider>(context, listen: true);
 
     if (AuthService().isGuest()) {
-      return const Text("Devi essere loggato per cercare sentenze");
+      try {
+        return loggedOutDocumento(context);
+      } catch (e) {
+        debugPrint("Error in RicercaDocumento: $e");
+        return const Text("Errore nel caricamento dei documenti");
+      }
     } else {
       return loggedInDocumento(ricercaSentenzeProvider);
     }
@@ -221,7 +228,7 @@ class _RicercaDocumentoState extends State<RicercaDocumento> {
     );
   }
 
-  Column loggedOutDocumento() {
+  Column loggedOutDocumento(BuildContext context) {
     return Column(
       children: [
         FileUploader(
@@ -244,8 +251,11 @@ class _RicercaDocumentoState extends State<RicercaDocumento> {
         String filename = path.basenameWithoutExtension(file.name);
         String extension = path.extension(file.name);
         Uint8List data = file.bytes!;
-        // TODO: Extract text from file
-        // Vector search on sentenze
+        TextExtractor().extractText(data, extension);
+        // TODO: Vector search on sentenze
+      } catch (e) {
+        debugPrint("Error in onFileSelected: $e");
+        rethrow;
       } finally {
         provider.isSearchingSentenze = false;
       }
