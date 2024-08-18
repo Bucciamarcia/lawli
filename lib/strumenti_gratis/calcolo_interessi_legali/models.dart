@@ -1,7 +1,6 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
 import "package:json_annotation/json_annotation.dart";
-import "package:lawli/services/auth.dart";
 part "models.g.dart";
 
 @JsonSerializable()
