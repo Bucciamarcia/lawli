@@ -149,7 +149,7 @@ class _RicercaParoleChiaveState extends State<RicercaParoleChiave> {
       {bool clearController = false}) {
     return IconButton(
       icon: const Icon(Icons.send),
-      style: ButtonStyle(iconSize: MaterialStateProperty.all(50)),
+      style: ButtonStyle(iconSize: WidgetStateProperty.all(50)),
       tooltip: textToCompare.isNotEmpty
           ? 'Invia il testo'
           : 'Inserisci del testo per inviare',
@@ -231,16 +231,28 @@ class _RicercaDocumentoState extends State<RicercaDocumento> {
   Column loggedOutDocumento(BuildContext context) {
     return Column(
       children: [
+        const TribunaleSelector(),
         FileUploader(
-            labelText: "labeltext",
-            helperText: "helpertext",
-            buttonText: "buttonText",
-            onFileSelected: onFileSelected)
+            labelText: "Carica un documento",
+            helperText: "Carica un documento per cercare sentenze simili.",
+            buttonText: "Carica documento",
+            onFileSelected: loggedOutFileSelected),
+        if (Provider.of<RicercaSentenzeProvider>(context, listen: true)
+                .isSearchingSentenze ==
+            true)
+          const CircularProgressIndicator()
+        else if (Provider.of<RicercaSentenzeProvider>(context, listen: true)
+            .similarSentenze
+            .isNotEmpty)
+          ResultBox(
+              sentenze:
+                  Provider.of<RicercaSentenzeProvider>(context, listen: true)
+                      .similarSentenze),
       ],
     );
   }
 
-  void onFileSelected(PlatformFile? file) async {
+  void loggedOutFileSelected(PlatformFile? file) async {
     if (file == null || file.bytes == null) {
       return;
     } else {
@@ -248,11 +260,10 @@ class _RicercaDocumentoState extends State<RicercaDocumento> {
           Provider.of<RicercaSentenzeProvider>(context, listen: false);
       provider.isSearchingSentenze = true;
       try {
-        String filename = path.basenameWithoutExtension(file.name);
         String extension = path.extension(file.name);
         Uint8List data = file.bytes!;
-        TextExtractor().extractText(data, extension);
-        // TODO: Vector search on sentenze
+        String text = TextExtractor().extractText(data, extension);
+        await provider.searchSentenze(text, provider.corte);
       } catch (e) {
         debugPrint("Error in onFileSelected: $e");
         rethrow;
