@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import "../../shared/shared.dart";
-import "../../services/services.dart";
+import "../../../shared/shared.dart";
+import "../../../services/services.dart";
 import "motore_ricerca_sentenze.dart";
 
 String infoBox = """La funzionalità ricerca sentenze è un motore di ricerca per sentenze di tribulale.

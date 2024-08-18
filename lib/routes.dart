@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lawli/strumenti_gratis/calcolo_interessi_legali/calcolo_interessi_legali.dart';
 import 'package:lawli/trascrizione_audio/trascrizione_audio.dart';
 import 'dashboard/document/view/view_document.dart';
 import 'home/home.dart';
@@ -11,7 +12,7 @@ import "home/recent/recent.dart";
 import 'pratiche/nuovo/nuovo.dart';
 import "pratiche/pratiche.dart";
 import "assistiti/nuovo/nuovo.dart";
-import "ricerca_sentenze/ricerca_sentenze.dart";
+import "strumenti_gratis/ricerca_sentenze/ricerca_sentenze.dart";
 import "template/template.dart";
 import "account/account.dart";
 import "home/guestlogin.dart";
@@ -33,5 +34,6 @@ final Map<String, WidgetBuilder> routes = {
   '/template': (BuildContext context) => const TemplateScreen(),
   '/account': (BuildContext context) => const AccountScreen(),
   '/guestlogin': (BuildContext context) => const GuestLogin(),
+  '/calcolointeressilegali': (BuildContext context) => const CalcoloInteressiLegaliScreen(),
 };
 

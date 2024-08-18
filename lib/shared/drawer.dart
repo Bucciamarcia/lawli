@@ -76,6 +76,12 @@ class MenuElements {
             Navigator.pushNamed(context, '/ricerca_sentenze');
           },
         ),
+        ListTile(
+          title: const Text("Calcolo interessi legali"),
+          onTap: () {
+            Navigator.pushNamed(context, '/calcolointeressilegali');
+          },
+        )
       ]),
       ListTile(
           title: const Text("Account"),

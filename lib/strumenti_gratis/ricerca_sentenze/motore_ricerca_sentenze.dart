@@ -2,14 +2,13 @@ import 'dart:typed_data';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:lawli/ricerca_sentenze/tribunale_selector.dart';
+import 'package:lawli/strumenti_gratis/ricerca_sentenze/tribunale_selector.dart';
 import 'package:lawli/services/auth.dart';
 import 'package:lawli/services/cloud_storage.dart';
 import 'package:lawli/services/firestore.dart';
 import 'package:lawli/services/text_extractor.dart';
-import 'package:lawli/shared/confirmation_message.dart';
 import 'package:lawli/shared/upload_file.dart';
-import '../services/models.dart';
+import '../../services/models.dart';
 import "result_box.dart";
 import "dart:convert";
 import "sentenza_object.dart";

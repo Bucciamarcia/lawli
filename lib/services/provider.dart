@@ -2,7 +2,7 @@ import "package:flutter/foundation.dart";
 import 'package:lawli/services/models.dart';
 import "dart:convert";
 import 'package:cloud_functions/cloud_functions.dart';
-import "package:lawli/ricerca_sentenze/sentenza_object.dart";
+import "package:lawli/strumenti_gratis/ricerca_sentenze/sentenza_object.dart";
 
 class RicercaSentenzeProvider extends ChangeNotifier {
   String corte = "tutte";
