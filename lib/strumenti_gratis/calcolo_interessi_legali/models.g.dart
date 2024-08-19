@@ -9,8 +9,8 @@ part of 'models.dart';
 TassoInteresseLegale _$TassoInteresseLegaleFromJson(
         Map<String, dynamic> json) =>
     TassoInteresseLegale(
-      inizio: DateTime.parse(json['inizio'] as String),
-      fine: DateTime.parse(json['fine'] as String),
+      inizio: TassoInteresseLegale._fromJson(json['inizio'] as String),
+      fine: TassoInteresseLegale._fromJson(json['fine'] as String),
       interesse: (json['interesse'] as num?)?.toDouble() ?? 0,
       norma: json['norma'] as String? ?? '',
     );
@@ -18,8 +18,8 @@ TassoInteresseLegale _$TassoInteresseLegaleFromJson(
 Map<String, dynamic> _$TassoInteresseLegaleToJson(
         TassoInteresseLegale instance) =>
     <String, dynamic>{
-      'inizio': instance.inizio.toIso8601String(),
-      'fine': instance.fine.toIso8601String(),
+      'inizio': TassoInteresseLegale._toJson(instance.inizio),
+      'fine': TassoInteresseLegale._toJson(instance.fine),
       'interesse': instance.interesse,
       'norma': instance.norma,
     };

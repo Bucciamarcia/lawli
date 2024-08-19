@@ -19,6 +19,15 @@ class TassoInteresseLegale {
     this.norma = '',
   });
 
+  factory TassoInteresseLegale.fromJson(Map<String, dynamic> json) =>
+      _$TassoInteresseLegaleFromJson(json);
+  Map<String, dynamic> toJson() => _$TassoInteresseLegaleToJson(this);
+  static DateTime _fromJson(String date) => DateTime.parse(date);
+  static String _toJson(DateTime date) => date.toIso8601String();
+}
+
+class TassoInteresseLegaleOperations {
+
   /// Returns the legal interest rate that started in the given year.
   Future<TassoInteresseLegale> getTassoInteresseLegale(double anno) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -55,9 +64,4 @@ class TassoInteresseLegale {
     }
   }
 
-  factory TassoInteresseLegale.fromJson(Map<String, dynamic> json) =>
-      _$TassoInteresseLegaleFromJson(json);
-  Map<String, dynamic> toJson() => _$TassoInteresseLegaleToJson(this);
-  static DateTime _fromJson(String date) => DateTime.parse(date);
-  static String _toJson(DateTime date) => date.toIso8601String();
 }
