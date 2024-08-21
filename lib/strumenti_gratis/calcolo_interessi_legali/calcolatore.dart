@@ -21,7 +21,7 @@ class Calcolatore {
 
   Future<TabellaInteressi> run() async {
     tassoInteresseLegaleOperations ??= TassoInteresseLegaleOperations();
-    if (capitalizzazione == 0) {
+    if (capitalizzazione == 0 || capitalizzazione == 12) {
       return await NoCapitalizzazione(
         initialCapital: initialCapital,
         initialDate: initialDate,
@@ -48,6 +48,12 @@ class Calcolatore {
     }
     return anni;
   }
+
+  int _countDays(DateTime date1, DateTime date2) {
+    Duration difference = date1.difference(date2);
+    int days = difference.inDays.abs();
+    return days;
+  }
 }
 
 class NoCapitalizzazione extends Calcolatore {
@@ -70,42 +76,68 @@ class NoCapitalizzazione extends Calcolatore {
           "Error in calculate NoCapitalizzazione: startIndex not found");
     }
     List<RigaInteressi> righe = [];
+    double workingCapital = initialCapital;
 
     while (true) {
+      // If capitalizzazione, change the initial date to the end of the last riga +1 day.
+      DateTime startPeriodDate;
+      if (righe.isNotEmpty && capitalizzazione == 12) {
+        startPeriodDate = righe.last.dataFinale.add(const Duration(days: 1));
+      } else {
+        startPeriodDate = initialDate;
+      }
       // Fetch the interest rate for the current period.
       TassoInteresseLegale tassoCorrente = tassi[currentIndex];
       // Get the LATTEST date between the initial date and the start of the period.
-      DateTime initialPeriodDate = initialDate.isAfter(tassoCorrente.inizio)
-          ? initialDate
+      DateTime initialPeriodDate = startPeriodDate.isAfter(tassoCorrente.inizio)
+          ? startPeriodDate
           : tassoCorrente.inizio;
       // Get the EARLIEST date between the final date and the end of the period.
       DateTime finalPeriodDate = tassoCorrente.fine.isBefore(finalDate)
           ? tassoCorrente.fine
           : finalDate;
 
+      // If capitalizzazione annuale, get the EARLIEST date between finalPeriodDate and the December 31st of the same year.
+      if (capitalizzazione == 12) {
+        DateTime endOfYear = DateTime(initialPeriodDate.year, 12, 31);
+        finalPeriodDate =
+            finalPeriodDate.isBefore(endOfYear) ? finalPeriodDate : endOfYear;
+      }
+
       int days = _countDays(finalPeriodDate, initialPeriodDate);
 /*    If the period starts on the initial date, add one day.
       This is because the interest is calculated on the day of the start, so the first day is included. */
       if (initialPeriodDate == tassoCorrente.inizio) {
         days++;
+      } else if (startPeriodDate == DateTime(initialPeriodDate.year, 1, 1)) {
+        days++;
       }
 
       // The formula for calculating the interest is: (capital * interest rate * days) / 36500
       double interessi =
-          initialCapital * tassoCorrente.interesse * days / 36500;
+          workingCapital * tassoCorrente.interesse * days / 36500;
       interessi = double.parse(interessi.toStringAsFixed(2));
 
       // Add the row to the table.
       righe.add(
         RigaInteressi(
-            capitale: initialCapital,
+            capitale: workingCapital,
             dataIniziale: initialPeriodDate,
             dataFinale: finalPeriodDate,
             giorni: days,
             interessi: interessi,
             tasso: tassoCorrente.interesse),
       );
-      currentIndex++;
+      // If finalPeriodDate is before or equal endofYear, increase the index.
+      if (finalPeriodDate == tassoCorrente.fine) {
+        currentIndex++;
+      }
+      // Add interests to the initial capital if necessary.
+      if (capitalizzazione == 12) {
+        workingCapital += interessi;
+        workingCapital = double.parse(workingCapital.toStringAsFixed(2));
+      }
+      // If finalPeriodDate is after endofYear, break the loop.
       if (finalDate.isBefore(tassoCorrente.fine) ||
           currentIndex == tassi.length - 1) {
         break;
@@ -119,12 +151,6 @@ class NoCapitalizzazione extends Calcolatore {
       capitalizzazione: capitalizzazione,
       capitaleIniziale: initialCapital,
     );
-  }
-
-  int _countDays(DateTime date1, DateTime date2) {
-    Duration difference = date1.difference(date2);
-    int days = difference.inDays.abs();
-    return days;
   }
 }
 
@@ -162,7 +188,7 @@ class TabellaInteressi {
     for (var riga in righe) {
       totale += riga.interessi;
     }
-    return totale;
+    return double.parse(totale.toStringAsFixed(2));
   }
 
   /// Returns the total amount due.
