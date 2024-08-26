@@ -342,11 +342,11 @@ void main() {
         expect(run.righe[1].dataFinale, DateTime(2013, 09, 30));
         expect(run.righe[1].capitale, 102500);
         expect(run.righe[1].tasso, 2.5);
-        expect(run.righe[1].giorni, 273);
-        expect(run.righe[1].interessi, 1916.61);
-        expect(run.totaleGiorni, 638);
-        expect(run.totaleInteressi, 4416.61);
-        expect(run.totaleDovuto, 104416.61);
+        expect(run.righe[1].giorni, 272);
+        expect(run.righe[1].interessi, 1909.59);
+        expect(run.totaleGiorni, 637);
+        expect(run.totaleInteressi, 4409.59);
+        expect(run.totaleDovuto, 104409.59);
       });
       test("Fine 31 dicembre", () async {
         when(mockTassoInteresseLegale.getTassiInteresseLegale())

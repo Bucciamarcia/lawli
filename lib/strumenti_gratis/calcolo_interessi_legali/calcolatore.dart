@@ -78,6 +78,10 @@ class NoCapitalizzazione extends Calcolatore {
     List<RigaInteressi> righe = [];
     double workingCapital = initialCapital;
 
+    /// If capitalizzazione annuale, add the interests to the capital at the end of the year.
+    /// So if the end of the period is not the end of the year, it has to save to memory the interests to add them at the end of the year.
+    double appendedInterests = 0;
+
     while (true) {
       // If capitalizzazione, change the initial date to the end of the last riga +1 day.
       DateTime startPeriodDate;
@@ -107,9 +111,18 @@ class NoCapitalizzazione extends Calcolatore {
       int days = _countDays(finalPeriodDate, initialPeriodDate);
 /*    If the period starts on the initial date, add one day.
       This is because the interest is calculated on the day of the start, so the first day is included. */
-      if (initialPeriodDate == tassoCorrente.inizio) {
+      if (initialPeriodDate == tassoCorrente.inizio &&
+          startPeriodDate != initialPeriodDate) {
         days++;
       } else if (startPeriodDate == DateTime(initialPeriodDate.year, 1, 1)) {
+        if (capitalizzazione == 0) {
+          days++;
+        } else if (initialDate != DateTime(initialPeriodDate.year, 1, 1)) {
+          days++;
+        }
+      } else if (initialPeriodDate == tassoCorrente.inizio &&
+          initialPeriodDate != DateTime(initialPeriodDate.year, 1, 1) &&
+          finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31)) {
         days++;
       }
 
@@ -133,13 +146,16 @@ class NoCapitalizzazione extends Calcolatore {
         currentIndex++;
       }
       // Add interests to the initial capital if necessary.
-      if (capitalizzazione == 12) {
-        workingCapital += interessi;
+      if (capitalizzazione == 12 &&
+          finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31)) {
+        workingCapital += interessi + appendedInterests;
+        appendedInterests = 0; // Reset the appended interests.
         workingCapital = double.parse(workingCapital.toStringAsFixed(2));
+      } else {
+        appendedInterests += interessi;
       }
       // If finalPeriodDate is after endofYear, break the loop.
-      if (finalDate.isBefore(tassoCorrente.fine) ||
-          currentIndex == tassi.length - 1) {
+      if (finalDate == finalPeriodDate || currentIndex == tassi.length - 1) {
         break;
       }
     }
