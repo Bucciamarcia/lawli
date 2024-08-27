@@ -23,7 +23,8 @@ class Calcolatore {
     tassoInteresseLegaleOperations ??= TassoInteresseLegaleOperations();
     if (capitalizzazione == 0 ||
         capitalizzazione == 12 ||
-        capitalizzazione == 6) {
+        capitalizzazione == 6 ||
+        capitalizzazione == 3) {
       return await NoCapitalizzazione(
         initialCapital: initialCapital,
         initialDate: initialDate,
@@ -90,14 +91,16 @@ class NoCapitalizzazione extends Calcolatore {
       // If capitalizzazione, change the initial date to the end of the last riga +1 day.
       DateTime startPeriodDate;
       if (righe.isNotEmpty &&
-          (capitalizzazione == 12 || capitalizzazione == 6)) {
+          (capitalizzazione == 12 ||
+              capitalizzazione == 6 ||
+              capitalizzazione == 3)) {
         startPeriodDate = righe.last.dataFinale.add(const Duration(days: 1));
       } else {
         startPeriodDate = initialDate;
       }
       // Fetch the interest rate for the current period.
       TassoInteresseLegale tassoCorrente = tassi[currentIndex];
-      // Get the LATTEST date between the initial date and the start of the period.
+      // Get the LATEST date between the initial date and the start of the period.
       DateTime initialPeriodDate = startPeriodDate.isAfter(tassoCorrente.inizio)
           ? startPeriodDate
           : tassoCorrente.inizio;
@@ -108,12 +111,12 @@ class NoCapitalizzazione extends Calcolatore {
 
       // If capitalizzazione is active, get the EARLIEST date between finalPeriodDate and the December 31st of the same year.
       if (capitalizzazione == 12) {
-        DateTime endOfYear = DateTime(initialPeriodDate.year, 12, 31);
+        DateTime endOfYear = DateTime.utc(initialPeriodDate.year, 12, 31);
         finalPeriodDate =
             finalPeriodDate.isBefore(endOfYear) ? finalPeriodDate : endOfYear;
       } else if (capitalizzazione == 6) {
-        DateTime endOfYear = DateTime(initialPeriodDate.year, 12, 31);
-        DateTime endOfSemester = DateTime(initialPeriodDate.year, 6, 30);
+        DateTime endOfYear = DateTime.utc(initialPeriodDate.year, 12, 31);
+        DateTime endOfSemester = DateTime.utc(initialPeriodDate.year, 6, 30);
         if (finalPeriodDate.isBefore(endOfSemester)) {
           finalPeriodDate = finalPeriodDate;
         } else if (initialPeriodDate.isAfter(endOfSemester) &&
@@ -121,6 +124,29 @@ class NoCapitalizzazione extends Calcolatore {
           finalPeriodDate = endOfYear;
         } else if (endOfSemester.isAfter(initialPeriodDate)) {
           finalPeriodDate = endOfSemester;
+        }
+      } else if (capitalizzazione == 3) {
+        DateTime endOfTrimester1 = DateTime.utc(initialPeriodDate.year, 3, 31);
+        DateTime endOfTrimester2 = DateTime.utc(initialPeriodDate.year, 6, 30);
+        DateTime endOfTrimester3 = DateTime.utc(initialPeriodDate.year, 9, 30);
+        DateTime endOfYear = DateTime.utc(initialPeriodDate.year, 12, 31);
+
+        if (finalPeriodDate.isBefore(endOfTrimester1)) {
+          finalPeriodDate = finalPeriodDate;
+        } else if (initialPeriodDate.isBefore(endOfTrimester1) &&
+            finalPeriodDate.isAfter(endOfTrimester1)) {
+          finalPeriodDate = endOfTrimester1;
+        } else if (initialPeriodDate.isAfter(endOfTrimester1) &&
+            initialPeriodDate.isBefore(endOfTrimester2) &&
+            finalPeriodDate.isAfter(endOfTrimester2)) {
+          finalPeriodDate = endOfTrimester2;
+        } else if (initialPeriodDate.isAfter(endOfTrimester2) &&
+            initialPeriodDate.isBefore(endOfTrimester3) &&
+            finalPeriodDate.isAfter(endOfTrimester3)) {
+          finalPeriodDate = endOfTrimester3;
+        } else if (initialPeriodDate.isAfter(endOfTrimester3) &&
+            finalPeriodDate.isAfter(endOfYear)) {
+          finalPeriodDate = endOfYear;
         }
       }
 
@@ -130,27 +156,42 @@ class NoCapitalizzazione extends Calcolatore {
       if (initialPeriodDate == tassoCorrente.inizio &&
           startPeriodDate != initialPeriodDate) {
         days++;
-      } else if (startPeriodDate == DateTime(initialPeriodDate.year, 1, 1) ||
-          startPeriodDate == DateTime(initialPeriodDate.year, 7, 1)) {
+      } else if (startPeriodDate == DateTime.utc(initialPeriodDate.year, 1, 1) ||
+          startPeriodDate == DateTime.utc(initialPeriodDate.year, 7, 1) ||
+          startPeriodDate == DateTime.utc(initialPeriodDate.year, 4, 1) ||
+          startPeriodDate == DateTime.utc(initialPeriodDate.year, 10, 1)) {
         if (capitalizzazione == 0 &&
-            initialDate != DateTime(initialPeriodDate.year, 1, 1)) {
+            initialDate != DateTime.utc(initialPeriodDate.year, 1, 1)) {
           days++;
         } else if (capitalizzazione == 12 &&
-            initialDate != DateTime(initialPeriodDate.year, 1, 1)) {
+            initialDate != DateTime.utc(initialPeriodDate.year, 1, 1)) {
           days++;
-        } else if (capitalizzazione == 6 && initialDate != startPeriodDate &&
-            (initialDate != DateTime(initialPeriodDate.year, 1, 1) ||
-            initialDate != DateTime(initialPeriodDate.year, 7, 1))) {
+        } else if (capitalizzazione == 6 &&
+            initialDate != startPeriodDate &&
+            (initialDate != DateTime.utc(initialPeriodDate.year, 1, 1) ||
+                initialDate != DateTime.utc(initialPeriodDate.year, 7, 1))) {
+          days++;
+        } else if (capitalizzazione == 3 &&
+            initialDate != startPeriodDate &&
+            (initialDate != DateTime.utc(initialPeriodDate.year, 1, 1) ||
+                initialDate != DateTime.utc(initialPeriodDate.year, 4, 1) ||
+                initialDate != DateTime.utc(initialPeriodDate.year, 7, 1) ||
+                initialDate != DateTime.utc(initialPeriodDate.year, 10, 1))) {
           days++;
         }
       } else if (capitalizzazione == 12 &&
           initialPeriodDate == tassoCorrente.inizio &&
-          initialPeriodDate != DateTime(initialPeriodDate.year, 1, 1) &&
-          finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31)) {
+          initialPeriodDate != DateTime.utc(initialPeriodDate.year, 1, 1) &&
+          finalPeriodDate == DateTime.utc(finalPeriodDate.year, 12, 31)) {
         days++;
       } else if (capitalizzazione == 6) {
         if (tassoCorrente.fine == finalPeriodDate ||
-            finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31)) {
+            finalPeriodDate == DateTime.utc(finalPeriodDate.year, 12, 31)) {
+          days++;
+        }
+      } else if (capitalizzazione == 3) {
+        if (tassoCorrente.fine == finalPeriodDate ||
+            finalPeriodDate == DateTime.utc(finalPeriodDate.year, 12, 31)) {
           days++;
         }
       }
@@ -176,13 +217,21 @@ class NoCapitalizzazione extends Calcolatore {
       }
       // Add interests to the initial capital if necessary.
       if (capitalizzazione == 12 &&
-          finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31)) {
+          finalPeriodDate == DateTime.utc(finalPeriodDate.year, 12, 31)) {
         workingCapital += interessi + appendedInterests;
         appendedInterests = 0; // Reset the appended interests.
         workingCapital = double.parse(workingCapital.toStringAsFixed(2));
       } else if (capitalizzazione == 6 &&
-          (finalPeriodDate == DateTime(finalPeriodDate.year, 6, 30) ||
-              finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31))) {
+          (finalPeriodDate == DateTime.utc(finalPeriodDate.year, 6, 30) ||
+              finalPeriodDate == DateTime.utc(finalPeriodDate.year, 12, 31))) {
+        workingCapital += interessi + appendedInterests;
+        appendedInterests = 0; // Reset the appended interests.
+        workingCapital = double.parse(workingCapital.toStringAsFixed(2));
+      } else if (capitalizzazione == 3 &&
+          (finalPeriodDate == DateTime.utc(finalPeriodDate.year, 3, 31) ||
+              finalPeriodDate == DateTime.utc(finalPeriodDate.year, 6, 30) ||
+              finalPeriodDate == DateTime.utc(finalPeriodDate.year, 9, 30) ||
+              finalPeriodDate == DateTime.utc(finalPeriodDate.year, 12, 31))) {
         workingCapital += interessi + appendedInterests;
         appendedInterests = 0; // Reset the appended interests.
         workingCapital = double.parse(workingCapital.toStringAsFixed(2));
