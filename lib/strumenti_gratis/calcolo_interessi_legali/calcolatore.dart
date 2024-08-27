@@ -21,7 +21,9 @@ class Calcolatore {
 
   Future<TabellaInteressi> run() async {
     tassoInteresseLegaleOperations ??= TassoInteresseLegaleOperations();
-    if (capitalizzazione == 0 || capitalizzazione == 12) {
+    if (capitalizzazione == 0 ||
+        capitalizzazione == 12 ||
+        capitalizzazione == 6) {
       return await NoCapitalizzazione(
         initialCapital: initialCapital,
         initialDate: initialDate,
@@ -50,7 +52,9 @@ class Calcolatore {
   }
 
   int _countDays(DateTime date1, DateTime date2) {
-    Duration difference = date1.difference(date2);
+    DateTime date1utc = DateTime.utc(date1.year, date1.month, date1.day);
+    DateTime date2utc = DateTime.utc(date2.year, date2.month, date2.day);
+    Duration difference = date1utc.difference(date2utc);
     int days = difference.inDays.abs();
     return days;
   }
@@ -85,7 +89,8 @@ class NoCapitalizzazione extends Calcolatore {
     while (true) {
       // If capitalizzazione, change the initial date to the end of the last riga +1 day.
       DateTime startPeriodDate;
-      if (righe.isNotEmpty && capitalizzazione == 12) {
+      if (righe.isNotEmpty &&
+          (capitalizzazione == 12 || capitalizzazione == 6)) {
         startPeriodDate = righe.last.dataFinale.add(const Duration(days: 1));
       } else {
         startPeriodDate = initialDate;
@@ -101,11 +106,22 @@ class NoCapitalizzazione extends Calcolatore {
           ? tassoCorrente.fine
           : finalDate;
 
-      // If capitalizzazione annuale, get the EARLIEST date between finalPeriodDate and the December 31st of the same year.
+      // If capitalizzazione is active, get the EARLIEST date between finalPeriodDate and the December 31st of the same year.
       if (capitalizzazione == 12) {
         DateTime endOfYear = DateTime(initialPeriodDate.year, 12, 31);
         finalPeriodDate =
             finalPeriodDate.isBefore(endOfYear) ? finalPeriodDate : endOfYear;
+      } else if (capitalizzazione == 6) {
+        DateTime endOfYear = DateTime(initialPeriodDate.year, 12, 31);
+        DateTime endOfSemester = DateTime(initialPeriodDate.year, 6, 30);
+        if (finalPeriodDate.isBefore(endOfSemester)) {
+          finalPeriodDate = finalPeriodDate;
+        } else if (initialPeriodDate.isAfter(endOfSemester) &&
+            finalPeriodDate.isAfter(endOfYear)) {
+          finalPeriodDate = endOfYear;
+        } else if (endOfSemester.isAfter(initialPeriodDate)) {
+          finalPeriodDate = endOfSemester;
+        }
       }
 
       int days = _countDays(finalPeriodDate, initialPeriodDate);
@@ -114,16 +130,29 @@ class NoCapitalizzazione extends Calcolatore {
       if (initialPeriodDate == tassoCorrente.inizio &&
           startPeriodDate != initialPeriodDate) {
         days++;
-      } else if (startPeriodDate == DateTime(initialPeriodDate.year, 1, 1)) {
-        if (capitalizzazione == 0) {
+      } else if (startPeriodDate == DateTime(initialPeriodDate.year, 1, 1) ||
+          startPeriodDate == DateTime(initialPeriodDate.year, 7, 1)) {
+        if (capitalizzazione == 0 &&
+            initialDate != DateTime(initialPeriodDate.year, 1, 1)) {
           days++;
-        } else if (initialDate != DateTime(initialPeriodDate.year, 1, 1)) {
+        } else if (capitalizzazione == 12 &&
+            initialDate != DateTime(initialPeriodDate.year, 1, 1)) {
+          days++;
+        } else if (capitalizzazione == 6 && initialDate != startPeriodDate &&
+            (initialDate != DateTime(initialPeriodDate.year, 1, 1) ||
+            initialDate != DateTime(initialPeriodDate.year, 7, 1))) {
           days++;
         }
-      } else if (initialPeriodDate == tassoCorrente.inizio &&
+      } else if (capitalizzazione == 12 &&
+          initialPeriodDate == tassoCorrente.inizio &&
           initialPeriodDate != DateTime(initialPeriodDate.year, 1, 1) &&
           finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31)) {
         days++;
+      } else if (capitalizzazione == 6) {
+        if (tassoCorrente.fine == finalPeriodDate ||
+            finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31)) {
+          days++;
+        }
       }
 
       // The formula for calculating the interest is: (capital * interest rate * days) / 36500
@@ -148,6 +177,12 @@ class NoCapitalizzazione extends Calcolatore {
       // Add interests to the initial capital if necessary.
       if (capitalizzazione == 12 &&
           finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31)) {
+        workingCapital += interessi + appendedInterests;
+        appendedInterests = 0; // Reset the appended interests.
+        workingCapital = double.parse(workingCapital.toStringAsFixed(2));
+      } else if (capitalizzazione == 6 &&
+          (finalPeriodDate == DateTime(finalPeriodDate.year, 6, 30) ||
+              finalPeriodDate == DateTime(finalPeriodDate.year, 12, 31))) {
         workingCapital += interessi + appendedInterests;
         appendedInterests = 0; // Reset the appended interests.
         workingCapital = double.parse(workingCapital.toStringAsFixed(2));

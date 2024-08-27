@@ -342,11 +342,11 @@ void main() {
         expect(run.righe[1].dataFinale, DateTime(2013, 09, 30));
         expect(run.righe[1].capitale, 102500);
         expect(run.righe[1].tasso, 2.5);
-        expect(run.righe[1].giorni, 272);
-        expect(run.righe[1].interessi, 1909.59);
-        expect(run.totaleGiorni, 637);
-        expect(run.totaleInteressi, 4409.59);
-        expect(run.totaleDovuto, 104409.59);
+        expect(run.righe[1].giorni, 273);
+        expect(run.righe[1].interessi, 1916.61);
+        expect(run.totaleGiorni, 638);
+        expect(run.totaleInteressi, 4416.61);
+        expect(run.totaleDovuto, 104416.61);
       });
       test("Fine 31 dicembre", () async {
         when(mockTassoInteresseLegale.getTassiInteresseLegale())
@@ -422,6 +422,271 @@ void main() {
         expect(run.totaleGiorni, 292);
         expect(run.totaleInteressi, 5197.59);
         expect(run.totaleDovuto, 105197.59);
+      });
+    });
+    group("Capitalizzazione semestrale", () {
+      test("2005 a 2012", () async {
+        when(mockTassoInteresseLegale.getTassiInteresseLegale())
+            .thenAnswer((_) async => mockTassi);
+        Calcolatore calcolatore = Calcolatore(
+          initialCapital: 100000,
+          initialDate: DateTime(2005, 05, 20),
+          finalDate: DateTime(2012, 03, 08),
+          capitalizzazione: 6,
+          tassoInteresseLegaleOperations: mockTassoInteresseLegale,
+        );
+
+        TabellaInteressi run = await calcolatore.run();
+
+        expect(run.righe.length, 15);
+        expect(run.capitaleIniziale, 100000);
+        expect(run.initialDate, DateTime(2005, 05, 20));
+        expect(run.finalDate, DateTime(2012, 03, 08));
+        expect(run.capitalizzazione, 6);
+        expect(run.righe[0].dataIniziale, DateTime(2005, 05, 20));
+        expect(run.righe[0].dataFinale, DateTime(2005, 06, 30));
+        expect(run.righe[0].capitale, 100000);
+        expect(run.righe[0].tasso, 2.5);
+        expect(run.righe[0].giorni, 41);
+        expect(run.righe[0].interessi, 280.82);
+        expect(run.righe[1].dataIniziale, DateTime(2005, 07, 01));
+        expect(run.righe[1].dataFinale, DateTime(2005, 12, 31));
+        expect(run.righe[1].capitale, 100280.82);
+        expect(run.righe[1].tasso, 2.5);
+        expect(run.righe[1].giorni, 184);
+        expect(run.righe[1].interessi, 1263.81);
+        expect(run.righe[2].dataIniziale, DateTime(2006, 01, 01));
+        expect(run.righe[2].dataFinale, DateTime(2006, 06, 30));
+        expect(run.righe[2].capitale, 101544.63);
+        expect(run.righe[2].tasso, 2.5);
+        expect(run.righe[2].giorni, 181);
+        expect(run.righe[2].interessi, 1258.88);
+        expect(run.righe[3].dataIniziale, DateTime(2006, 07, 01));
+        expect(run.righe[3].dataFinale, DateTime(2006, 12, 31));
+        expect(run.righe[3].capitale, 102803.51);
+        expect(run.righe[3].tasso, 2.5);
+        expect(run.righe[3].giorni, 184);
+        expect(run.righe[3].interessi, 1295.61);
+        expect(run.righe[4].dataIniziale, DateTime(2007, 01, 01));
+        expect(run.righe[4].dataFinale, DateTime(2007, 06, 30));
+        expect(run.righe[4].capitale, 104099.12);
+        expect(run.righe[4].tasso, 2.5);
+        expect(run.righe[4].giorni, 181);
+        expect(run.righe[4].interessi, 1290.54);
+        expect(run.righe[5].dataIniziale, DateTime(2007, 07, 01));
+        expect(run.righe[5].dataFinale, DateTime(2007, 12, 31));
+        expect(run.righe[5].capitale, 105389.66);
+        expect(run.righe[5].tasso, 2.5);
+        expect(run.righe[5].giorni, 184);
+        expect(run.righe[5].interessi, 1328.20);
+        expect(run.righe[6].dataIniziale, DateTime(2008, 01, 01));
+        expect(run.righe[6].dataFinale, DateTime(2008, 06, 30));
+        expect(run.righe[6].capitale, 106717.86);
+        expect(run.righe[6].tasso, 3);
+        expect(run.righe[6].giorni, 182);
+        expect(run.righe[6].interessi, 1596.38);
+        expect(run.righe[7].dataIniziale, DateTime(2008, 07, 01));
+        expect(run.righe[7].dataFinale, DateTime(2008, 12, 31));
+        expect(run.righe[7].capitale, 108314.24);
+        expect(run.righe[7].tasso, 3);
+        expect(run.righe[7].giorni, 184);
+        expect(run.righe[7].interessi, 1638.07);
+        expect(run.righe[8].dataIniziale, DateTime(2009, 01, 01));
+        expect(run.righe[8].dataFinale, DateTime(2009, 06, 30));
+        expect(run.righe[8].capitale, 109952.31);
+        expect(run.righe[8].tasso, 3);
+        expect(run.righe[8].giorni, 181);
+        expect(run.righe[8].interessi, 1635.73);
+        expect(run.righe[9].dataIniziale, DateTime(2009, 07, 01));
+        expect(run.righe[9].dataFinale, DateTime(2009, 12, 31));
+        expect(run.righe[9].capitale, 111588.04);
+        expect(run.righe[9].tasso, 3);
+        expect(run.righe[9].giorni, 184);
+        expect(run.righe[9].interessi, 1687.58);
+        expect(run.righe[10].dataIniziale, DateTime(2010, 01, 01));
+        expect(run.righe[10].dataFinale, DateTime(2010, 06, 30));
+        expect(run.righe[10].capitale, 113275.62);
+        expect(run.righe[10].tasso, 1);
+        expect(run.righe[10].giorni, 181);
+        expect(run.righe[10].interessi, 561.72);
+        expect(run.righe[11].dataIniziale, DateTime(2010, 07, 01));
+        expect(run.righe[11].dataFinale, DateTime(2010, 12, 31));
+        expect(run.righe[11].capitale, 113837.34);
+        expect(run.righe[11].tasso, 1);
+        expect(run.righe[11].giorni, 184);
+        expect(run.righe[11].interessi, 573.86);
+        expect(run.righe[12].dataIniziale, DateTime(2011, 01, 01));
+        expect(run.righe[12].dataFinale, DateTime(2011, 06, 30));
+        expect(run.righe[12].capitale, 114411.20);
+        expect(run.righe[12].tasso, 1.5);
+        expect(run.righe[12].giorni, 181);
+        expect(run.righe[12].interessi, 851.03);
+        expect(run.righe[13].dataIniziale, DateTime(2011, 07, 01));
+        expect(run.righe[13].dataFinale, DateTime(2011, 12, 31));
+        expect(run.righe[13].capitale, 115262.23);
+        expect(run.righe[13].tasso, 1.5);
+        expect(run.righe[13].giorni, 184);
+        expect(run.righe[13].interessi, 871.57);
+        expect(run.righe[14].dataIniziale, DateTime(2012, 01, 01));
+        expect(run.righe[14].dataFinale, DateTime(2012, 03, 08));
+        expect(run.righe[14].capitale, 116133.80);
+        expect(run.righe[14].tasso, 2.5);
+        expect(run.righe[14].giorni, 68);
+        expect(run.righe[14].interessi, 540.90);
+        expect(run.totaleGiorni, 2484);
+        expect(run.totaleInteressi, 16674.70);
+        expect(run.totaleDovuto, 116674.70);
+      });
+      test("Stesso anno 2012", () async {
+        when(mockTassoInteresseLegale.getTassiInteresseLegale())
+            .thenAnswer((_) async => mockTassi);
+
+        Calcolatore calcolatore = Calcolatore(
+          initialCapital: 100000,
+          initialDate: DateTime(2012, 05, 20),
+          finalDate: DateTime(2012, 09, 23),
+          capitalizzazione: 6,
+          tassoInteresseLegaleOperations: mockTassoInteresseLegale,
+        );
+
+        TabellaInteressi run = await calcolatore.run();
+
+        expect(run.righe.length, 2);
+        expect(run.capitaleIniziale, 100000);
+        expect(run.initialDate, DateTime(2012, 05, 20));
+        expect(run.finalDate, DateTime(2012, 09, 23));
+        expect(run.capitalizzazione, 6);
+        expect(run.righe[0].dataIniziale, DateTime(2012, 05, 20));
+        expect(run.righe[0].dataFinale, DateTime(2012, 06, 30));
+        expect(run.righe[0].capitale, 100000);
+        expect(run.righe[0].tasso, 2.5);
+        expect(run.righe[0].giorni, 41);
+        expect(run.righe[0].interessi, 280.82);
+        expect(run.righe[1].dataIniziale, DateTime(2012, 07, 01));
+        expect(run.righe[1].dataFinale, DateTime(2012, 09, 23));
+        expect(run.righe[1].capitale, 100280.82);
+        expect(run.righe[1].tasso, 2.5);
+        expect(run.righe[1].giorni, 85);
+        expect(run.righe[1].interessi, 583.83);
+        expect(run.totaleGiorni, 126);
+        expect(run.totaleInteressi, 864.65);
+        expect(run.totaleDovuto, 100864.65);
+      });
+      test("Inizio primo gennaio", () async {
+        when(mockTassoInteresseLegale.getTassiInteresseLegale())
+            .thenAnswer((_) async => mockTassi);
+
+        Calcolatore calcolatore = Calcolatore(
+          initialCapital: 100000,
+          initialDate: DateTime(2012, 01, 01),
+          finalDate: DateTime(2012, 09, 30),
+          capitalizzazione: 6,
+          tassoInteresseLegaleOperations: mockTassoInteresseLegale,
+        );
+
+        TabellaInteressi run = await calcolatore.run();
+
+        expect(run.righe.length, 2);
+        expect(run.capitaleIniziale, 100000);
+        expect(run.initialDate, DateTime(2012, 01, 01));
+        expect(run.finalDate, DateTime(2012, 09, 30));
+        expect(run.capitalizzazione, 6);
+        expect(run.righe[0].dataIniziale, DateTime(2012, 01, 01));
+        expect(run.righe[0].dataFinale, DateTime(2012, 06, 30));
+        expect(run.righe[0].capitale, 100000);
+        expect(run.righe[0].tasso, 2.5);
+        expect(run.righe[0].giorni, 181);
+        expect(run.righe[0].interessi, 1239.73);
+        expect(run.righe[1].dataIniziale, DateTime(2012, 07, 01));
+        expect(run.righe[1].dataFinale, DateTime(2012, 09, 30));
+        expect(run.righe[1].capitale, 101239.73);
+        expect(run.righe[1].tasso, 2.5);
+        expect(run.righe[1].giorni, 92);
+        expect(run.righe[1].interessi, 637.95);
+        expect(run.totaleGiorni, 273);
+        expect(run.totaleInteressi, 1877.68);
+        expect(run.totaleDovuto, 101877.68);
+      });
+      test("Fine 31 dicembre", () async {
+        when(mockTassoInteresseLegale.getTassiInteresseLegale())
+            .thenAnswer((_) async => mockTassi);
+
+        Calcolatore calcolatore = Calcolatore(
+          initialCapital: 100000,
+          initialDate: DateTime(2012, 05, 20),
+          finalDate: DateTime(2012, 12, 31),
+          capitalizzazione: 6,
+          tassoInteresseLegaleOperations: mockTassoInteresseLegale,
+        );
+
+        TabellaInteressi run = await calcolatore.run();
+
+        expect(run.righe.length, 2);
+        expect(run.capitaleIniziale, 100000);
+        expect(run.initialDate, DateTime(2012, 05, 20));
+        expect(run.finalDate, DateTime(2012, 12, 31));
+        expect(run.capitalizzazione, 6);
+        expect(run.righe[0].dataIniziale, DateTime(2012, 05, 20));
+        expect(run.righe[0].dataFinale, DateTime(2012, 06, 30));
+        expect(run.righe[0].capitale, 100000);
+        expect(run.righe[0].tasso, 2.5);
+        expect(run.righe[0].giorni, 41);
+        expect(run.righe[0].interessi, 280.82);
+        expect(run.righe[1].dataIniziale, DateTime(2012, 07, 01));
+        expect(run.righe[1].dataFinale, DateTime(2012, 12, 31));
+        expect(run.righe[1].capitale, 100280.82);
+        expect(run.righe[1].tasso, 2.5);
+        expect(run.righe[1].giorni, 184);
+        expect(run.righe[1].interessi, 1263.81);
+        expect(run.totaleGiorni, 225);
+        expect(run.totaleInteressi, 1544.63);
+        expect(run.totaleDovuto, 101544.63);
+      });
+      test("Anno spezzato", () async {
+        when(mockTassoInteresseLegale.getTassiInteresseLegale())
+            .thenAnswer((_) async => mockTassi);
+        Calcolatore calcolatore = Calcolatore(
+          initialCapital: 100000,
+          initialDate: DateTime(1990, 05, 20),
+          finalDate: DateTime(1991, 03, 08),
+          capitalizzazione: 6,
+          tassoInteresseLegaleOperations: mockTassoInteresseLegale,
+        );
+
+        TabellaInteressi run = await calcolatore.run();
+
+        expect(run.righe.length, 4);
+        expect(run.capitaleIniziale, 100000);
+        expect(run.initialDate, DateTime(1990, 05, 20));
+        expect(run.finalDate, DateTime(1991, 03, 08));
+        expect(run.capitalizzazione, 6);
+        expect(run.righe[0].dataIniziale, DateTime(1990, 05, 20));
+        expect(run.righe[0].dataFinale, DateTime(1990, 06, 30));
+        expect(run.righe[0].capitale, 100000);
+        expect(run.righe[0].tasso, 5.0);
+        expect(run.righe[0].giorni, 41);
+        expect(run.righe[0].interessi, 561.64);
+        expect(run.righe[1].dataIniziale, DateTime(1990, 07, 01));
+        expect(run.righe[1].dataFinale, DateTime(1990, 12, 15));
+        expect(run.righe[1].capitale, 100561.64);
+        expect(run.righe[1].tasso, 5.0);
+        expect(run.righe[1].giorni, 168);
+        expect(run.righe[1].interessi, 2314.30);
+        expect(run.righe[2].dataIniziale, DateTime(1990, 12, 16));
+        expect(run.righe[2].dataFinale, DateTime(1990, 12, 31));
+        expect(run.righe[2].capitale, 100561.64);
+        expect(run.righe[2].tasso, 10.0);
+        expect(run.righe[2].giorni, 16);
+        expect(run.righe[2].interessi, 440.82);
+        expect(run.righe[3].dataIniziale, DateTime(1991, 01, 01));
+        expect(run.righe[3].dataFinale, DateTime(1991, 03, 08));
+        expect(run.righe[3].capitale, 103316.76);
+        expect(run.righe[3].tasso, 10.0);
+        expect(run.righe[3].giorni, 67);
+        expect(run.righe[3].interessi, 1896.50);
+        expect(run.totaleGiorni, 292);
+        expect(run.totaleInteressi, 5213.26);
+        expect(run.totaleDovuto, 105213.26);
       });
     });
   });
