@@ -69,6 +69,8 @@ Need to inizialize the weaviate DB once. In functions/weaviate_setup_template_co
 
 ## Deploy
 
+From the main project folder.
+
 ```bash
 flutter build web &&
 firebase deploy &&
