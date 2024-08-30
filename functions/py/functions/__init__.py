@@ -15,6 +15,7 @@ from .template_operations import Template
 from .search_similar_templates import TemplateSearcher
 from .get_likley_templates import LikleyTemplateFinder
 from .string_to_docx import DocxCreator
+from .calcolo_interessi_legali import CalcoloInteressiLegali
 
 __all__ = [
     "Pdf_Transformer",
@@ -34,4 +35,5 @@ __all__ = [
     "TemplateSearcher",
     "LikleyTemplateFinder",
     "DocxCreator",
+    "CalcoloInteressiLegali",
 ]

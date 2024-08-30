@@ -8,8 +8,8 @@ class LoggerConfig:
     def __init__(self):
         pass
 
-    def setup_logging(self):
-        logger_name = "cloudLogger" if "K_SERVICE" in os.environ else "consoleLogger"
+    def setup_logging(self, logger_name: str = ""):
+        logger_name = "cloudLogger" if "K_SERVICE" in os.environ else logger_name
         logger = logging.getLogger(logger_name)
 
         if not logger.handlers:
