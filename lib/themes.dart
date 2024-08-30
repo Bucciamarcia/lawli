@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 
 class LightTheme {
   ThemeData get themeData {
-    
     return ThemeData(
       colorSchemeSeed: Colors.lightBlue,
       appBarTheme: const AppBarTheme(
@@ -44,6 +43,11 @@ class LightTheme {
           ),
         ),
       ),
+      dividerTheme: const DividerThemeData(
+        color: Color.fromRGBO(117, 146, 175, 100),
+        indent: 10,
+        endIndent: 10,
+      ),
     );
-  } 
+  }
 }

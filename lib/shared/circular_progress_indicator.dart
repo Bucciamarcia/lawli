@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
 /// A class to show a circular progress indicator
+/// 
+/// Show with: `OverlayEntry? overlay = CircularProgress.show(context);`
+/// 
+/// Remove with:
+/// 
+/// ```dart
+/// overlay?.remove();
+/// overlay = null;
+/// ```
 class CircularProgress {
   /// Show a circular progress indicator
   static OverlayEntry? show(BuildContext context) {

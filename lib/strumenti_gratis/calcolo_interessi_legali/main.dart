@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:lawli/shared/shared.dart';
+import 'package:lawli/strumenti_gratis/calcolo_interessi_legali/calcolatore.dart';
+import 'package:lawli/strumenti_gratis/calcolo_interessi_legali/result_widget.dart';
 
 class LegalInterestCalculatorMain extends StatefulWidget {
   const LegalInterestCalculatorMain({super.key});
@@ -86,12 +89,14 @@ class _LegalInterestCalculatorMainState
                 _optionRow(
                   context,
                   "Data inizio",
-                  _dateSelector(context, updateInitialDate, displayDate: initialDate),
+                  _dateSelector(context, updateInitialDate,
+                      displayDate: initialDate),
                 ),
                 _optionRow(
                   context,
                   "Data fine",
-                  _dateSelector(context, updateFinalDate, displayDate: finalDate),
+                  _dateSelector(context, updateFinalDate,
+                      displayDate: finalDate),
                 ),
                 Text(
                   "Capitalizzazione",
@@ -103,12 +108,31 @@ class _LegalInterestCalculatorMainState
                 _widgetCapitalizzazione(context),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  child: const Text("Calcola"),
-                  onPressed: () {
-                    double result = _calculateResult();
-                    debugPrint("Calculated result: $result");
-                  }
-                )
+                    child: const Text("Calcola"),
+                    onPressed: () async {
+                      OverlayEntry? overlay = CircularProgress.show(context);
+                      try {
+                        TabellaInteressi results = await _calculateResult();
+                        debugPrint(
+                            "Calculated result: ${results.totaleDovuto}");
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Risultato"),
+                              content: InteressiLegaliResults(results: results),
+                            );
+                          },
+                        );
+                      } catch (e) {
+                        debugPrint("Error: $e");
+                        ConfirmationMessage.show(context, "Errore",
+                            "Errore durante il calcolo degli interessi legali. Assicurati di aver inserito tutti i dati correttamente.");
+                      } finally {
+                        overlay?.remove();
+                        overlay = null;
+                      }
+                    })
               ],
             ),
           ),
@@ -155,8 +179,8 @@ class _LegalInterestCalculatorMainState
   }
 
   /// Shows a date picker and shows the selected date if present.
-  Widget _dateSelector(
-      BuildContext context, void Function(DateTime?) onchanged, {required DateTime? displayDate}) {
+  Widget _dateSelector(BuildContext context, void Function(DateTime?) onchanged,
+      {required DateTime? displayDate}) {
     return Expanded(
       child: Row(children: [
         Text(displayDate != null
@@ -201,7 +225,24 @@ class _LegalInterestCalculatorMainState
     );
   }
 
-  double _calculateResult() {
-    return 0;
+  Future<TabellaInteressi> _calculateResult() async {
+    late final double intCapitalizzazione;
+    if (capitalizzazione == "Nessuna") {
+      intCapitalizzazione = 0;
+    } else if (capitalizzazione == "Trimestrale") {
+      intCapitalizzazione = 3;
+    } else if (capitalizzazione == "Semestrale") {
+      intCapitalizzazione = 6;
+    } else if (capitalizzazione == "Annuale") {
+      intCapitalizzazione = 12;
+    }
+    Calcolatore calcolatore = Calcolatore(
+      initialCapital: double.parse(initialCapital),
+      initialDate: initialDate!,
+      finalDate: finalDate!,
+      capitalizzazione: intCapitalizzazione,
+    );
+    TabellaInteressi tabella = await calcolatore.run();
+    return tabella;
   }
 }

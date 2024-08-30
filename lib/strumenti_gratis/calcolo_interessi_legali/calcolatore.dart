@@ -198,7 +198,7 @@ class NoCapitalizzazione extends Calcolatore {
 
       // The formula for calculating the interest is: (capital * interest rate * days) / 36500
       double interessi =
-          workingCapital * tassoCorrente.interesse * days / 36500;
+          workingCapital * tassoCorrente.interesse * days / 365;
       interessi = double.parse(interessi.toStringAsFixed(2));
 
       // Add the row to the table.

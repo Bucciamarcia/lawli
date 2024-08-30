@@ -21,9 +21,19 @@ class TassoInteresseLegale {
 
   factory TassoInteresseLegale.fromJson(Map<String, dynamic> json) =>
       _$TassoInteresseLegaleFromJson(json);
+
   Map<String, dynamic> toJson() => _$TassoInteresseLegaleToJson(this);
-  static DateTime _fromJson(String date) => DateTime.parse(date);
-  static String _toJson(DateTime date) => date.toIso8601String();
+
+  static DateTime _fromJson(dynamic date) {
+    if (date is Timestamp) {
+      return date.toDate();
+    } else if (date is String) {
+      return DateTime.parse(date);
+    }
+    throw ArgumentError('Invalid date format');
+  }
+
+  static dynamic _toJson(DateTime date) => Timestamp.fromDate(date);
 }
 
 class TassoInteresseLegaleOperations {
