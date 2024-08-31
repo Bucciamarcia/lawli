@@ -215,12 +215,6 @@ class Template extends FirestoreService {
 
   Future<void> deleteTemplate(Template template) async {
     try {
-      await TemplateDb().deleteTemplate(template);
-    } catch (e) {
-      debugPrint("Error while deleting template from db: $e");
-      rethrow;
-    }
-    try {
       await FirebaseFunctions.instance
           .httpsCallable("delete_template_from_weaviate")
           .call(

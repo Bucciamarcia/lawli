@@ -13,7 +13,6 @@ from py.constants import (
 
 class Brief_Description:
     def __init__(self, payload: str, object_id: str):
-    def __init__(self, payload: str, object_id: str):
         self.logger = LoggerConfig().setup_logging()
         try:
             self.payload = json.loads(payload)
@@ -27,7 +26,6 @@ class Brief_Description:
         self.client = OpenAI(api_key=os.environ.get("OPENAI_APIKEY"))
 
     def generate_brief_description(self, text: str, filename: str) -> str:
-    def generate_brief_description(self, text: str, filename: str) -> str:
         """
         Uses the GPT engine to create a brief description of the legal document.
         """
@@ -35,11 +33,8 @@ class Brief_Description:
 
         messages = [
             {"role": "system", "content": BRIEF_DESCRIPTION_GPT_MESSAGE},
-            {"role": "system", "content": BRIEF_DESCRIPTION_GPT_MESSAGE},
             {
                 "role": "user",
-                "content": USR_MSG_TEMPLATE.format(filename=filename, text=text),
-            },
                 "content": USR_MSG_TEMPLATE.format(filename=filename, text=text),
             },
         ]
@@ -53,8 +48,6 @@ class Brief_Description:
             return response.choices[0].message.content
         except OpenAIError as e:
             self.logger.error(f"Error while generating the brief description: {e}")
-            raise Exception(f"Error while generating the brief description: {e}")
-
             raise Exception(f"Error while generating the brief description: {e}")
 
     def get_blob_output_name(self, original_filename) -> str:
@@ -75,7 +68,6 @@ class Brief_Description:
         )
         return original_filename if original_filename else self.filename
 
-    def process_brief_description(self) -> None:
     def process_brief_description(self) -> None:
         """Entrypoint of the function. Process the brief description."""
         self.logger.info(f"File {self.object_id} is a txt file. Processing...")

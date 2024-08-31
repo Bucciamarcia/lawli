@@ -4,7 +4,6 @@ from google.api_core.client_options import ClientOptions
 from py.logger_config import LoggerConfig
 
 
-
 class Pdf_Transformer:
     """
     Transform the pdf file into text
@@ -23,8 +22,6 @@ class Pdf_Transformer:
         project_id = constants.PROJECT_ID
         location = "eu"
         processor_id = "a1de2c755caca3e6"
-        location = "eu"
-        processor_id = "a1de2c755caca3e6"
 
         opts = ClientOptions(api_endpoint=f"{location}-documentai.googleapis.com")
         client = documentai.DocumentProcessorServiceClient(client_options=opts)
@@ -35,17 +32,8 @@ class Pdf_Transformer:
         gcs_document = documentai.GcsDocument(
             gcs_uri=source_uri, mime_type="application/pdf"
         )
-        gcs_document = documentai.GcsDocument(
-            gcs_uri=source_uri, mime_type="application/pdf"
-        )
         gcs_documents = documentai.GcsDocuments(documents=[gcs_document])
         input_config = documentai.BatchDocumentsInputConfig(gcs_documents=gcs_documents)
-        gcs_output_config = documentai.DocumentOutputConfig.GcsOutputConfig(
-            gcs_uri=destination_uri
-        )
-        output_config = documentai.DocumentOutputConfig(
-            gcs_output_config=gcs_output_config
-        )
         gcs_output_config = documentai.DocumentOutputConfig.GcsOutputConfig(
             gcs_uri=destination_uri
         )

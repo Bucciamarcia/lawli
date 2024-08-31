@@ -268,7 +268,6 @@ def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
 
 
 @functions_framework.cloud_event  # type: ignore
-@functions_framework.cloud_event  # type: ignore
 def generate_document_summary(event: CloudEvent) -> dict[str, str]:
     logger.info("generate_document_summary called")
     logger.info(event)

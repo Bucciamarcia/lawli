@@ -231,7 +231,7 @@ Se il documento non contiene una certa informazione, il valore associato sarà u
 }
 ```
 Esempio in cui il documento non contiene la capitalizzazione:
-    
+
     ```
     {
         "data iniziale": "01/01/2021",
@@ -241,7 +241,7 @@ Esempio in cui il documento non contiene la capitalizzazione:
     }
     ```
 Esempio in cui il documento non contiene la data finale:
-    
+
     ```
     {
         "data iniziale": "01/01/2021",
