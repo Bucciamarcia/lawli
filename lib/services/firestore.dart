@@ -87,8 +87,33 @@ class PraticheDb extends FirestoreService {
   Future<void> addNewDocument(
       String filename, DateTime? date, double idPratica) async {
     debugPrint("Starting addNewDocument");
+  Future<void> addNewDocument(
+      String filename, DateTime? date, double idPratica) async {
+    debugPrint("Starting addNewDocument");
     final String accountName = await AccountDb().getAccountName();
 
+    Map<String, dynamic> data;
+    if (date != null) {
+      data = <String, dynamic>{
+        "filename": filename,
+        "data": date,
+      };
+    } else {
+      data = <String, dynamic>{
+        "filename": filename,
+      };
+    }
+
+    try {
+      final DocumentReference docs = _db
+          .collection("accounts")
+          .doc(accountName)
+          .collection("pratiche")
+          .doc(idPratica.toString())
+          .collection("documenti")
+          .doc(filename);
+      await docs.set(data, SetOptions(merge: true));
+      debugPrint("Added new document");
     Map<String, dynamic> data;
     if (date != null) {
       data = <String, dynamic>{
@@ -226,6 +251,7 @@ class AssistitoDb extends FirestoreService {
 
       if (querySnapshot.docs.isNotEmpty) {
         var result = querySnapshot.docs.first.id;
+        var result = querySnapshot.docs.first.id;
         return double.parse(result);
       } else {
         throw "No matching document found";
@@ -324,6 +350,8 @@ class AssistitoDb extends FirestoreService {
 class DocumentoDb extends FirestoreService {
   Future<void> deleteDocumentFromPraticaid(double praticaId, String filename,
       [bool deleteStorage = true]) async {
+  Future<void> deleteDocumentFromPraticaid(double praticaId, String filename,
+      [bool deleteStorage = true]) async {
     try {
       final accountRef = await retrieveAccountObject();
       await accountRef
@@ -339,6 +367,8 @@ class DocumentoDb extends FirestoreService {
 
     if (deleteStorage) {
       int idx = filename.lastIndexOf(".");
+      String filenameNoExtension =
+          idx != -1 ? filename.substring(0, idx) : filename;
       String filenameNoExtension =
           idx != -1 ? filename.substring(0, idx) : filename;
       try {
@@ -367,6 +397,8 @@ class DocumentoDb extends FirestoreService {
     }
   }
 
+  Future<void> updateDocument(
+      double praticaId, String filename, Map<String, dynamic> addition) async {
   Future<void> updateDocument(
       double praticaId, String filename, Map<String, dynamic> addition) async {
     try {
@@ -445,6 +477,11 @@ class RetrieveObjectFromDb extends FirestoreService {
   Future<Assistito> getAssistito(String assistitoId) async {
     String accountName = await AccountDb().getAccountName();
     debugPrint("STARTING GET ASSISTITO");
+    var ref = _db
+        .collection("accounts")
+        .doc(accountName)
+        .collection("assistiti")
+        .doc(assistitoId);
     var ref = _db
         .collection("accounts")
         .doc(accountName)

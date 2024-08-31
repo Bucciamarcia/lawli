@@ -18,9 +18,13 @@ def get_data(req: https_fn.CallableRequest, keys: list) -> tuple:
     logger = LoggerConfig().setup_logging()
     logger.info(f"REQ DATA: {req.data}")
     logger.info(f"KEYS: {keys}")
+    logger = LoggerConfig().setup_logging()
+    logger.info(f"REQ DATA: {req.data}")
+    logger.info(f"KEYS: {keys}")
     try:
         data = req.data
     except Exception as e:
+        logger.error(f"Error while extracting data from request: {e}")
         logger.error(f"Error while extracting data from request: {e}")
         raise Exception(f"Error while extracting data from request: {e}")
 
@@ -65,15 +69,25 @@ class Cloud_Storege_Util:
     Utility class for Cloud Storage operations.
     """
 
+
     def __init__(self):
+        self.logger = LoggerConfig().setup_logging()
         self.logger = LoggerConfig().setup_logging()
         try:
             self.storage_client = storage.Client()
             self.bucket = self.storage_client.bucket(BUCKET_NAME)
         except Exception as e:
             self.logger.error(f"Error while initializing storage client: {e}")
+            self.logger.error(f"Error while initializing storage client: {e}")
             raise Exception(f"Error while initializing storage client: {e}")
 
+    def read_text_file(
+        self,
+        blob_name: str | None = None,
+        account_name: str | None = None,
+        pratica_id: str | None = None,
+        document_id: str | None = None,
+    ) -> str:
     def read_text_file(
         self,
         blob_name: str | None = None,
@@ -108,6 +122,30 @@ class Cloud_Storege_Util:
                 raise Exception(e)
         else:
             raise Exception("No arguments provided")
+        If blob_name is specified, then it is used.
+        Otherwise, account_name, pratica_id, and document_id are used.
+        """
+        if blob_name:
+            try:
+                blob = self.bucket.blob(blob_name)
+                with blob.open("r") as f:
+                    return str(f.read())
+            except Exception as e:
+                self.logger.error(f"Error while reading text file: {e}")
+                raise Exception(e)
+        elif account_name and pratica_id and document_id:
+            blob_name = (
+                f"accounts/{account_name}/pratiche/{pratica_id}/documenti/{document_id}"
+            )
+            try:
+                blob = self.bucket.blob(blob_name)
+                with blob.open("r") as f:
+                    return str(f.read())
+            except Exception as e:
+                self.logger.error(f"Error while reading text file: {e}")
+                raise Exception(e)
+        else:
+            raise Exception("No arguments provided")
 
     def get_file_bytes(self, blob_name: str) -> bytes:
         """
@@ -117,8 +155,10 @@ class Cloud_Storege_Util:
         try:
             blob = self.bucket.blob(blob_name)
             self.logger.info(f"BLOB READ CORRECTLY: {blob}")
+            self.logger.info(f"BLOB READ CORRECTLY: {blob}")
             return blob.download_as_bytes()
         except Exception as e:
+            self.logger.error(f"Error while reading file: {e}")
             self.logger.error(f"Error while reading file: {e}")
             raise Exception(f"Error while reading file: {e}")
 
@@ -135,7 +175,13 @@ class Cloud_Storege_Util:
                 content_type="text/plain; \
             charset=utf-8",
             )
+            blob.upload_from_string(
+                content,
+                content_type="text/plain; \
+            charset=utf-8",
+            )
         except Exception as e:
+            self.logger.error(f"Error while writing text file: {e}")
             self.logger.error(f"Error while writing text file: {e}")
             raise Exception(f"Error while writing text file: {e}")
 
@@ -145,11 +191,14 @@ class Firestore_Util:
     Utility class for Firestore operations.
     """
 
+
     def __init__(self):
+        self.logger = LoggerConfig().setup_logging()
         self.logger = LoggerConfig().setup_logging()
         try:
             self.db = firestore.client()
         except Exception as e:
+            self.logger.error(f"Error while initializing firestore client: {e}")
             self.logger.error(f"Error while initializing firestore client: {e}")
             raise Exception(e)
 
@@ -158,10 +207,12 @@ class Firestore_Util:
         Write data to Firestore.
         """
         self.logger.info(f"Writing to Firestore: {data} - {path}")
+        self.logger.info(f"Writing to Firestore: {data} - {path}")
         try:
             ref = self.db.document(path)
             ref.set(data, merge=merge)
         except Exception as e:
+            self.logger.error(f"Error while writing to Firestore: {e}")
             self.logger.error(f"Error while writing to Firestore: {e}")
             raise Exception(f"Error while writing to Firestore: {e}")
 
