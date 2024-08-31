@@ -70,18 +70,28 @@ class MenuElements {
         onTap: () => Navigator.pushNamed(context, '/template'),
       ),
       ExpansionTile(title: const Text("Strumenti"), children: [
-        ListTile(
-          title: const Text("Ricerca sentenze"),
-          onTap: () {
-            Navigator.pushNamed(context, '/ricerca_sentenze');
-          },
+        ExpansionTile(
+          title: const Text("Giurisprudenza e leggi"),
+          children: [
+            ListTile(
+              title: const Text("Ricerca sentenze"),
+              onTap: () {
+                Navigator.pushNamed(context, '/ricerca_sentenze');
+              },
+            ),
+          ],
         ),
-        ListTile(
-          title: const Text("Calcolo interessi legali"),
-          onTap: () {
-            Navigator.pushNamed(context, '/calcolointeressilegali');
-          },
-        )
+        ExpansionTile(
+          title: const Text("Denaro e interessi"),
+          children: [
+            ListTile(
+              title: const Text("Calcolo interessi legali"),
+              onTap: () {
+                Navigator.pushNamed(context, '/calcolointeressilegali');
+              },
+            )
+          ],
+        ),
       ]),
       ListTile(
           title: const Text("Account"),

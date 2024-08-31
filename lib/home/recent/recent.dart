@@ -6,20 +6,13 @@ class RecentScreen extends StatelessWidget {
 
   Scaffold body(BuildContext context) {
     return Scaffold(
-      
       body: Container(
         padding: const EdgeInsets.all(30),
         child: const Center(
           child: Text(
-            '''
-          In questa schermata verranno presentate le pratiche recenti dell'utente.
-          Naviga le tue pratiche con il menù a sinistra.
-          ''',
-            style: TextStyle(fontSize: 20),
-          )
+              "Qui potrai vedere le pratiche recenti per un accesso rapido."),
         ),
-      )
-
+      ),
     );
   }
 
@@ -27,10 +20,8 @@ class RecentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AppBar appBar(BuildContext context) {
       return AppBar(
-        
         centerTitle: true,
         title: const Text('Pratiche recenti'),
-        
       );
     }
 
