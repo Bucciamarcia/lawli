@@ -206,3 +206,48 @@ TEMPLATE_FORMAT_SYSPROMPT = (
     "Il sottoscritto, avvocato Mario Rossi, in qualità di difensore di parte convenuta, signore/a {{nome}}_____ [...]"
     "OUTPUT SBAGLIATO 3: \n"
 )
+
+# CALCOLO INTERESSI LEGALI
+
+CALCOLO_INTERESSI_LEGALI_ENGINE = BEST_GPT_MODEL
+CALCOLO_INTERESSI_LEGALI_SYSPROMPT = """L'utente ti passerà un documento legale.
+    Il tuo compito è restituire un json con questo formato:
+```
+    {
+        "data iniziale": "01/01/2021", -- string
+        "data finale": "01/01/2022", -- string
+        "capitale": 1000, -- int
+        ""capitalizzazione": "Annuale", -- string (options: "Annuale", "Semestrale", "Trimestrale", "Nessuna")
+    }
+```
+Se il documento non contiene una certa informazione, il valore associato sarà una stringa vuota o il numero 0 (in caso di "capitale"). Esempio in cui il documento non contiene il capitale iniziale:
+
+```
+{
+    "data iniziale": "01/01/2021",
+    "data finale": "01/01/2022",
+    "capitale": 0,
+    ""capitalizzazione": "Annuale"
+}
+```
+Esempio in cui il documento non contiene la capitalizzazione:
+    
+    ```
+    {
+        "data iniziale": "01/01/2021",
+        "data finale": "01/01/2022",
+        "capitale": 1000,
+        ""capitalizzazione": ""
+    }
+    ```
+Esempio in cui il documento non contiene la data finale:
+    
+    ```
+    {
+        "data iniziale": "01/01/2021",
+        "data finale": "",
+        "capitale": 1000,
+        ""capitalizzazione": "Annuale"
+    }
+    ```
+"""

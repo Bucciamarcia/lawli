@@ -17,6 +17,8 @@ class FileUploader extends StatefulWidget {
   final String buttonText;
 
   /// Allowed file extensions. If null, all files are allowed
+  /// 
+  /// No leading dot. Example: `['pdf', 'docx']`
   final List<String>? allowedExtensions;
 
   /// Callback function to return the selected file
