@@ -226,31 +226,6 @@ def string_to_docx(req: https_fn.CallableRequest) -> str:
     return functions.DocxCreator(text).create_docx()
 
 
-@https_fn.on_call()
-def calcolo_interessi_legali_data(
-    req: https_fn.CallableRequest,
-) -> dict[str, str | int]:
-    """Returns the parameters for the calculation of legal interest starting from a text document.
-    * text: The text to be processed (Strigified document).
-
-    Returns a dictionary:
-
-    {
-        "data iniziale": "01/01/2021", -- string
-        "data finale": "01/01/2022", -- string
-        "capitale": 1000, -- int
-        "capitalizzazione": "annuale", -- string (options: "annuale", "semestrale", "trimestrale", "nessuna")
-    }
-
-    If the document doesn't contain a certain information, the associated value will be an empty string.
-    """
-    initialize_env()
-    logger.info("calcolo_interessi_legali_data called")
-    keys = ["text"]
-    (text,) = commons.get_data(req, keys)
-    return functions.CalcoloInteressiLegali(text).run()
-
-
 @functions_framework.cloud_event  # type: ignore
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")

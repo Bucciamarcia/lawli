@@ -1,11 +1,7 @@
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:lawli/services/text_extractor.dart';
 import 'package:lawli/shared/shared.dart';
-import 'package:lawli/shared/upload_file.dart';
 import 'package:lawli/strumenti_gratis/calcolo_interessi_legali/calcolatore.dart';
 import 'package:lawli/strumenti_gratis/calcolo_interessi_legali/result_widget.dart';
 
@@ -85,46 +81,6 @@ class _LegalInterestCalculatorMainState
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        border: Border(
-                          bottom:
-                              BorderSide(color: colorScheme.primary, width: 2),
-                          left:
-                              BorderSide(color: colorScheme.primary, width: 2),
-                          right:
-                              BorderSide(color: colorScheme.primary, width: 2),
-                          top: BorderSide(color: colorScheme.primary, width: 2),
-                        ),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Column(
-                      children: [
-                        Text(
-                          "Carica un documento",
-                          style: TextStyle(
-                            color: colorScheme.primary,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const Text(
-                          "Carica un documento e l'AI estrapolerà i dati necessari per il calcolo degli interessi legali.",
-                          textAlign: TextAlign.left,
-                        ),
-                        const SizedBox(height: 20),
-                        FileUploader(
-                            labelText: "Carica un file",
-                            helperText: "",
-                            buttonText: "Seleziona",
-                            allowedExtensions: const ["pdf", "docx", "txt"],
-                            onFileSelected: _fileSelected)
-                      ],
-                    ),
-                  ),
-                ),
                 _optionRow(
                   context,
                   "Capitale iniziale €",
@@ -154,14 +110,6 @@ class _LegalInterestCalculatorMainState
                 ElevatedButton(
                     child: const Text("Calcola"),
                     onPressed: () async {
-                      if (initialDate == null ||
-                          finalDate == null ||
-                          initialCapital.isEmpty ||
-                          initialCapital == "0") {
-                        ConfirmationMessage.show(context, "Errore",
-                            "Assicurati di aver inserito tutti i dati correttamente.");
-                        return;
-                      }
                       OverlayEntry? overlay = CircularProgress.show(context);
                       try {
                         TabellaInteressi results = await _calculateResult();
@@ -193,74 +141,22 @@ class _LegalInterestCalculatorMainState
     );
   }
 
-  Future<void> _fileSelected(PlatformFile? file) async {
-    if (file == null || file.bytes == null || file.extension == null) {
-      return;
-    }
-
-    OverlayEntry? overlay = CircularProgress.show(context);
-
-    final String extension = file.extension!;
-    final Uint8List data = file.bytes!;
-    String text = TextExtractor().extractText(data, extension);
-    var response = await FirebaseFunctions.instance
-        .httpsCallable("calcolo_interessi_legali_data")
-        .call({"text": text});
-    Map<String, dynamic> callData = response.data;
-    String initialDate = callData["data_iniziale"];
-    String finalDate = callData["data_finale"];
-    double initialCapital = callData["capitale_iniziale"];
-    String capitalizzazione = callData["capitalizzazione"];
-
-    debugPrint("Initial date: $initialDate");
-    debugPrint("Final date: $finalDate");
-    debugPrint("Initial capital: $initialCapital");
-    debugPrint("Capitalizzazione: $capitalizzazione");
-
-    if (initialDate != "") {
-      DateTime initialDateObj = _parseDate(initialDate);
-      updateInitialDate(initialDateObj);
-    }
-    if (finalDate != "") {
-      DateTime finalDateObj = _parseDate(finalDate);
-      updateFinalDate(finalDateObj);
-    }
-    if (initialCapital != 0) {
-      updateInitialCapital(initialCapital.toString());
-    }
-    if (capitalizzazione != "") {
-      updateCapitalizzazione(capitalizzazione);
-    }
-
-    overlay?.remove();
-    overlay = null;
-  }
-
-  DateTime _parseDate(String date) {
-    List<String> parts = date.split('/');
-    String formattedDate = "${parts[2]}-${parts[1]}-${parts[0]}";
-    return DateTime.parse(formattedDate);
-  }
-
   Widget _optionRow(BuildContext context, String title, Widget child) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10, top: 5),
-      child: SizedBox(
-        height: 100,
-        child: Column(children: [
-          Center(
-            child: Text(
-              title,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 16,
-              ),
+      child: Row(children: [
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 16,
             ),
           ),
-          const SizedBox(height: 25),
-          child,
-        ]),
-      ),
+        ),
+        const SizedBox(width: 25),
+        child,
+      ]),
     );
   }
 

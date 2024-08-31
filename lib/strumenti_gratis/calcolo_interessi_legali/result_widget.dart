@@ -34,10 +34,7 @@ class InteressiLegaliResults extends StatelessWidget {
           thickness: 3,
           height: 20,
         ),
-        Flexible(
-            child: SingleChildScrollView(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal, child: resultsTable()))),
+        Flexible(child: SingleChildScrollView(child: resultsTable())),
         const Divider(
           thickness: 3,
           height: 20,

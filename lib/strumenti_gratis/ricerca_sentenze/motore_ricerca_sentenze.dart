@@ -233,9 +233,8 @@ class _RicercaDocumentoState extends State<RicercaDocumento> {
         const TribunaleSelector(),
         FileUploader(
             labelText: "Carica un documento",
-            helperText: "Carica un documento per cercare sentenze simili. File supportati: .pdf, .txt, .docx",
+            helperText: "Carica un documento per cercare sentenze simili.",
             buttonText: "Carica documento",
-            allowedExtensions: const ["pdf", "docx", "txt"],
             onFileSelected: loggedOutFileSelected),
         if (Provider.of<RicercaSentenzeProvider>(context, listen: true)
                 .isSearchingSentenze ==

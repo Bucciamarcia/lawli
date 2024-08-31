@@ -9,11 +9,11 @@ class TextExtractor {
   /// Extracts text from a given text. Supports PDF, DOCX, and TXT files.
   String extractText(Uint8List bytes, String extension) {
     switch (extension) {
-      case ".pdf" || "pdf":
+      case ".pdf":
         return _pdfToText(bytes);
-      case ".docx" || "docx":
+      case ".docx":
         return _docxToText(bytes);
-      case ".txt" || "txt":
+      case ".txt":
         return String.fromCharCodes(bytes);
       default:
         throw Exception("Unsupported file extension: $extension");

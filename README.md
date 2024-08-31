@@ -86,11 +86,3 @@ cd ..
 Need  to set up a pubsub notification for google cloud storage for generate document summary and documentai pdf to doc:
 
 `gcloud storage buckets notifications create gs://lawli-bab83.appspot.com/ --topic="topic" --object-prefix=accounts/ --event-types=OBJECT_FINALIZE`
-
-# Functions
-
-## Testing
-
-```bash
-python -m unittest discover -s tests -p "*.py"
-```
