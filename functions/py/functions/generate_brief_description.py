@@ -73,7 +73,9 @@ class Brief_Description:
         self.logger.info(f"File {self.object_id} is a txt file. Processing...")
         pattern = r"pratiche/(\d+)/documenti"
         match = re.search(pattern, self.object_id)
-        account_pattern = r"raccounts/([^/]+)/pratiche"
+        account_pattern = r"accounts/([^/]+)/pratiche"
+        self.logger.debug(f"account_pattern: {account_pattern}")
+        self.logger.debug(f"object_id: {self.object_id}")
         match_pattern = re.search(account_pattern, self.object_id)
 
         if match:
