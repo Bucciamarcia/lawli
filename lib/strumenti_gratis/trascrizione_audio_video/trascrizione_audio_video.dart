@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import "package:lawli/strumenti_gratis/trascrizione_audio_video/main.dart";
 import "../../shared/shared.dart";
 import "../../services/services.dart";
 
@@ -11,16 +12,9 @@ class TrascrizioneAudioVideoScreen extends StatelessWidget {
         child: Container(
           alignment: Alignment.topCenter,
           padding: ResponsiveLayout.mainWindowPadding(context),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              children: [
-                Text(
-                  "OK!",
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
-              ],
-            ),
+          child: const Padding(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: TrascrizioneAudioVideoMain(),
           ),
         ),
       ),

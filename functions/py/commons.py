@@ -8,7 +8,9 @@ from google.cloud import storage
 from firebase_admin import firestore
 import os
 import re
+from io import BytesIO
 from py.logger_config import LoggerConfig
+from openai import OpenAI, OpenAIError
 
 
 def get_data(req: https_fn.CallableRequest, keys: list) -> tuple:
@@ -193,3 +195,21 @@ class Firestore_Util:
         for doc in docs:
             documents.append(doc.id)
         return documents
+
+
+class OpenAiOperations:
+    def __init__(self):
+        self.logger = LoggerConfig().setup_logging()
+        self.client = OpenAI(api_key=os.environ.get("OPENAI_APIKEY"))
+
+    def extract_text_from_bytefile(self, file: BytesIO) -> str:
+        """Extracts text from mp3 file-like object."""
+        self.logger.info("Extracting text from audio, sending to openai whisper....")
+        try:
+            transcription = self.client.audio.transcriptions.create(
+                model="whisper-1", file=file, language="it"
+            )
+            return transcription.text
+        except OpenAIError as e:
+            self.logger.error(f"Error in openai while extracting text from audio: {e}")
+            raise Exception(f"Error in openai while extracting text from audio: {e}")

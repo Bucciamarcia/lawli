@@ -251,6 +251,20 @@ def calcolo_interessi_legali_data(
     return functions.CalcoloInteressiLegali(text).run()
 
 
+@https_fn.on_call()
+def transcribe_audio_video(req: https_fn.CallableRequest) -> str | None:
+    initialize_env()
+    logger.info("extract_audio_from_video called")
+    keys = ["bytes", "format"]
+    bytes, format = commons.get_data(req, keys)
+    try:
+        response = functions.TextTranscriber(bytes, format).run()
+        return response
+    except Exception as e:
+        logger.error(f"Error in transcribing audio: {e}")
+        return
+
+
 @functions_framework.cloud_event  # type: ignore
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")

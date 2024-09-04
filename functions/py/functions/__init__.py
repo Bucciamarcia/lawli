@@ -16,6 +16,7 @@ from .search_similar_templates import TemplateSearcher
 from .get_likley_templates import LikleyTemplateFinder
 from .string_to_docx import DocxCreator
 from .calcolo_interessi_legali import CalcoloInteressiLegali
+from .transcribe_video_audio import TextTranscriber
 
 __all__ = [
     "Pdf_Transformer",
@@ -36,4 +37,5 @@ __all__ = [
     "LikleyTemplateFinder",
     "DocxCreator",
     "CalcoloInteressiLegali",
+    "TextTranscriber",
 ]
