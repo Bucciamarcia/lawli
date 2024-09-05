@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import "package:lawli/strumenti_gratis/trascrizione_audio_video/main.dart";
+import "package:provider/provider.dart";
 import "../../shared/shared.dart";
 import "../../services/services.dart";
+import "provider.dart";
 
 class TrascrizioneAudioVideoScreen extends StatelessWidget {
   const TrascrizioneAudioVideoScreen({super.key});
 
   Scaffold body(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          alignment: Alignment.topCenter,
-          padding: ResponsiveLayout.mainWindowPadding(context),
-          child: const Padding(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            child: TrascrizioneAudioVideoMain(),
+      body: ChangeNotifierProvider(
+        create: (context) => TrascrizioneAudioVideoProvider(),
+        child: SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.topCenter,
+            padding: ResponsiveLayout.mainWindowPadding(context),
+            child: const Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: TrascrizioneAudioVideoMain(),
+            ),
           ),
         ),
       ),

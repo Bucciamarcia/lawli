@@ -41,7 +41,7 @@ class TextTranscriber:
         with tempfile.NamedTemporaryFile() as temp:
             temp.write(bytes(self.bytes_list))
             temp.seek(0)
-            self.logger.info(f"Extracting audio from video.")
+            self.logger.info("Extracting audio from video.")
             out, err = (
                 ffmpeg.input(temp.name)
                 .output("pipe:", format="mp3", audio_bitrate="192k")
