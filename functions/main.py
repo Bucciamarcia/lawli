@@ -265,6 +265,20 @@ def transcribe_audio_video(req: https_fn.CallableRequest) -> str | None:
         return
 
 
+@https_fn.on_call()
+def get_short_transcription_summary(req: https_fn.CallableRequest) -> str:
+    initialize_env()
+    logger.info("get_short_transcription_summary called")
+    keys = ["text"]
+    (text,) = commons.get_data(req, keys)
+    summary = functions.TrascrizioneSummaries(text).get_short_summary()
+    if summary:
+        return summary
+    else:
+        logger.error("Error in processing the transcription")
+        return ""
+
+
 @functions_framework.cloud_event  # type: ignore
 def get_txt_from_docai_json(event: CloudEvent) -> dict[str, str]:
     logger.info("on_pubsub_message called")

@@ -17,6 +17,7 @@ from .get_likley_templates import LikleyTemplateFinder
 from .string_to_docx import DocxCreator
 from .calcolo_interessi_legali import CalcoloInteressiLegali
 from .transcribe_video_audio import TextTranscriber
+from .trascrizione_summaries import TrascrizioneSummaries
 
 __all__ = [
     "Pdf_Transformer",
@@ -38,4 +39,5 @@ __all__ = [
     "DocxCreator",
     "CalcoloInteressiLegali",
     "TextTranscriber",
+    "TrascrizioneSummaries",
 ]

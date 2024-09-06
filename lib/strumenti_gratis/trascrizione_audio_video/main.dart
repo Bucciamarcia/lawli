@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lawli/shared/circular_progress_indicator.dart';
 import 'package:lawli/shared/confirmation_message.dart';
 import 'package:lawli/shared/upload_file.dart';
+import 'package:lawli/strumenti_gratis/trascrizione_audio_video/models.dart';
 import 'package:lawli/strumenti_gratis/trascrizione_audio_video/provider.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +43,7 @@ class _TrascrizioneAudioVideoMainState
                             Text(
                                 "Carica un file audio o video per ottenere la trascrizione."),
                             Text(
-                                "Potrai poi chiedere all'intelligenza artificiale di creare un riassunto del testo.")
+                                "L'intellingeza artificiale creerà anche un riassunto breve e uno lungo del testo ottenuto."),
                           ],
                         ),
                       ),
@@ -59,7 +60,12 @@ class _TrascrizioneAudioVideoMainState
                         "wmv",
                         "flv",
                         "mkv",
-                        "webm"
+                        "webm",
+                        "mp3",
+                        "wav",
+                        "flac",
+                        "ogg",
+                        "m4a",
                       ],
                       onFileSelected: (file) =>
                           _handleFileSelection(context, file),
@@ -71,12 +77,14 @@ class _TrascrizioneAudioVideoMainState
           ),
         ),
         Provider.of<TrascrizioneAudioVideoProvider>(context, listen: true)
-                    .trascrizione ==
+                    .trascrizione
+                    .text ==
                 null
             ? const SizedBox()
             : Text(Provider.of<TrascrizioneAudioVideoProvider>(context,
                     listen: true)
-                .trascrizione!),
+                .trascrizione
+                .text!),
       ],
     );
   }
@@ -96,6 +104,8 @@ class _TrascrizioneAudioVideoMainState
       if (transcription != null) {
         Provider.of<TrascrizioneAudioVideoProvider>(context, listen: false)
             .setTrascrizione(transcription);
+        _generateShortSummary(context, transcription);
+        _generateLongSummary(context, transcription);
       } else {
         _showErrorMessage(context,
             "Nessun testo ottenuto. Sicuro che il file contenga del parlato?");
@@ -105,6 +115,28 @@ class _TrascrizioneAudioVideoMainState
     } finally {
       overlay?.remove();
       overlay = null;
+    }
+  }
+
+  void _generateShortSummary(BuildContext context, String text) async {
+    try {
+      String shortSummary = await Trascrizione(text: text).getShortSummary();
+      Provider.of<TrascrizioneAudioVideoProvider>(context, listen: false)
+          .setShortSummary(shortSummary);
+    } catch (e) {
+      _showErrorMessage(
+          context, "Errore durante la generazione del riassunto breve: $e");
+    }
+  }
+
+  void _generateLongSummary(BuildContext context, String text) async {
+    try {
+      String longSummary = await Trascrizione(text: text).getLongSummary();
+      Provider.of<TrascrizioneAudioVideoProvider>(context, listen: false)
+          .setLongSummary(longSummary);
+    } catch (e) {
+      _showErrorMessage(
+          context, "Errore durante la generazione del riassunto lungo: $e");
     }
   }
 
