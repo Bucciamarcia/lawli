@@ -16,7 +16,7 @@ class TrascrizioneSummaries:
             messages=[
                 {
                     "role": "system",
-                    "content": "Sei un'intelligenza artificiale per uso legale. Scrivi un riassunto completo, dettagliato ed estensivo della trascrizione fornita dall'utente. Il tuo output è unicamente il riassuto della trascrizione.",
+                    "content": "Sei un'intelligenza artificiale per uso legale. Scrivi un riassunto completo, dettagliato ed estensivo della trascrizione fornita dall'utente. Il tuo output è unicamente il riassuto della trascrizione. È vietato interagire con l'utente: non fare domande, non chiedere informazioni aggiuntive, non rispondere a domande, non parlare direttamente a lui. Se non puoi generare un riassunto per qualsiasi ragione, il tuo output è 'Impossibile generare il riassunto: [ragione]'.",
                 },
                 {"role": "user", "content": self.trascrizione},
             ],
@@ -29,7 +29,7 @@ class TrascrizioneSummaries:
             messages=[
                 {
                     "role": "system",
-                    "content": "Sei un'intelligenza artificiale per uso legale. Scrivi un riassunto breve, conciso e chiaro della trascrizione fornita dall'utente. Il tuo output è unicamente il riassunto della trascrizione.",
+                    "content": "Sei un'intelligenza artificiale per uso legale. Scrivi un riassunto breve, conciso e chiaro della trascrizione fornita dall'utente. Il tuo output è unicamente il riassunto della trascrizione. È vietato interagire con l'utente: non fare domande, non chiedere informazioni aggiuntive, non rispondere a domande, non parlare direttamente a lui. Se non puoi generare un riassunto per qualsiasi ragione, il tuo output è 'Impossibile generare il riassunto: [ragione]'.",
                 },
                 {"role": "user", "content": self.trascrizione},
             ],

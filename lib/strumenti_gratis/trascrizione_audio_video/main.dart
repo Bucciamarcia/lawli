@@ -7,6 +7,7 @@ import 'package:lawli/shared/confirmation_message.dart';
 import 'package:lawli/shared/upload_file.dart';
 import 'package:lawli/strumenti_gratis/trascrizione_audio_video/models.dart';
 import 'package:lawli/strumenti_gratis/trascrizione_audio_video/provider.dart';
+import 'package:lawli/strumenti_gratis/trascrizione_audio_video/result_box.dart';
 import 'package:provider/provider.dart';
 
 class TrascrizioneAudioVideoMain extends StatefulWidget {
@@ -76,15 +77,7 @@ class _TrascrizioneAudioVideoMainState
             ),
           ),
         ),
-        Provider.of<TrascrizioneAudioVideoProvider>(context, listen: true)
-                    .trascrizione
-                    .text ==
-                null
-            ? const SizedBox()
-            : Text(Provider.of<TrascrizioneAudioVideoProvider>(context,
-                    listen: true)
-                .trascrizione
-                .text!),
+        const TrascrizioneResultBoxWidget(),
       ],
     );
   }
