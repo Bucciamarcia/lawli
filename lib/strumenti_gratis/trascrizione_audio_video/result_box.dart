@@ -18,18 +18,16 @@ class TrascrizioneResultBoxWidget extends StatelessWidget {
     if (trascrizione.text!.isEmpty) {
       return const SizedBox();
     }
-    return const TabViewWidget();
+    return TabViewWidget(trascrizione: trascrizione);
   }
 }
 
 class TabViewWidget extends StatelessWidget {
-  const TabViewWidget({super.key});
+  final Trascrizione trascrizione;
+  const TabViewWidget({super.key, required this.trascrizione});
 
   @override
   Widget build(BuildContext context) {
-    Trascrizione trascrizione =
-        Provider.of<TrascrizioneAudioVideoProvider>(context, listen: true)
-            .trascrizione;
     return DefaultTabController(
       length: 3,
       child: Column(

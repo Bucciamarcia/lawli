@@ -16,6 +16,7 @@ import "strumenti_gratis/ricerca_sentenze/ricerca_sentenze.dart";
 import "template/template.dart";
 import "account/account.dart";
 import "home/guestlogin.dart";
+import "strumenti_gratis/trascrizione_audio_video/test.dart";
 
 final Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => const HomeScreen(),
@@ -38,4 +39,5 @@ final Map<String, WidgetBuilder> routes = {
   '/guestlogin': (BuildContext context) => const GuestLogin(),
   '/calcolointeressilegali': (BuildContext context) =>
       const CalcoloInteressiLegaliScreen(),
+  '/test': (BuildContext context) => const TestResultBox(),
 };
