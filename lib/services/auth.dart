@@ -31,6 +31,7 @@ class AuthService {
 
   Future<void> anonLogin(BuildContext context) async {
     try {
+      debugPrint("Attempting to log in as anonymous user");
       await FirebaseAuth.instance.signInAnonymously();
       final loggedUser = FirebaseAuth.instance.currentUser;
       final userData =

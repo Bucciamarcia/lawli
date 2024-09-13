@@ -11,3 +11,4 @@ weaviate-client
 python-docx
 pyyaml
 tiktoken
+ffmpeg-python

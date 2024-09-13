@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "../services/services.dart";
 
@@ -18,11 +19,12 @@ class _ResponsiveDrawerState extends State<ResponsiveDrawer> {
     checkUserSignInStatus();
   }
 
-  void checkUserSignInStatus() async {
+  void checkUserSignInStatus() {
     bool signedIn = AuthService().isSignedIn();
     setState(() {
       isUserSignedIn = signedIn;
     });
+    debugPrint("User signed in: $signedIn");
   }
 
   @override
@@ -69,20 +71,44 @@ class MenuElements {
         title: const Text("Template"),
         onTap: () => Navigator.pushNamed(context, '/template'),
       ),
-      ExpansionTile(title: const Text("Strumenti"), children: [
-        ListTile(
-          title: const Text("Ricerca sentenze"),
-          onTap: () {
-            Navigator.pushNamed(context, '/ricerca_sentenze');
-          },
-        ),
-        ListTile(
-          title: const Text("Calcolo interessi legali"),
-          onTap: () {
-            Navigator.pushNamed(context, '/calcolointeressilegali');
-          },
-        )
-      ]),
+      ExpansionTile(
+        title: const Text("Strumenti"),
+        children: [
+          ExpansionTile(
+            title: const Text("Giurisprudenza"),
+            children: [
+              ListTile(
+                title: const Text("Ricerca sentenze"),
+                onTap: () {
+                  Navigator.pushNamed(context, '/ricerca_sentenze');
+                },
+              ),
+            ],
+          ),
+          ExpansionTile(
+            title: const Text("Denaro e interessi"),
+            children: [
+              ListTile(
+                title: const Text("Calcolo interessi legali"),
+                onTap: () {
+                  Navigator.pushNamed(context, '/calcolointeressilegali');
+                },
+              )
+            ],
+          ),
+          ExpansionTile(
+            title: const Text("Intelligenza artificiale"),
+            children: [
+              ListTile(
+                title: const Text("Trascrizione audio/video"),
+                onTap: () {
+                  Navigator.pushNamed(context, '/trascrizione_audio_video');
+                },
+              )
+            ],
+          ),
+        ],
+      ),
       ListTile(
           title: const Text("Account"),
           onTap: () async {
@@ -95,6 +121,13 @@ class MenuElements {
             await AuthService().signOut();
             Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
           }),
+      if (kDebugMode)
+        ListTile(
+          title: const Text("Test"),
+          onTap: () {
+            Navigator.pushNamed(context, '/test');
+          },
+        ),
     ];
     return listElements;
   }
