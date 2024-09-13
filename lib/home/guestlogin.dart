@@ -12,17 +12,25 @@ class GuestLogin extends StatefulWidget {
 
 class _GuestLoginState extends State<GuestLogin> {
   @override
-  void initState() async {
+  @override
+  void initState() {
     super.initState();
-    await AuthService().anonLogin(context);
-    Provider.of<DashboardProvider>(context, listen: false).setIsGuest(true);
+
+    // Defer the state modification to after the build process is completed.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<DashboardProvider>(context, listen: false).setIsGuest(true);
+      _anonLogin();
+    });
   }
+
+  void _anonLogin() async {
+    await AuthService().anonLogin(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Card(
-        child: Text("Creazione in corso..")
-      ),
+      child: Card(child: Text("Creazione in corso..")),
     );
   }
 }

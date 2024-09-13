@@ -2,7 +2,7 @@ from py.logger_config import LoggerConfig
 import ffmpeg
 import io
 import tempfile
-from py.constants import LIST_OF_VIDEO_EXTENSIONS
+from py.constants import LIST_OF_VIDEO_EXTENSIONS, LIST_OF_AUDIO_EXTENSIONS
 from py.commons import OpenAiOperations
 
 
@@ -16,16 +16,19 @@ class TextTranscriber:
         """
         Entrypoint. Extracts audio from video.
         """
-        self.logger.info("Extracting audio from video.")
+        self.logger.info("Starting transcription process.")
+
+        # Validate the format
         if self.format in LIST_OF_VIDEO_EXTENSIONS:
             audio_bytes = self._extract_audio()
-        elif self.format not in LIST_OF_VIDEO_EXTENSIONS and self.format != "mp3":
-            audio_bytes = self._transform_audio()
-        elif self.format == "mp3":
-            self.logger.info("Audio is already in mp3 format.")
-            audio_bytes = bytes(self.bytes_list)
+        elif self.format in LIST_OF_AUDIO_EXTENSIONS:
+            if self.format == "mp3":
+                self.logger.info("Audio is already in mp3 format.")
+                audio_bytes = bytes(self.bytes_list)
+            else:
+                audio_bytes = self._transform_audio()
         else:
-            raise ValueError("Format not supported.")
+            raise ValueError(f"Format not supported. {self.format}")
 
         audio_file = io.BytesIO(audio_bytes)
         audio_file.name = "audio.mp3"
@@ -39,15 +42,18 @@ class TextTranscriber:
     def _extract_audio(self) -> bytes:
         """Extracts audio from video."""
         with tempfile.NamedTemporaryFile() as temp:
-            temp.write(bytes(self.bytes_list))
-            temp.seek(0)
-            self.logger.info("Extracting audio from video.")
-            out, err = (
-                ffmpeg.input(temp.name)
-                .output("pipe:", format="mp3", audio_bitrate="192k")
-                .run(capture_stdout=True, capture_stderr=True)
-            )
-            return out
+            try:
+                temp.write(bytes(self.bytes_list))
+                temp.seek(0)
+                self.logger.info("Extracting audio from video.")
+                out, err = (
+                    ffmpeg.input(temp.name)
+                    .output("pipe:", format="mp3", audio_bitrate="192k")
+                    .run(capture_stdout=True, capture_stderr=True)
+                )
+                return out
+            except Exception as e:
+                raise Exception(f"Error while extracting audio: {e}")
 
     def _transform_audio(self) -> bytes:
         """Transforms the non-mp3 audio into mp3."""

@@ -254,3 +254,5 @@ Esempio in cui il documento non contiene la data finale:
 
 # TRANSCRIBE AUDIO VIDEO
 LIST_OF_VIDEO_EXTENSIONS = ["mp4", "avi", "mov", "wmv", "flv", "mkv", "webm"]
+
+LIST_OF_AUDIO_EXTENSIONS = ["mp3", "wav", "flac", "ogg", "m4a"]

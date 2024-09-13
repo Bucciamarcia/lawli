@@ -12,15 +12,17 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
   if (kDebugMode) {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   }
-  
-  runApp(ChangeNotifierProvider(
+
+  runApp(
+    ChangeNotifierProvider(
       create: (context) => DashboardProvider(),
       child: const MyApp(),
-    ),);
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
