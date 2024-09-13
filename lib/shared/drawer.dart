@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "../services/services.dart";
 
@@ -120,6 +121,13 @@ class MenuElements {
             await AuthService().signOut();
             Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
           }),
+      if (kDebugMode)
+        ListTile(
+          title: const Text("Test"),
+          onTap: () {
+            Navigator.pushNamed(context, '/test');
+          },
+        ),
     ];
     return listElements;
   }
