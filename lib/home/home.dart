@@ -11,7 +11,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Uri uri = Uri.base;
     String? anonLogin = uri.queryParameters['anonlogin'];
-    if (anonLogin == 'true' && Provider.of<DashboardProvider>(context, listen: true).isGuest == false) {
+    if (anonLogin == 'true' &&
+        Provider.of<DashboardProvider>(context, listen: true).isGuest ==
+            false) {
       return FutureBuilder(
         future: AuthService().anonLogin(context),
         builder: (context, snapshot) {
