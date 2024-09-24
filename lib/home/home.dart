@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lawli/home/login/login.dart';
 import 'package:lawli/home/recent/recent.dart';
-import 'package:provider/provider.dart';
 import '../services/services.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -9,34 +8,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Uri uri = Uri.base;
-    String? anonLogin = uri.queryParameters['anonlogin'];
-    if (anonLogin == 'true' &&
-        Provider.of<DashboardProvider>(context, listen: true).isGuest ==
-            false) {
-      return FutureBuilder(
-        future: AuthService().anonLogin(context),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: SizedBox(
-                width: 100,
-                height: 100,
-                child: CircularProgressIndicator(),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return const Text("ERROR!");
-          } else {
-            Provider.of<DashboardProvider>(context, listen: false)
-                .setIsGuest(true);
-            return const HomeScreenBuilder();
-          }
-        },
-      );
-    } else {
-      return const HomeScreenBuilder();
-    }
+    return const HomeScreenBuilder();
   }
 }
 

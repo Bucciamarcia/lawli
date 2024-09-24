@@ -20,14 +20,15 @@ class _GuestLoginState extends State<GuestLogin> {
     // Defer the state modification to after the build process is completed.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Access the provider without listening to avoid unnecessary rebuilds
-      _dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
-      
+      _dashboardProvider =
+          Provider.of<DashboardProvider>(context, listen: false);
+
       // Set isGuest to true
       _dashboardProvider!.setIsGuest(true);
-      
+
       // Perform anonymous login
       _anonLogin();
-      
+
       // Add a listener to respond to changes in the provider
       _dashboardProvider!.addListener(_providerListener);
     });
@@ -39,13 +40,13 @@ class _GuestLoginState extends State<GuestLogin> {
       // Perform your action here. For now, we'll just print.
       debugPrint("isGuest is true");
       Navigator.pushNamed(context, "/");
-      
+
       _dashboardProvider!.removeListener(_providerListener);
     }
   }
 
   void _anonLogin() async {
-    await AuthService().anonLogin(context);
+    await AuthService().anonLogin();
   }
 
   @override
@@ -59,13 +60,15 @@ class _GuestLoginState extends State<GuestLogin> {
   Widget build(BuildContext context) {
     // Listen to isGuest changes to rebuild UI if necessary
     bool isGuest = Provider.of<DashboardProvider>(context).isGuest;
-    
+
     return Center(
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            isGuest ? "Creazione account di prova in corso..." : "Un secondo...",
+            isGuest
+                ? "Creazione account di prova in corso..."
+                : "Un secondo...",
             style: const TextStyle(fontSize: 16),
           ),
         ),
