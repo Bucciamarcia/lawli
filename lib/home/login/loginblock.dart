@@ -66,10 +66,8 @@ class _LoginBlockState extends State<LoginBlock> {
   }
 
   Future<void> _handleGuestRegistration() async {
-
-    await AuthService().anonLogin(context);
+    await AuthService().anonLogin();
     Provider.of<DashboardProvider>(context, listen: false).setIsGuest(true);
-
   }
 
   Future<void> _handleEmailRegistration() async {
