@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lawli/strumenti_gratis/calcolo_interessi_legali/calcolo_interessi_legali.dart';
-import 'package:lawli/trascrizione_audio/trascrizione_audio.dart';
+import 'package:lawli/strumenti_gratis/trascrizione_audio_video/trascrizione_audio_video.dart';
 import 'dashboard/document/view/view_document.dart';
 import 'home/home.dart';
 import 'dashboard/dashboard.dart';
@@ -16,6 +16,7 @@ import "strumenti_gratis/ricerca_sentenze/ricerca_sentenze.dart";
 import "template/template.dart";
 import "account/account.dart";
 import "home/guestlogin.dart";
+import "strumenti_gratis/trascrizione_audio_video/test.dart";
 
 final Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => const HomeScreen(),
@@ -28,12 +29,15 @@ final Map<String, WidgetBuilder> routes = {
   '/pratiche': (BuildContext context) => const PraticheScreen(),
   '/assistiti/nuovo': (BuildContext context) => const NuovoAssistitoScreen(),
   '/pratiche/nuovo': (BuildContext context) => const NuovaPraticaScreen(),
-  '/dashboard/document/update': (BuildContext context) => const ViewDocumentScreen(),
+  '/dashboard/document/update': (BuildContext context) =>
+      const ViewDocumentScreen(),
   '/ricerca_sentenze': (BuildContext context) => const RicercaSentenzeScreen(),
-  '/trascrizione_audio': (BuildContext context) => const TrascrizioneAudioScreen(),
+  '/trascrizione_audio_video': (BuildContext context) =>
+      const TrascrizioneAudioVideoScreen(),
   '/template': (BuildContext context) => const TemplateScreen(),
   '/account': (BuildContext context) => const AccountScreen(),
   '/guestlogin': (BuildContext context) => const GuestLogin(),
-  '/calcolointeressilegali': (BuildContext context) => const CalcoloInteressiLegaliScreen(),
+  '/calcolointeressilegali': (BuildContext context) =>
+      const CalcoloInteressiLegaliScreen(),
+  '/test': (BuildContext context) => const TestResultBox(),
 };
-

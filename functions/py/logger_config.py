@@ -17,7 +17,7 @@ class LoggerConfig:
                 client = google.cloud.logging.Client()
                 handler = client.get_default_handler()
                 client.setup_logging()
-                logger.setLevel(logging.INFO)
+                logger.setLevel(logging.DEBUG)
                 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
                 handler.setFormatter(formatter)
                 logger.addHandler(handler)  # Make sure to add the handler here
@@ -27,6 +27,6 @@ class LoggerConfig:
                 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
                 console.setFormatter(formatter)
                 logger.addHandler(console)
-                logger.setLevel(logging.INFO)
+                logger.setLevel(logging.DEBUG)
 
         return logger

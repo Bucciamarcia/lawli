@@ -13,8 +13,11 @@ class MobileVersion extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => setAccountId(context));
     return Scaffold(
-        appBar: appBar, drawer: const ResponsiveDrawer(), body: body);
+        appBar: appBar, 
+        drawer: const ResponsiveDrawer(key: ValueKey('mobileDrawer')),
+        body: body);
   }
+
   void setAccountId(context) async {
     if (Provider.of<DashboardProvider>(context, listen: false).accountName ==
         "") {

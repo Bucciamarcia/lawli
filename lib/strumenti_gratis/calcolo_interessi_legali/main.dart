@@ -77,14 +77,6 @@ class _LegalInterestCalculatorMainState
             padding: const EdgeInsets.all(15),
             child: Column(
               children: [
-                Text(
-                  "Calcolo interessi legali",
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(

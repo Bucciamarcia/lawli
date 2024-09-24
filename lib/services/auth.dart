@@ -1,8 +1,6 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:google_sign_in/google_sign_in.dart";
-import "package:lawli/services/provider.dart";
-import "package:provider/provider.dart";
 import "dart:developer";
 import "../services/firestore.dart";
 
@@ -29,8 +27,9 @@ class AuthService {
     }
   }
 
-  Future<void> anonLogin(BuildContext context) async {
+  Future<void> anonLogin() async {
     try {
+      debugPrint("Attempting to log in as anonymous user");
       await FirebaseAuth.instance.signInAnonymously();
       final loggedUser = FirebaseAuth.instance.currentUser;
       final userData =
@@ -40,7 +39,6 @@ class AuthService {
       }
 
       debugPrint("Logged in as anonymous user");
-      Provider.of<DashboardProvider>(context, listen: false).setIsGuest(true);
     } on FirebaseAuthException catch (e) {
       debugPrint("Error in anonLogin: $e");
     } catch (e) {
