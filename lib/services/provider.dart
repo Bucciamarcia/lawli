@@ -45,8 +45,8 @@ class RicercaSentenzeProvider extends ChangeNotifier {
     isSearchingSentenze = true;
     notifyListeners();
     try {
-    List<Sentenza> sentenze = await fetchSimilarSentenze(text, corte);
-    similarSentenze = sentenze;
+      List<Sentenza> sentenze = await fetchSimilarSentenze(text, corte);
+      similarSentenze = sentenze;
     } catch (e) {
       debugPrint("Error fetching similar sentenze: $e");
     } finally {
@@ -76,10 +76,7 @@ class RicercaSentenzeProvider extends ChangeNotifier {
 class DashboardProvider extends ChangeNotifier {
   double idPratica = kDebugMode ? 1 : 0;
 
-  Pratica pratica = kDebugMode
-      ? Pratica(id: 1, assistitoId: 2, titolo: "Pratica Mario Rossi")
-      : Pratica();
-
+  Pratica pratica = Pratica();
   Documento documento = Documento(data: DateTime.now());
 
   String accountName = "";
@@ -126,3 +123,4 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

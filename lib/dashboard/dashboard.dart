@@ -13,33 +13,33 @@ class DashboardScreen extends StatelessWidget {
     if (userPraticaId == 0) {
       return const CasoIdZero();
     } else {
-    return FutureBuilder<Pratica>(
-        future: RetrieveObjectFromDb().getPratica(userPraticaId),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            Pratica pratica = snapshot.data!;
-            return MainWindow(pratica: pratica);
-          } else if (snapshot.hasError) {
-            return Scaffold(
-              body: Container(
-                padding: ResponsiveLayout.mainWindowPadding(context),
-                child: Text(
-                  "Errore: ${snapshot.error}",
-                  style: Theme.of(context).textTheme.displayLarge,
+      return FutureBuilder<Pratica>(
+          future: RetrieveObjectFromDb().getPratica(userPraticaId),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Pratica pratica = snapshot.data!;
+              return MainWindow(pratica: pratica);
+            } else if (snapshot.hasError) {
+              return Scaffold(
+                body: Container(
+                  padding: ResponsiveLayout.mainWindowPadding(context),
+                  child: Text(
+                    "Errore: ${snapshot.error}",
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
                 ),
-              ),
-            );
-          } else {
-            return Scaffold(
-              body: Container(
-                padding: ResponsiveLayout.mainWindowPadding(context),
-                child: const Center(
-                  child: CircularProgressIndicator(),
+              );
+            } else {
+              return Scaffold(
+                body: Container(
+                  padding: ResponsiveLayout.mainWindowPadding(context),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
-              ),
-            );
-          }
-        });
+              );
+            }
+          });
     }
   }
 
@@ -91,7 +91,7 @@ class CasoIdZero extends StatelessWidget {
             ],
           ),
         ),
-        ),
-      );
+      ),
+    );
   }
 }
