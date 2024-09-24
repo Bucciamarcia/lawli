@@ -6,10 +6,9 @@
 import 'dart:async' as _i3;
 
 import 'package:firebase_auth/firebase_auth.dart' as _i4;
-import 'package:flutter/material.dart' as _i5;
 import 'package:lawli/services/auth.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i6;
+import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -48,10 +47,10 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
       ) as bool);
 
   @override
-  _i3.Future<void> anonLogin(_i5.BuildContext? context) => (super.noSuchMethod(
+  _i3.Future<void> anonLogin() => (super.noSuchMethod(
         Invocation.method(
           #anonLogin,
-          [context],
+          [],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
@@ -117,7 +116,7 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
           #userId,
           [],
         ),
-        returnValue: _i6.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.method(
             #userId,
