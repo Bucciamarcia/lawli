@@ -74,7 +74,7 @@ class RicercaSentenzeProvider extends ChangeNotifier {
 }
 
 class DashboardProvider extends ChangeNotifier {
-  double idPratica = kDebugMode ? 1 : 0;
+  double idPratica = 0;
 
   Pratica pratica = Pratica();
   Documento documento = Documento(data: DateTime.now());
@@ -123,4 +123,3 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
-
