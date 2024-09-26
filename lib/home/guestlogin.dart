@@ -37,16 +37,15 @@ class _GuestLoginState extends State<GuestLogin> {
   // Listener callback to respond to provider changes
   void _providerListener() {
     if (_dashboardProvider!.isGuest) {
-      // Perform your action here. For now, we'll just print.
       debugPrint("isGuest is true");
       Navigator.pushNamed(context, "/");
-
       _dashboardProvider!.removeListener(_providerListener);
     }
   }
 
   void _anonLogin() async {
     await AuthService().anonLogin();
+    Navigator.pushNamed(context, "/");
   }
 
   @override

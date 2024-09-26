@@ -8,7 +8,10 @@ class NuovaPraticaFormButtons extends StatefulWidget {
   final double userId;
 
   const NuovaPraticaFormButtons(
-      {super.key, required this.formData, required this.pageContext, required this.userId});
+      {super.key,
+      required this.formData,
+      required this.pageContext,
+      required this.userId});
 
   @override
   State<NuovaPraticaFormButtons> createState() =>
@@ -35,17 +38,11 @@ class _NuovaPraticaFormButtonsState extends State<NuovaPraticaFormButtons> {
             onPressed: () {
               String assistitoName = widget.formData.assistitoIdController.text;
               debugPrint("Assistito ID: $assistitoName");
-              if (widget.formData.assistitoIdController.text == ""){
-
-                debugPrint("Assistito ID non presente. Ritorna errore");
-                AddPraticaToFirebase(formData: widget.formData, assistitoId: widget.userId).showErrorPopup(context);
-
-
-              } else {
-                debugPrint("User ID: ${widget.userId}");
-                AddPraticaToFirebase(formData: widget.formData, assistitoId: widget.userId).addPratica();
-                postAdditionPushAndRemove();
-              }
+              debugPrint("User ID: ${widget.userId}");
+              AddPraticaToFirebase(
+                      formData: widget.formData, assistitoId: widget.userId)
+                  .addPratica();
+              postAdditionPushAndRemove();
             },
             child: const Text("Salva"),
           ),
@@ -80,7 +77,8 @@ class AddPraticaToFirebase {
   final NuovaPraticaFormState formData;
   final double assistitoId;
 
-  const AddPraticaToFirebase({required this.formData, required this.assistitoId});
+  const AddPraticaToFirebase(
+      {required this.formData, required this.assistitoId});
 
   Future<void> addPratica() async {
     final account = await FirestoreService().retrieveAccountObject();
@@ -92,7 +90,6 @@ class AddPraticaToFirebase {
     final documentName = praticaId.toString();
 
     await pratiche.doc(documentName).set(pratica);
-
   }
 
   Map<String, dynamic> _buildPraticaMap(
@@ -104,7 +101,6 @@ class AddPraticaToFirebase {
       "id": praticaId
     };
   }
-
 
   Future<double> _getPraticaId(account) async {
     final stats = account.collection("stats");
@@ -136,7 +132,8 @@ class AddPraticaToFirebase {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Errore"),
-          content: const Text("Devi selezionare un assistito per poter aggiungere una pratica."),
+          content: const Text(
+              "Devi selezionare un assistito per poter aggiungere una pratica."),
           actions: [
             TextButton(
               onPressed: () {
@@ -149,7 +146,4 @@ class AddPraticaToFirebase {
       },
     );
   }
-
-
-
 }

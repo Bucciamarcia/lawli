@@ -56,12 +56,6 @@ class MenuElements {
           height: ResponsiveLayout.isDesktop(context) ? 100 : null,
           child: const DrawerHeader(child: Text('Menù principale'))),
       ListTile(
-        title: const Text('Assistiti'),
-        onTap: () {
-          Navigator.pushNamed(context, '/assistiti');
-        },
-      ),
-      ListTile(
         title: const Text("Pratiche"),
         onTap: () {
           Navigator.pushNamed(context, '/pratiche');
@@ -71,50 +65,44 @@ class MenuElements {
         title: const Text("Template"),
         onTap: () => Navigator.pushNamed(context, '/template'),
       ),
+      ListTile(
+          title: const Text("Dashboard"),
+          onTap: () {
+            Navigator.pushNamed(context, '/dashboard');
+          }),
       ExpansionTile(
-        title: const Text("Strumenti"),
+        title: const Text("Giurisprudenza"),
         children: [
-          ExpansionTile(
-            title: const Text("Giurisprudenza"),
-            children: [
-              ListTile(
-                title: const Text("Ricerca sentenze"),
-                onTap: () {
-                  Navigator.pushNamed(context, '/ricerca_sentenze');
-                },
-              ),
-            ],
-          ),
-          ExpansionTile(
-            title: const Text("Denaro e interessi"),
-            children: [
-              ListTile(
-                title: const Text("Calcolo interessi legali"),
-                onTap: () {
-                  Navigator.pushNamed(context, '/calcolointeressilegali');
-                },
-              )
-            ],
-          ),
-          ExpansionTile(
-            title: const Text("Intelligenza artificiale"),
-            children: [
-              ListTile(
-                title: const Text("Trascrizione audio/video"),
-                onTap: () {
-                  Navigator.pushNamed(context, '/trascrizione_audio_video');
-                },
-              )
-            ],
+          ListTile(
+            title: const Text("Ricerca sentenze"),
+            onTap: () {
+              Navigator.pushNamed(context, '/ricerca_sentenze');
+            },
           ),
         ],
       ),
-      ListTile(
-          title: const Text("Account"),
-          onTap: () async {
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/account', (route) => false);
-          }),
+      ExpansionTile(
+        title: const Text("Denaro e interessi"),
+        children: [
+          ListTile(
+            title: const Text("Calcolo interessi legali"),
+            onTap: () {
+              Navigator.pushNamed(context, '/calcolointeressilegali');
+            },
+          )
+        ],
+      ),
+      ExpansionTile(
+        title: const Text("Intelligenza artificiale"),
+        children: [
+          ListTile(
+            title: const Text("Trascrizione audio/video"),
+            onTap: () {
+              Navigator.pushNamed(context, '/trascrizione_audio_video');
+            },
+          )
+        ],
+      ),
       ListTile(
           title: const Text("Logout"),
           onTap: () async {
