@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lawli/strumenti_gratis/calcolo_interessi_legali/calcolo_interessi_legali.dart';
 import 'package:lawli/strumenti_gratis/calcolo_interessi_legali/standalone.dart';
+import 'package:lawli/strumenti_gratis/ricerca_sentenze/standalone.dart';
+import 'package:lawli/strumenti_gratis/trascrizione_audio_video/standalone.dart';
 import 'package:lawli/strumenti_gratis/trascrizione_audio_video/trascrizione_audio_video.dart';
 import 'dashboard/document/view/view_document.dart';
 import 'home/home.dart';
@@ -43,4 +45,8 @@ final Map<String, WidgetBuilder> routes = {
   '/test': (BuildContext context) => const TestResultBox(),
   '/interessi_standalone': (BuildContext context) =>
       const InteressiStandalone(),
+  '/ricerca_sentenze_standalone': (BuildContext context) =>
+      const RicercaSentenzeStandalone(),
+  '/trascrizione_audio_video_standalone': (BuildContext context) =>
+      const TrascrizioneStandalone(),
 };

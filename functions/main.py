@@ -251,7 +251,7 @@ def calcolo_interessi_legali_data(
     return functions.CalcoloInteressiLegali(text).run()
 
 
-@https_fn.on_call()
+@https_fn.on_call(timeout_sec=300)
 def transcribe_audio_video(req: https_fn.CallableRequest) -> str | None:
     initialize_env()
     logger.info("extract_audio_from_video called")
