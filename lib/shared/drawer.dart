@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lawli/shared/loading_indicators/fullpage_horizontal_progress.dart';
 import "../services/services.dart";
 
 class ResponsiveDrawer extends StatefulWidget {
@@ -113,7 +114,8 @@ class MenuElements {
         ListTile(
           title: const Text("Test"),
           onTap: () {
-            Navigator.pushNamed(context, '/test');
+            debugPrint("Pressed test");
+            FullpageHorizontalProgress.show(context);
           },
         ),
     ];

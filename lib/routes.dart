@@ -15,6 +15,7 @@ import "home/recent/recent.dart";
 import 'pratiche/nuovo/nuovo.dart';
 import "pratiche/pratiche.dart";
 import "assistiti/nuovo/nuovo.dart";
+import 'strumenti_gratis/chatta_documento/chatta_documento.dart';
 import "strumenti_gratis/ricerca_sentenze/ricerca_sentenze.dart";
 import 'strumenti_gratis/trascrizione_audio_video/test.dart';
 import "template/template.dart";
@@ -49,4 +50,6 @@ final Map<String, WidgetBuilder> routes = {
       const RicercaSentenzeStandalone(),
   '/trascrizione_audio_video_standalone': (BuildContext context) =>
       const TrascrizioneStandalone(),
+  '/chatta_documento_standalone': (BuildContext context) =>
+      const ChattaDocumentoStandalone(),
 };
