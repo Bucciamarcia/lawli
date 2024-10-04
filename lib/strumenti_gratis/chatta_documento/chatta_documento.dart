@@ -8,7 +8,8 @@ class ChattaDocumentoStandalone extends StatefulWidget {
   const ChattaDocumentoStandalone({super.key});
 
   @override
-  State<ChattaDocumentoStandalone> createState() => ChattaDocumentoStandaloneState();
+  State<ChattaDocumentoStandalone> createState() =>
+      ChattaDocumentoStandaloneState();
 }
 
 class ChattaDocumentoStandaloneState extends State<ChattaDocumentoStandalone> {
@@ -77,14 +78,9 @@ class StandaloneBuilder extends StatelessWidget {
           return Container(
             alignment: Alignment.topCenter,
             padding: ResponsiveLayout.mainWindowPadding(context),
-            child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: ChangeNotifierProvider(
-                      create: (context) => DocumentChatterProvider(),
-                      child: const ChatMainStandalone()),
-                ),),
+            child: ChangeNotifierProvider(
+                create: (context) => DocumentChatterProvider(),
+                child: const ChatMainStandalone()),
           );
         }
       },
