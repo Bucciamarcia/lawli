@@ -15,9 +15,9 @@ import "home/recent/recent.dart";
 import 'pratiche/nuovo/nuovo.dart';
 import "pratiche/pratiche.dart";
 import "assistiti/nuovo/nuovo.dart";
+import 'shared/loading_indicators/horizontal_widget.dart';
 import 'strumenti_gratis/chatta_documento/chatta_documento.dart';
 import "strumenti_gratis/ricerca_sentenze/ricerca_sentenze.dart";
-import 'strumenti_gratis/trascrizione_audio_video/test.dart';
 import "template/template.dart";
 import "account/account.dart";
 import "home/guestlogin.dart";
@@ -43,7 +43,8 @@ final Map<String, WidgetBuilder> routes = {
   '/guestlogin': (BuildContext context) => const GuestLogin(),
   '/calcolointeressilegali': (BuildContext context) =>
       const CalcoloInteressiLegaliScreen(),
-  '/test': (BuildContext context) => const TestResultBox(),
+  '/test': (BuildContext context) =>
+      const LinearProgressIndicatorCustom(initalValue: 0.3),
   '/interessi_standalone': (BuildContext context) =>
       const InteressiStandalone(),
   '/ricerca_sentenze_standalone': (BuildContext context) =>

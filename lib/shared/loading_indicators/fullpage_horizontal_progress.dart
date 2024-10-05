@@ -19,7 +19,7 @@ class FullpageHorizontalProgress {
               color: Colors.black.withOpacity(0.5),
             ),
             const Center(
-              child: HorizontalWidget(),
+              child: LinearProgressIndicatorCustom(initalValue: 0.3),
             )
           ],
         );

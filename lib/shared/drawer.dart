@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lawli/shared/loading_indicators/fullpage_horizontal_progress.dart';
@@ -116,6 +118,10 @@ class MenuElements {
           onTap: () {
             debugPrint("Pressed test");
             FullpageHorizontalProgress.show(context);
+            Timer(const Duration(seconds: 2), () {
+              FullpageHorizontalProgress.hide();
+            });
+            // clear overlay
           },
         ),
     ];
