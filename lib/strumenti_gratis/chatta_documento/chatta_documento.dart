@@ -75,12 +75,16 @@ class StandaloneBuilder extends StatelessWidget {
         } else if (accountNameSnapshot.hasError) {
           return const Text('Error getting name');
         } else {
-          return Container(
-            alignment: Alignment.topCenter,
-            padding: ResponsiveLayout.mainWindowPadding(context),
-            child: ChangeNotifierProvider(
-                create: (context) => DocumentChatterProvider(),
-                child: const ChatMainStandalone()),
+          return Scaffold(
+            body: SingleChildScrollView(
+              child: Container(
+                alignment: Alignment.topCenter,
+                padding: ResponsiveLayout.mainWindowPadding(context),
+                child: ChangeNotifierProvider(
+                    create: (context) => DocumentChatterProvider(),
+                    child: const ChatMainStandalone()),
+              ),
+            ),
           );
         }
       },

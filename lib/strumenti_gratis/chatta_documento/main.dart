@@ -14,25 +14,26 @@ class ChatMainStandalone extends StatelessWidget {
         Provider.of<DocumentChatterProvider>(context, listen: true).messaggi;
     return Container(
       constraints: const BoxConstraints(maxWidth: 800),
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              FileUploader(
-                labelText: "Carica un documento per chattare",
-                helperText: "",
-                buttonText: "Carica",
-                onFileSelected: (PlatformFile? file) {
-                  Provider.of<DocumentChatterProvider>(context, listen: false)
-                      .updateFile(file);
-                },
-              ),
-              // if (chatMessages.isNotEmpty) const ChatScreen(),
-              const ChatScreen(),
-              const Text("hello there")
-            ],
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            FileUploader(
+              labelText: "Carica un documento per chattare",
+              helperText: "",
+              buttonText: "Carica",
+              onFileSelected: (PlatformFile? file) {
+                Provider.of<DocumentChatterProvider>(context, listen: false)
+                    .updateFile(file);
+              },
+            ),
+            // if (chatMessages.isNotEmpty) const ChatScreen(),
+            const ChatScreen(),
+            const SizedBox(
+              height: 20,
+            ),
+            const MessageSender()
+          ],
         ),
       ),
     );
@@ -68,5 +69,14 @@ class ChatScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class MessageSender extends StatelessWidget {
+  const MessageSender({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
